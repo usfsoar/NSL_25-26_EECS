@@ -1,0 +1,31 @@
+{
+	"name": "soar_echo_base",
+	"version": "1.0.0",
+	"description": "Ground station for SOAR NSL",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "webpack",
+		"watch": "webpack --watch"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/usfsoar/NSL_23-24_PAYLOADEECS.git"
+	},
+	"author": "L42ARO",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/usfsoar/NSL_23-24_PAYLOADEECS/issues"
+	},
+	"homepage": "https://github.com/usfsoar/NSL_23-24_PAYLOADEECS#readme",
+	"dependencies": {
+		"@esri/arcgis-rest-feature-service": "^4.0.5",
+		"d3": "^7.8.5",
+		"flask": "^0.2.10",
+		"socket-io": "^1.0.0"
+	},
+	"devDependencies": {
+		"webpack": "^5.90.1",
+		"webpack-cli": "^5.1.4"
+	}
+}

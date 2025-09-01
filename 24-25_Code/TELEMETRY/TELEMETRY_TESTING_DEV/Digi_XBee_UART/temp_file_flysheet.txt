@@ -1,0 +1,208 @@
+---------------------------------------------------------------------------------------------------
+Transmitter #5
+What is the brand of the transmitter?
+Dorji
+
+What is the model of the transmitter?
+DRA818V
+
+What is the RF power (mW) of the transmitter?
+1000
+
+Is the transmitter Fixed Frequency or Frequency Hopping?
+Frequency Hopping
+
+Specific Frequency to be used (MHz) (Enter N/A for Frequency Hopping)
+N/A
+
+Specific Channel/Slot/ID (Fixed) or Band (Frequency Hopping)
+146.50 ± 0.025 MHz (146.475 - 146.525)
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+APRS
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+APRS
+
+Baud Rate (bps or kbps) (if digital)
+9600 bps
+
+Callsign you are transmitting on (Required if operating on HAM Frequency) Enter N/A if HAM license is not required
+KQ4FYU
+
+Purpose of transmitter
+Fulfill Payload Challenge by transmitting to NASA transceiver outlined in section 4.2.3 - 4.2.6 of Handbook
+
+Distance (in.) to closest altimeter hardware (e-match, wire, switch, altimeter, etc.) and identify what hardware
+6 in. to e-match
+
+Description of shielding plan
+Common ground plane through the PCB board
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
+Transmitter #4
+What is the brand of the transmitter?
+Digi
+
+What is the model of the transmitter?
+XBee Pro S3B 900HP
+
+What is the RF power (mW) of the transmitter?
+250
+
+Is the transmitter Fixed Frequency or Frequency Hopping?
+Frequency Hopping
+
+Specific Frequency to be used (MHz) (Enter N/A for Frequency Hopping)
+N/A
+
+Specific Channel/Slot/ID (Fixed) or Band (Frequency Hopping)
+916.00 to 923.60 MHz
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Baud Rate (bps or kbps) (if digital)
+10 Kbps
+
+Callsign you are transmitting on (Required if operating on HAM Frequency) Enter N/A if HAM license is not required
+N/A
+
+Purpose of transmitter
+Data downlink of in-flight telemetry data from Telemetry Bay to Ground Station
+
+Distance (in.) to closest altimeter hardware (e-match, wire, switch, altimeter, etc.) and identify what hardware
+32.4 in. from e-match
+
+Description of shielding plan
+Common ground plane through the PCB board
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
+Transmitter #3
+What is the brand of the transmitter?
+Digi
+
+What is the model of the transmitter?
+XBee Pro S3B 900HP
+
+What is the RF power (mW) of the transmitter?
+250
+
+Is the transmitter Fixed Frequency or Frequency Hopping?
+Frequency Hopping
+
+Specific Frequency to be used (MHz) (Enter N/A for Frequency Hopping)
+N/A
+
+Specific Channel/Slot/ID (Fixed) or Band (Frequency Hopping)
+916.00 to 923.60 MHz
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Baud Rate (bps or kbps) (if digital)
+10 Kbps
+
+Callsign you are transmitting on (Required if operating on HAM Frequency) Enter N/A if HAM license is not required
+N/A
+
+Purpose of transmitter
+Verify airbrakes operation & control through data downlink to Ground Station
+
+Distance (in.) to closest altimeter hardware (e-match, wire, switch, altimeter, etc.) and identify what hardware
+2.5 in. to altimeter
+
+Description of shielding plan
+Common ground plane through the PCB board
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
+Transmitter #2
+What is the brand of the transmitter?
+Digi
+
+What is the model of the transmitter?
+XBee Pro S3B 900HP
+
+What is the RF power (mW) of the transmitter?
+250
+
+Is the transmitter Fixed Frequency or Frequency Hopping?
+Frequency Hopping
+
+Specific Frequency to be used (MHz) (Enter N/A for Frequency Hopping)
+N/A
+
+Specific Channel/Slot/ID (Fixed) or Band (Frequency Hopping)
+916.00 to 923.60 MHz
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Baud Rate (bps or kbps) (if digital)
+10 Kbps
+
+Callsign you are transmitting on (Required if operating on HAM Frequency) Enter N/A if HAM license is not required
+N/A
+
+Purpose of transmitter
+Establish communications from Ground Station to Telemetry Bay, Payload, Airbrakes
+
+Distance (in.) to closest altimeter hardware (e-match, wire, switch, altimeter, etc.) and identify what hardware
+N/A (is located on the ground)
+
+Description of shielding plan
+N/A (is located on the ground)
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
+Transmitter #1
+What is the brand of the transmitter?
+Digi
+
+What is the model of the transmitter?
+XBee Pro S3B 900HP
+
+What is the RF power (mW) of the transmitter?
+250
+
+Is the transmitter Fixed Frequency or Frequency Hopping?
+Frequency Hopping
+
+Specific Frequency to be used (MHz) (Enter N/A for Frequency Hopping)
+N/A
+
+Specific Channel/Slot/ID (Fixed) or Band (Frequency Hopping)
+916.00 to 923.60 MHz
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+FHSS
+
+Baud Rate (bps or kbps) (if digital)
+10 Kbps
+
+Callsign you are transmitting on (Required if operating on HAM Frequency) Enter N/A if HAM license is not required
+N/A
+
+Purpose of transmitter
+Verify operation of Payload through data downlink to Ground Station
+
+Distance (in.) to closest altimeter hardware (e-match, wire, switch, altimeter, etc.) and identify what hardware
+6 in. to e-match
+
+Description of shielding plan
+Common ground plane through the PCB board

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Control Panel</title>
+		<!-- Link to the Orbitron font from Google Fonts -->
+		<!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" /> -->
+		<link rel="stylesheet" href="_global/theme_stylesheet.css" />
+		<link rel="stylesheet" href="control_panel/control_panel.css" />
+		<link rel="shortcut icon" href="_global/favicon.ico" />
+	</head>
+	<body id="the_body">
+		<div class="wrapper">
+		<p id="theme_value" style="display: none;">Light</p>
+		<header id="the_header">
+			<h1>SOAR Echo Base</h1>
+			<a class="tab_btn" href="/gps_data"> GPS DATA SITE</a>
+			<div>
+				<img src="_global/settings_gear.svg" class="header_svg_color_green" id="settings_gear" />
+				<div id="settings_gear_div">
+					<!-- Theme Switcher Button -->
+					<div id="settings_menu_div">
+						<p id="settings_menu_text">Theme:</p>
+						<label class="ui-switch">
+							<input type="checkbox" value="dark" id="theme_toggle" unchecked />
+							<div class="slider">
+								<div class="circle"></div>
+							</div>
+						</label>
+					</div>
+					<div>
+						<button id="header_theme_button_white">White</button>
+						<button id="header_theme_button_gold">Gold</button>
+						<button id="header_theme_button_black">Black</button>
+					</div>
+				</div>
+			</div>
+		</header>
+		<div id="main_holder">
+			<div id="left_column">
+				<h2 class="text">Connection Setup</h2>
+				<div>
+					<div>
+						<h3 class="text">Payload</h3>
+						<div class="com-port-style">
+							<label for="com_port" style="margin-right: 1em; height: min-content;">COM Port: </label>
+							<input type="text" id="com_port" name="com_port" style="height: min-content;" />
+							<p id="invalid_com_port_notif" class="live_console_error_messages">Invalid COM Port</p>
+						</div>
+						<button id="telemetry_start" class="ctrl_panel_btn" style="font-size: 10px;">Start Serial</button>
+						<button id="close_serial" class="ctrl_panel_btn" style="font-size: 10px;">Close Serial Connection</button>
+					</div>
+					<div>
+						<h3 class="text">GPS</h3>
+						<div class="com-port-style">
+							<label for="com_port_recovery" style="margin-right: 1em; height: min-content;">COM Port: </label>
+							<input type="text" id="com_port_recovery" name="com_port" style="height: min-content;" />
+							<p id="invalid_com_port_notif" class="live_console_error_messages">Invalid COM Port</p>
+						</div>
+						<button id="gps_connection_start" class="ctrl_panel_btn" style="font-size: 10px;">Start Serial</button>
+						<button id="gps_connection_close" class="ctrl_panel_btn" style="font-size: 10px;">
+							Close Serial Connection
+						</button>
+					</div>
+				</div>
+				<div id="live_console_holder">
+					<h3 style="margin: 0px; margin-left: 0.5em; margin-bottom: 0.5em;">Live Console</h3>
+					<div
+						id="live_console"
+						style="border: 1px solid black; height: 300px; overflow: scroll; white-space: pre-line; display: flex; flex-direction: column-reverse;"
+					></div>
+					<div style="display: flex; width: auto; padding-top: 0.7em;">
+						<div style="display: flex;flex-grow: 1;">
+							<input
+								type="text"
+								placeholder="Type serial input"
+								id="live_console_send_msg_field"
+							/>
+							<input
+								type="text"
+								placeholder="ID"
+								size = "2"
+								id="live_console_send_msg_id"
+							/>
+						</div>
+						<button id="live_console_send_msg_btn">
+							<div class="svg-wrapper-1">
+								<div class="svg-wrapper">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+										<path fill="none" d="M0 0h24v24H0z"></path>
+										<path
+											fill="currentColor"
+											d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+										></path>
+									</svg>
+								</div>
+							</div>
+							<span>Send</span>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div id="middle_column">
+				<h2 style="width: fit-content;">Telemetry</h2>
+				<div style="display:flex; width:100%; height:90%">
+					<canvas id="rocket_status_diagram"></canvas>
+					<div class="chart_holder">
+						<!-- CHARTS WILL GO HERE-->
+					</div>
+				</div>
+			</div>
+
+			<div id="right_column">
+				<!-- <p>
+					Note: The below button is intended for use only for dev purposes.<br />
+					The point is to not be able to click these<br />
+					buttons until a serial connection is initiated
+				</p> -->
+				<div style="display: flex; flex-direction: column; width: min-content; min-width:20rem; row-gap: 5px;">
+					<div style="display: flex; flex-direction: row; border: 1px solid white;flex-wrap:wrap">
+						<button id="ping_recovery_btn" class="ctrl_panel_btn" style="font-size: 10px;">PING Recovery</button>
+						<button id="ping_payload_btn" class="ctrl_panel_btn" style="font-size: 10px;">PING Payload</button>
+						<button id="ping_extension_btn" class="ctrl_panel_btn" style="font-size: 10px;">PING Extension</button>
+					</div>
+					<div style="display: flex; flex-direction: row; flex-wrap: wrap; border: 1px solid white;">
+						<button id="deploy_btn" class="ctrl_panel_btn" style="font-size: 10px;">DEPLOY</button>
+						<button id="stop_btn" class="ctrl_panel_btn" style="font-size: 10px;">STOP</button>
+						<button id="reset_btn" class="ctrl_panel_btn" style="font-size: 10px;">RESET</button>
+						<button id="retract_btn" class="ctrl_panel_btn" style="font-size: 10px;">RETRACT</button>
+					</div>
+					<div style="display: flex; flex-direction: row; flex-wrap: wrap; border: 1px solid white;">
+						<button id="gps_btn" class="ctrl_panel_btn" style="font-size: 10px;">GPS</button>
+						<button id="altitude_btn" class="ctrl_panel_btn" style="font-size: 10px;">ALTITUDE</button>
+						<button id="status_btn" class="ctrl_panel_btn" style="font-size: 10px;">STATUS</button>
+						<button id="jog_fwd_btn" class="ctrl_panel_btn" style="font-size: 10px;">JOG FWD</button>
+						<button id="jog_rev_btn" class="ctrl_panel_btn" style="font-size: 10px;">JOG REV</button>
+						<button id="deploy_btn_dist" class="ctrl_panel_btn" style="font-size: 10px;">DISTANCE</button>
+						<button id="all_data_btn" class="ctrl_panel_btn" style="font-size:10px;">ALL DATA</button>"
+					</div>
+					<div style="display: flex; flex-direction: row; flex-wrap: wrap; border: 1px solid white;">
+						<!--Input for general repeat rate-->
+						<input  type="text" id="repeat_rate" placeholder="Repeat Rate" style="font-size: 10px; width:100%; height:2rem" />
+
+						<button id="gps_btn_rpt" class="ctrl_panel_btn" style="font-size: 10px;">GPS Repeat</button>
+						<button id="altitude_btn_rpt" class="ctrl_panel_btn" style="font-size: 10px;">Altitude Repeat</button>
+						<button id="dist_btn_rpt" class="ctrl_panel_btn" style="font-size: 10px;">Distance Repeat</button>
+						<button id="status_btn_rpt" class="ctrl_panel_btn" style="font-size: 10px;">Status Repeat</button>
+						<button id="all_data_rpt" class="ctrl_panel_btn" style="font-size:10px;">All Data Repeat</button>
+						<button id="deploy_btn_rtp" class="ctrl_panel_btn" style="font-size: 10px;">Deploy Repeat</button>
+						<button id="rpt_stop_btn" class="ctrl_panel_btn" style="font-size: 10px;">Stop Repeat</button>
+					</div>
+					<div style="display: flex; flex-direction: row; flex-wrap: wrap; border: 1px solid white;">
+						<!--Input for general repeat rate-->
+						<button id="abort_btn" class="ctrl_panel_btn" style="font-size: 10px;">Abort</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<!-- <script src="_global/bundle.js"></script> -->
+		<script src="_global/color_and_themes.js"></script>
+		<script type="module" src="control_panel/control_panel.js"></script>
+	</body>
+</html>

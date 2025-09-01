@@ -1,0 +1,144 @@
+datetime,serial msg
+2024-03-16 16:20:25.007252,Sending: AT+ADDRESS=6
+2024-03-16 16:20:25.240997,Received: +OK
+2024-03-16 16:20:25.333793,Sending: AT+BAND=905000000
+2024-03-16 16:20:25.487031,Received: +OK
+2024-03-16 16:20:25.564893,Sending: AT+NETWORKID=5
+2024-03-16 16:20:25.942949,Received: +OK
+2024-03-16 16:20:50.035990,"Sending: AT+SEND=5,4,IR\x00\x9b"
+2024-03-16 16:20:50.316205,Received: +OK
+2024-03-16 16:20:50.579853,Checksum: 497 Calculated: 497
+2024-03-16 16:20:50.859180,Latency: 106
+2024-03-16 16:20:51.348855,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 8, Data Bytes: bytearray(b'IR\x8c\xaf\x1b\x00'), Checksum: 497, RSSI: 0, SNR: 65429"
+2024-03-16 16:20:53.443314,Checksum: 755 Calculated: 755
+2024-03-16 16:20:53.635890,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS>\x18\x9bA+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00)\xb6\x1b\x00'), Checksum: 755, RSSI: 0, SNR: 65432"
+2024-03-16 16:20:54.793208,Checksum: 1174 Calculated: 1174
+2024-03-16 16:20:55.605415,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xbc\xe2\x99A+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x81\xbb\x1b\x00'), Checksum: 1174, RSSI: 0, SNR: 65431"
+2024-03-16 16:20:57.065139,Checksum: 1152 Calculated: 1152
+2024-03-16 16:20:58.226295,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISZ\xd6\x99A+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xd4\xc0\x1b\x00'), Checksum: 1152, RSSI: 0, SNR: 65432"
+2024-03-16 16:20:59.154449,Checksum: 1137 Calculated: 1137
+2024-03-16 16:21:00.501728,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xf9\xc9\x99A.\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00*\xc6\x1b\x00'), Checksum: 1137, RSSI: 0, SNR: 65430"
+2024-03-16 16:21:00.503739,Checksum: 1141 Calculated: 1141
+2024-03-16 16:21:01.022168,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x93\xdd\x99A+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00~\xcb\x1b\x00'), Checksum: 1141, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:01.135945,"LORA: Valid data:False, Address Bytes: 5, Length Bytes: 0, Data Bytes: bytearray(b''), Checksum: 6144, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:02.241350,Checksum: 1126 Calculated: 1126
+2024-03-16 16:21:02.383166,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xfe\xa9\x99A-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00+\xd6\x1b\x00'), Checksum: 1126, RSSI: 0, SNR: 65436"
+2024-03-16 16:21:04.139472,Checksum: 1013 Calculated: 1013
+2024-03-16 16:21:04.732783,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xd0\x05\x9aA.\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x85\xdb\x1b\x00'), Checksum: 1013, RSSI: 0, SNR: 65433"
+2024-03-16 16:21:05.728713,Checksum: 1075 Calculated: 1075
+2024-03-16 16:21:06.634024,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISaY\x9aA,\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xdb\xe0\x1b\x00'), Checksum: 1075, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:07.025902,Checksum: 1022 Calculated: 1022
+2024-03-16 16:21:07.476916,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISR\xd5\x99A.\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x002\xe6\x1b\x00'), Checksum: 1022, RSSI: 0, SNR: 65434"
+2024-03-16 16:21:08.515800,Checksum: 1185 Calculated: 1185
+2024-03-16 16:21:08.638911,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x93\xdd\x99A-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x88\xeb\x1b\x00'), Checksum: 1185, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:09.433234,Checksum: 1205 Calculated: 1205
+2024-03-16 16:21:10.119054,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISo\xb8\x99A.\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xdf\xf0\x1b\x00'), Checksum: 1205, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:10.617053,Checksum: 997 Calculated: 997
+2024-03-16 16:21:11.475355,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS}}\x9aA/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x004\xf6\x1b\x00'), Checksum: 997, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:12.021514,Checksum: 1154 Calculated: 1154
+2024-03-16 16:21:13.018330,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISk\xd8\x99A-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x86\xfb\x1b\x00'), Checksum: 1154, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:14.127014,Checksum: 894 Calculated: 894
+2024-03-16 16:21:14.377715,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x16\xd2\x9aA,\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xd7\x00\x1c\x00'), Checksum: 894, RSSI: 0, SNR: 65430"
+2024-03-16 16:21:15.234614,Checksum: 584 Calculated: 584
+2024-03-16 16:21:15.639503,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISA\x14\x9aA+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00/\x06\x1c\x00'), Checksum: 584, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:17.181717,Checksum: 1007 Calculated: 1007
+2024-03-16 16:21:17.339334,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISe\xe0\x9bA+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xdb\x10\x1c\x00'), Checksum: 1007, RSSI: 0, SNR: 65444"
+2024-03-16 16:21:18.536776,Checksum: 951 Calculated: 951
+2024-03-16 16:21:18.630520,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xb1\xaf\xe9A,\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x003\x16\x1c\x00'), Checksum: 951, RSSI: 0, SNR: 65447"
+2024-03-16 16:21:19.709607,Checksum: 968 Calculated: 968
+2024-03-16 16:21:20.443005,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x92\xbc\xaeB-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x1b\x1c\x00'), Checksum: 968, RSSI: 0, SNR: 65441"
+2024-03-16 16:21:20.475326,Checksum: 906 Calculated: 906
+2024-03-16 16:21:20.896048,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xe33IC/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe1 \x1c\x00'), Checksum: 906, RSSI: 0, SNR: 65436"
+2024-03-16 16:21:23.001954,Checksum: 892 Calculated: 892
+2024-03-16 16:21:23.408340,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS=\xfd\xbcC/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x006&\x1c\x00'), Checksum: 892, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:24.301166,Checksum: 885 Calculated: 885
+2024-03-16 16:21:24.424803,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x9d\xec\x0bD-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x8d+\x1c\x00'), Checksum: 885, RSSI: 0, SNR: 65433"
+2024-03-16 16:21:25.520597,Checksum: 856 Calculated: 856
+2024-03-16 16:21:26.481124,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISX\x950D+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe40\x1c\x00'), Checksum: 856, RSSI: 0, SNR: 65433"
+2024-03-16 16:21:26.997744,Checksum: 857 Calculated: 857
+2024-03-16 16:21:27.899064,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xd2\xa0OD,\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00:6\x1c\x00'), Checksum: 857, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:29.476689,Checksum: 885 Calculated: 885
+2024-03-16 16:21:30.571923,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IST\xc3iD,\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x91;\x1c\x00'), Checksum: 885, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:31.709081,Checksum: 898 Calculated: 898
+2024-03-16 16:21:31.768472,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISZ8\x86D*\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\xfeE\x1c\x00'), Checksum: 898, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:33.194428,Checksum: 915 Calculated: 915
+2024-03-16 16:21:33.556681,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x89\xb8\x8bD+\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00TK\x1c\x00'), Checksum: 915, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:37.126894,Checksum: 445 Calculated: 445
+2024-03-16 16:21:37.392706,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 9, Data Bytes: bytearray(b'DS\x02\xafY\x1c\x00'), Checksum: 445, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:40.508137,Checksum: 874 Calculated: 874
+2024-03-16 16:21:41.478507,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS5\x82\x8bD)\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\xa1`\x1c\x00'), Checksum: 874, RSSI: 0, SNR: 65433"
+2024-03-16 16:21:42.575263,Checksum: 920 Calculated: 920
+2024-03-16 16:21:43.560316,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x82L\x88D-\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\xb2e\x1c\x00'), Checksum: 920, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:48.435706,Checksum: 729 Calculated: 729
+2024-03-16 16:21:49.355287,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISQ\nfD-\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00m\x80\x1c\x00'), Checksum: 729, RSSI: 0, SNR: 65430"
+2024-03-16 16:21:52.861371,Checksum: 812 Calculated: 812
+2024-03-16 16:21:53.692302,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISCfOD/\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00w\x90\x1c\x00'), Checksum: 812, RSSI: 0, SNR: 65431"
+2024-03-16 16:21:55.652651,Checksum: 746 Calculated: 746
+2024-03-16 16:21:56.622281,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x80>?D.\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00&\x9b\x1c\x00'), Checksum: 746, RSSI: 0, SNR: 65432"
+2024-03-16 16:21:58.516232,Checksum: 1061 Calculated: 1061
+2024-03-16 16:21:59.901500,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xc6\x88/D,\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\xd9\xa5\x1c\x00'), Checksum: 1061, RSSI: 0, SNR: 65433"
+2024-03-16 16:22:01.067287,Checksum: 909 Calculated: 909
+2024-03-16 16:22:02.133885,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x8f\xcd&D-\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x005\xab\x1c\x00'), Checksum: 909, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:03.956622,Checksum: 915 Calculated: 915
+2024-03-16 16:22:05.511993,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x80\x8e\x1dD-\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x8d\xb0\x1c\x00'), Checksum: 915, RSSI: 0, SNR: 65432"
+2024-03-16 16:22:06.018508,Checksum: 999 Calculated: 999
+2024-03-16 16:22:07.924023,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xd8;\x16D,\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\xdf\xb5\x1c\x00'), Checksum: 999, RSSI: 0, SNR: 65433"
+2024-03-16 16:22:07.926023,Checksum: 814 Calculated: 814
+2024-03-16 16:22:09.032233,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x13\xfa\rD*\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x001\xbb\x1c\x00'), Checksum: 814, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:09.717059,Checksum: 892 Calculated: 892
+2024-03-16 16:22:11.085481,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xe5#\x06D,\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x84\xc0\x1c\x00'), Checksum: 892, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:11.149486,Checksum: 1118 Calculated: 1118
+2024-03-16 16:22:12.937308,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS \xda\xe2C,\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x89\xd0\x1c\x00'), Checksum: 1118, RSSI: 0, SNR: 65432"
+2024-03-16 16:22:15.950036,Checksum: 954 Calculated: 954
+2024-03-16 16:22:16.601055,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x18\xca\x97C*\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00/\xeb\x1c\x00'), Checksum: 954, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:17.154186,Checksum: 1245 Calculated: 1245
+2024-03-16 16:22:17.772233,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xe3\xd1\x82C.\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x8c\xf0\x1c\x00'), Checksum: 1245, RSSI: 0, SNR: 65430"
+2024-03-16 16:22:18.353434,Checksum: 1139 Calculated: 1139
+2024-03-16 16:22:19.101558,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x8b\x80fC-\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\xe3\xf5\x1c\x00'), Checksum: 1139, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:19.303975,Checksum: 1018 Calculated: 1018
+2024-03-16 16:22:20.353542,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISg\xdbXC+\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00=\xfb\x1c\x00'), Checksum: 1018, RSSI: 0, SNR: 65434"
+2024-03-16 16:22:21.508603,Checksum: 591 Calculated: 591
+2024-03-16 16:22:22.288362,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x04IRC(\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x8a\x00\x1d\x00'), Checksum: 591, RSSI: 0, SNR: 65432"
+2024-03-16 16:22:25.298764,Checksum: 629 Calculated: 629
+2024-03-16 16:22:25.987364,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x9f BC,\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00?\x0b\x1d\x00'), Checksum: 629, RSSI: 0, SNR: 65430"
+2024-03-16 16:22:26.797098,Checksum: 841 Calculated: 841
+2024-03-16 16:22:27.834004,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'ISn\xd8;C*\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x90\x10\x1d\x00'), Checksum: 841, RSSI: 0, SNR: 65432"
+2024-03-16 16:22:29.107741,Checksum: 303 Calculated: 303
+2024-03-16 16:22:29.338625,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 9, Data Bytes: bytearray(b'DS\x03e\x13\x1d\x00'), Checksum: 303, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:30.226583,Checksum: 803 Calculated: 803
+2024-03-16 16:22:30.432157,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xec\xb96C*\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x07\x17\x1d\x00'), Checksum: 803, RSSI: 0, SNR: 65432"
+2024-03-16 16:22:30.435167,Checksum: 1221 Calculated: 1221
+2024-03-16 16:22:31.354999,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\xee\xcd\x91C\xdd\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x80\x1c\x1d\x00'), Checksum: 1221, RSSI: 0, SNR: 65430"
+2024-03-16 16:22:33.601319,Checksum: 391 Calculated: 391
+2024-03-16 16:22:33.773763,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 12, Data Bytes: bytearray(b'LI\x9f\x01\x00\x00\x14!\x1d\x00'), Checksum: 391, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:34.399486,"Sending: AT+SEND=5,4,DP\x00\x94"
+2024-03-16 16:22:34.835659,Received: +OK
+2024-03-16 16:22:36.040465,Checksum: 426 Calculated: 426
+2024-03-16 16:22:37.232262,Latency: 196
+2024-03-16 16:22:37.879930,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 12, Data Bytes: bytearray(b'LI\xa2\x01\x00\x004!\x1d\x00'), Checksum: 426, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:38.881014,"Sending: AT+SEND=5,4,DP\x00\x94"
+2024-03-16 16:22:39.113440,Received: +OK
+2024-03-16 16:22:39.876376,Checksum: 462 Calculated: 462
+2024-03-16 16:22:39.972225,Latency: 875
+2024-03-16 16:22:40.739597,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 12, Data Bytes: bytearray(b'LI\xa6\x01\x00\x00T!\x1d\x00'), Checksum: 462, RSSI: 0, SNR: 65433"
+2024-03-16 16:22:40.941168,Checksum: 499 Calculated: 499
+2024-03-16 16:22:41.222837,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 12, Data Bytes: bytearray(b'LI\xac\x01\x00\x00s!\x1d\x00'), Checksum: 499, RSSI: 0, SNR: 65432"
+2024-03-16 16:22:42.931381,Checksum: 538 Calculated: 538
+2024-03-16 16:22:43.322858,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 12, Data Bytes: bytearray(b'LI\xb3\x01\x00\x00\x93!\x1d\x00'), Checksum: 538, RSSI: 0, SNR: 65433"
+2024-03-16 16:22:44.386603,Checksum: 901 Calculated: 901
+2024-03-16 16:22:45.469610,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS~s.Cm\x02\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00\xcd)\x1d\x00'), Checksum: 901, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:46.051919,"LORA: Valid data:False, Address Bytes: 5, Length Bytes: 0, Data Bytes: bytearray(b''), Checksum: 6144, RSSI: 0, SNR: 65431"
+2024-03-16 16:22:46.675283,Checksum: 815 Calculated: 815
+2024-03-16 16:22:46.971929,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS\x82:\x06Cl\x02\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00\xc68\x1d\x00'), Checksum: 815, RSSI: 0, SNR: 65436"
+2024-03-16 16:22:48.842686,Checksum: 1035 Calculated: 1035
+2024-03-16 16:22:49.323503,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 24, Data Bytes: bytearray(b'IS,P\xfbBn\x02\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00\xe7=\x1d\x00'), Checksum: 1035, RSSI: 0, SNR: 65433"
+2024-03-16 16:24:24.047969,"Sending: AT+SEND=5,4,LI\x00\x95"
+2024-03-16 16:24:24.767213,Received: +OK
+2024-03-16 16:24:33.817368,"Sending: AT+SEND=5,4,LI\x00\x95"
+2024-03-16 16:24:34.243625,Received: +OK
+2024-03-16 16:24:36.645945,"Sending: AT+SEND=5,4,LI\x00\x95"
+2024-03-16 16:24:36.709674,Received: +OK
+2024-03-16 16:24:39.294004,"Sending: AT+SEND=5,4,LI\x00\x95"
+2024-03-16 16:24:39.527338,Received: +OK
+2024-03-16 16:24:43.070459,"Sending: AT+SEND=5,4,LI\x00\x95"
+2024-03-16 16:24:43.508909,Received: +OK

@@ -1,0 +1,48 @@
+09:18:01.484 -> Data Processed to SD
+09:18:01.484 -> 
+09:18:01.484 -> Beginning sd storing process, received from qu
+09:18:01.484 -> Message appended
+09:18:01.484 -> Sending: AT+SEND=6,47,Altitude: -51.27m, 11.69°C, 101943.05kPa@��
+09:18:01.484 -> Received: +OK
+09:18:01.917 -> 
+09:18:02.944 -> Altitude: -51.05m, 11.74°C, 101938.26kPa
+09:18:02.944 -> Data Processed to SD
+09:18:02.944 -> Beginning sd storing process, received from qu
+09:18:02.944 -> Message appended
+09:18:02.944 -> Sending: AT+SEND=6,156,Accel: [X0.00,Y0.90,Z9.68], LinAccel: [X0.00,Y0.01,Z-0.07], Gravity: [X-0.01,Y0.88,Z9.76], Quat: [W0.04,X0.01,Y0.10,Z0.99], Gyro: [X-0.06,Y0.19,Z0.00]��'�
+09:18:02.944 -> Received: 
+09:18:03.808 -> +OK
+09:18:03.898 -> 
+09:18:04.402 -> 
+09:18:04.912 -> Accel: [X0.02,Y0.90,Z9.71], LinAccel: [X0.04,Y0.01,Z-0.04], Gravity: [X-0.01,Y0.88,Z9.76], Quat: [W0.04,X0.01,Y0.10,Z0.99], Gyro: [X0.12,Y-0.06,Z-0.12]
+09:18:04.912 -> Data Processed to SD
+09:18:04.912 -> 
+09:18:04.912 -> Beginning sd storing process, received from qu
+09:18:04.912 -> Message appended
+09:18:04.912 -> Sending: AT+SEND=6,47,Altitude: -51.39m, 11.72°C, 101942.73kPa��
+
+09:18:04.912 -> Received: +OK
+09:18:05.401 -> 
+09:18:06.382 -> Altitude: -50.85m, 11.71°C, 101936.05kPa
+09:18:06.382 -> Data Processed to SD
+09:18:06.382 -> Beginning sd storing process, received from qu
+09:18:06.382 -> Message appended
+09:18:06.382 -> Sending: AT+SEND=6,156,Accel: [X0.00,Y0.90,Z9.66], LinAccel: [X0.02,Y0.02,Z-0.10], Gravity: [X-0.01,Y0.88,Z9.76], Quat: [W0.04,X0.01,Y0.10,Z0.99], Gyro: [X0.00,Y-0.06,Z0.00]d�'*
+09:18:06.382 -> Received: 
+09:18:07.246 -> +OK
+09:18:07.334 -> 
+09:18:07.912 -> 
+09:18:08.340 -> Accel: [X0.02,Y0.90,Z9.73], LinAccel: [X0.04,Y0.01,Z-0.03], Gravity: [X-0.01,Y0.88,Z9.76], Quat: [W0.04,X0.01,Y0.10,Z0.99], Gyro: [X0.00,Y0.06,Z0.06]
+09:18:08.340 -> Data Processed to SD
+09:18:08.340 -> 
+09:18:08.340 -> Beginning sd storing process, received from qu
+09:18:08.340 -> Message appended
+09:18:08.340 -> Sending: AT+SEND=6,47,Altitude: -51.25m, 11.75°C, 101940.80kPa�v
+09:18:08.340 -> Received: +OK
+09:18:08.868 -> 
+09:18:09.775 -> Altitude: -50.70m, 11.70°C, 101934.45kPa
+09:18:09.775 -> Data Processed to SD
+09:18:09.775 -> Beginning sd storing process, received from qu
+09:18:09.775 -> Message appended
+09:18:09.775 -> Sending: AT+SEND=6,156,Accel: [X0.01,Y0.86,Z9.67], LinAccel: [X0.05,Y0.00,Z-0.03], Gravity: [X-0.01,Y0.88,Z9.76], Quat: [W0.04,X0.01,Y0.10,Z0.99], Gyro: [X0.19,Y0.06,Z-0.06]��'�
+09:18:09.819 -> Received: 

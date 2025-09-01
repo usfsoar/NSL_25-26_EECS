@@ -1,0 +1,82 @@
+|------------------------------------------------------------------------------------------------------------------------|
+|                                                University of South Florida                                             |
+|                                              Society of Aeronautics and Rocketry                                       |
+|                                                                                                                        |
+|                                               NASA Student Launch 2024-25                                              |
+|                                                                                                                        |
+|                                             V1 Telemetry Communication Protocol                                        |
+|------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                        |
+| This format is used to standardize how data is sent to the Ground Station.                                             |
+|                                                                                                                        |
+|------------------------------------------------------------------------------------------------------------------------|
+|                              ---------------- Device Identifiers ----------------                                      |
+|------------------------------------------------------------------------------------------------------------------------|
+| This is the identifiers of the Digi XBee Pro S3B 900HP devices that will go in the following SenderID and RxID fields  |
+| in the protocol outlined in this document.                                                                             |
+|                                                                                                                        |
+|                                         Payload - 1                                                                    |
+|                                         Telemetry - 2                                                                  |
+|                                         Airbrakes - 3                                                                  |
+|                                         Ground Station - 4                                                             |
+|                                         Ground Station Handheld - 5                                                    |
+|                                         NSL USLI Transceiver - SEPARATE AND DOES NOT FOLLOW THIS PROTOCOL              |
+|                                                                                                                        |
+|------------------------------------------------------------------------------------------------------------------------|
+|                              ---------------- Special Note ----------------                                            |
+|------------------------------------------------------------------------------------------------------------------------|
+|                                                 WARNING                                                                |
+|                                                 WARNING                                                                |
+|                                                 WARNING                                                                |
+| ALL DATA MUST BE ENTERED AS A STRING. IN C++ THIS MEANS AS AN ARRAY OF CHARS. ALL DATA MUST NOT BE IN A NUMERICAL      |
+| FORMAT. FURTHERMORE, ALL DATA MUST USE THE "," TO SEPARATE DATA ENTRIES / VALUES. DO NOT USE THE " " SPACE ANYWHERE.   |
+|                                                 WARNING                                                                |
+|                                                 WARNING                                                                |
+|                                                 WARNING                                                                |
+|------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                        |
+|------------------------------------------------------------------------------------------------------------------------|
+|                              ---------------- Telemetry Format ----------------                                        |
+|------------------------------------------------------------------------------------------------------------------------|
+| This is the format that telemetry data is sent from the Telemetry Bay to the Ground Station. The Ground station uses   |
+| the SenderID to identify what system is sending the data and conduct processing accordingly. This data format is       |
+| implemented into the actual payload message of each XBee API packet that is sent, and is independent of the rest of    |
+| the parameters of the XBee API frame.                                                                                  |
+|                                                                                                                        |
+| Below is a sample string:                                                                                              |
+| -------------------------------------------------                                                                      |
+| SenderID, RxID, Hrs, Mins, Secs, Microsecs, Accel_x, Accel_y, Accel_z, Linear_Accel_x, Linear_Accel_y, Linear_Accel_z, |
+| Gravity_x, Gravity_y, Gravity_z, Quat_w, Quat_x, Quat_y, Quat_z, Gyro_x, Gyro_y, Gyro_z, Altitude, Temperature,        |
+| Pressure, Status, Latitude, N/S, Longitude, E/W                                                                        |
+| -------------------------------------------------                                                                      |
+|                                                                                                                        |
+|------------------------------------------------------------------------------------------------------------------------|
+|                  ---------------- Payload & Airbrakes Format ----------------                                          |
+|------------------------------------------------------------------------------------------------------------------------|
+| The Ground Station will identify the data that is sent from the Payload & Airbrakes systems and utilize the appropriate |
+| logic. Below is a sample packet.                                                                                        |
+|                                                            |
+| ----                                BE SURE TO NOTE THAT THE FIELDS SHOWN BELOW ARE SAMPLE FIELDS                       |
+|                  AND ONE CAN SEND ANY VALUES AS LONG AS THEY ARE IN THAT FORMAT.                     ----              |
+|                                                            |
+| Below is the sample string:                                                                                             |
+| -------------------------------------------------                                                                       |
+| SenderID, RxID, Key1, Value1, Key2, Value2, Key3, Value3                                                                                |
+| -------------------------------------------------                                                                       |
+|                                                            |
+| As you can see, this follows the Key Value format where data is separated by commas. The first field is assumed to be   |
+| the key, and the data in the following comma is assumed to be the key's associated value. This means that there must    |
+| be a value for every key there is.                                                                                      |
+|                                                            |
+| Below is another sample string from Payload to Ground Station                                                                                  |
+| -------------------------------------------------                                                                       |
+| 1, 4, Max_Altitude, 4530, Max_Velocity, 6969, State, 4, Payload_Status, Exploded                                              |
+| -------------------------------------------------                                                                       |
+| This string translates to the following data output:                                                                    |
+| Max Altitude - 4530                                                                                                     |
+| Max Velocity - 6969                                                                                                     |
+| State - 4                                                                                                               |
+| Payload_Status - Exploded                                                                                               |
+| As you can see, the "_" character can be used in place of spaces. Prioritize using "_" to have separate words in your   |
+| data.                                                                                                                  |
+|------------------------------------------------------------------------------------------------------------------------|

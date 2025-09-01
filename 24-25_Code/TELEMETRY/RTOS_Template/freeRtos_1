@@ -1,0 +1,45 @@
+#if CONFIG_FREERTOS_UNICORE
+static const BaseType_t app_cpu = 0;
+#else
+static const BaseType_t app_cpu = 1;
+#endif
+
+static const int led_pin = 2;
+int delayTime = 500;
+
+void startTask1(void *parameter) {
+  while(1) {
+    digitalWrite(led_pin, HIGH);
+    vTaskDelay(delayTime / portTICK_PERIOD_MS);
+    digitalWrite(led_pin, LOW);
+    vTaskDelay(delayTime / portTICK_PERIOD_MS);
+  }
+}
+
+void startTask2(void *parameter) {
+  while(1) {
+    if(Serial.available() > 0) {
+      int newdelayTime = Serial.parseInt();
+      if(newdelayTime > 0) {
+        delayTime = newdelayTime;
+        Serial.print("New delay time: ");
+        Serial.println(delayTime);
+      }
+    }
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(led_pin, OUTPUT);
+
+  xTaskCreatePinnedToCore(startTask1, "Task 1", 1024, NULL, 1, NULL, app_cpu);
+  xTaskCreatePinnedToCore(startTask2, "Task 2", 1024, NULL, 2, NULL, app_cpu);
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}

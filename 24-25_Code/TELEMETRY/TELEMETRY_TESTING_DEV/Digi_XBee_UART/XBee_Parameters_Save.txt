@@ -1,0 +1,88 @@
+First Device
+MAC/PHY
+CM same: FFFFFFFFFFF7FFFF
+MF same: 19
+HP must be same, 0-7: 0
+ID must be same, 0-0x7FFF: 7FFF
+Addressing
+DH: 0
+DL: FFFF
+TO: 40
+NO: 02
+
+ChatGPT says
+ID 7FFF
+CH ? CM probably
+MY ? Not there
+DH and DL preferably
+DL optional
+AP
+
+Rover
+CM: 
+MF: 
+HP: 
+ID: 
+Addressing
+DH: 
+DL: 
+TO: 
+NO: 02
+
+Digi
+XBee Pro S3B 900HP
+250
+Frequency Hopping
+N/A
+916.00 to 923.60 MHz
+FHSS
+FHSS
+10 Kbps
+N/A
+...
+Common ground plane through the PCB board
+
+
+
+Transmitter #5
+What is the brand of the transmitter?
+Dorji
+
+What is the model of the transmitter?
+DRA818V
+
+What is the RF power (mW) of the transmitter?
+1000
+
+Is the transmitter Fixed Frequency or Frequency Hopping?
+
+
+Specific Frequency to be used (MHz) (Enter N/A for Frequency Hopping)
+
+
+Specific Channel/Slot/ID (Fixed) or Band (Frequency Hopping)
+
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+
+
+Data mode (APRS, GFSK, Audio Beacon, etc.)
+
+
+Baud Rate (bps or kbps) (if digital)
+
+
+Callsign you are transmitting on (Required if operating on HAM Frequency) Enter N/A if HAM license is not required
+
+
+Purpose of transmitter
+
+
+Distance (in.) to closest altimeter hardware (e-match, wire, switch, altimeter, etc.) and identify what hardware
+
+
+Description of shielding plan
+
+
+
+

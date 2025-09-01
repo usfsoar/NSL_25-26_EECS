@@ -1,0 +1,53 @@
+———————————————————————————————————————————————————————————————————————————————————————————————————
+|                                                                                                 |
+|                                   UNIVERSITY OF SOUTH FLORIDA                                   |
+|                               SOCIETY OF AERONAUTICS AND ROCKETRY                               |
+|                                                                                                 |
+|                       NASA STUDENT LAUNCH UNIVERSITY STUDENT LAUNCH INITIATIVE                  |
+|                                           2024-2025                                             |
+|                                                                                                 |
+|                           POST LAUNCH STATISTICS & METRICS LOG                                  |
+———————————————————————————————————————————————————————————————————————————————————————————————————
+
+
+ROCKET NAME: FINGER
+TYPE: SUBSCALE
+
+DATE OF LAUNCH: DECEMBER 21ST 2024
+TIME OF LAUNCH: 16:03:52 (±1 second)
+LOCATION OF LAUNCH: VARN RANCH
+
+APOGEE: 2176 FT
+MAX VELOCITY: 363
+ASCENT TIME: 11.6 seconds
+PAD TIME: 15.38 minutes
+
+
+AVERAGE WINDSPEED BEFORE LAUNCH: 
+AVERAGE WINDSPEED AFTER LAUNCH: 
+TEMPERATURE AROUND TIME OF LAUNCH: 31.17°C
+
+LAUNCH ROD ANGLE: 5° (INTO THE WIND)
+
+GPS COORDINATES OF LAUNCHPAD: 28.09225410, -82.17611270 (±18 ft)
+GPS COORDINATES OF LANDING LOCATION: 28.08981170, -82.17663800 (±12 ft)
+
+WEATHER CONDITIONS: Sunny and cold with cirrus and cirrocumulus clouds throughout the day covering 
+blue skies throughout the day.
+
+———————————————————————————————————————————————————————————————————————————————————————————————————
+|                                                                                                 |
+|                                         EECS LOG NAVIGATION NOTES                               |
+|                                                                                                 |
+| "Launch_Data\December_21_2024_Varn\GS_Telemetry_Bay_Logs\MORNING_Serial_Log.txt"                |
+| Log during setup. Pavan (EECS Telemetry Lead) tested core Telemetry Bay functionality, and this |
+| log was generated during testing. Telemetry Bay operational and transmitting.                   |
+|                                                                                                 |
+| "Launch_Data\December_21_2024_Varn\GS_Telemetry_Bay_Logs\EVENING_Serial_Log.txt"                |
+| Log obtained while rocket is placed on the launchpad. Log was started once SOAR members         |
+| returned to the base tent after putting the rocket on launch pad. Log encompassed the time      |
+| before, during, and after flight. Log was stopped after rocket was recovered and brought back   |
+| to base tent.                                                                                   |
+|                                                                                                 |
+———————————————————————————————————————————————————————————————————————————————————————————————————
+

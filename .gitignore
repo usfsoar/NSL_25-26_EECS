@@ -1,0 +1,23 @@
+.vs/
+.editorconfig
+.idea/
+__pycache__/
+
+# Windows system files
+*:Zone.Identifier
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build outputs
+/build/
+*.o
+*.d
+
+# IDE specific
+.vscode/
+.vs/
+
+# Project specific temporary files
+# *.log
+*.tmp

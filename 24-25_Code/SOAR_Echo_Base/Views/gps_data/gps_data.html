@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+	<!-- TASK LIST -->
+	<!-- 
+		1. Create functions and buttons that will make the GPS Map window larger and smaller at will. Keep Practicality in mind
+		--Complete but there is a bit of whitespace on the edge
+		2. Create availability for multiple GPS Devices at once
+		--2a. Need to discuss with others to determine how they are identifying each device
+		3. Display a console that is visible at all times on screen for easier debugging
+
+		--More Cosmetic Additions
+		4. Create Drop down Card menu in the upper right corner, and move the theme and header color function butttons to that card
+		5. Add styling to any and all buttons that appear on screen that will be preserved for the long term. Keep in mind practicality,
+		along with visual appeal are of utmost importance. My (Pavan) go to choice is uiverse.io for elements, as they are free and open source.
+		6. Are  transitions when switching from light to dark theme necessary?
+
+
+
+
+	 -->
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>GPS Data</title>
+		<!-- Link to the Orbitron font from Google Fonts -->
+		<!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" /> -->
+		<link rel="stylesheet" href="_global/theme_stylesheet.css" />
+		<link rel="shortcut icon" href="_global/favicon.ico" />
+		<link rel="stylesheet" href="https://js.arcgis.com/4.28/@arcgis/core/assets/esri/themes/light/main.css" />
+
+		<style>
+
+			#gps_data_left_column {
+				display: flex;
+				flex-direction: column;
+				/* justify-content: center; */
+				flex-wrap: wrap;
+				margin-left: 1em;
+				/* border: 1px solid black; */
+				padding-left: 0.5em;
+				padding-right: 0.5em;
+				background: white;
+				margin-right: 0.5em;
+				height: fit-content;
+				flex-grow: 1;
+			}
+
+			/* #main_canvas {
+				This is not used because it doesn't want to move
+				when told to with margin
+			} */
+			#main_holder {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+			}
+			:root {
+				/* --slider_height: 1505px;
+				--slider_width: 1505px; */
+				--slider_height: 800px;
+				--slider_width: 1000px;
+			}
+			#view_div {
+				/* display: inline-block; */
+				/* overflow: scroll; */
+				/* max-height: 800px;
+				max-width: 1000px; */
+				max-height: var(--slider_height);
+				max-width: var(--slider_width);
+				/* max-height: 500px;
+				max-width: 700px; */
+				/* border: 1px solid white; */
+				flex-grow: 2;
+				/* width:fit-content; */
+				/* height:fit-content */
+
+			}
+			.gps_map_size_slider {
+				appearance: slider-vertical;
+			}
+
+			#live_console_holder {
+				display: flex;
+				flex-direction: column;
+				padding-top: 1em;
+				padding-bottom: 1em;
+				background: white;
+			}
+
+
+			/* ---------------------------------------------------------------------------*/
+			/* Toggle Switch for theme changing from https://uiverse.io/Galahhad/heavy-dog-14 */
+			/* switch settings 👇 */
+			.ui-switch {
+			/* switch */
+			--switch-bg: rgb(135, 150, 165);
+			--switch-width: 48px;
+			--switch-height: 20px;
+			/* circle */
+			--circle-diameter: 32px;
+			--circle-bg: rgb(0, 56, 146);
+			--circle-inset: calc((var(--circle-diameter) - var(--switch-height)) / 2);
+			}
+			.ui-switch input {
+			display: none;
+			}
+			.slider {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			width: var(--switch-width);
+			height: var(--switch-height);
+			background: var(--switch-bg);
+			border-radius: 999px;
+			position: relative;
+			cursor: pointer;
+			}
+			.slider .circle {
+			top: calc(var(--circle-inset) * -1);
+			left: 0;
+			width: var(--circle-diameter);
+			height: var(--circle-diameter);
+			position: absolute;
+			background: var(--circle-bg);
+			border-radius: inherit;
+			background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTkuMzA1IDEuNjY3VjMuNzVoMS4zODlWMS42NjdoLTEuMzl6bS00LjcwNyAxLjk1bC0uOTgyLjk4Mkw1LjA5IDYuMDcybC45ODItLjk4Mi0xLjQ3My0xLjQ3M3ptMTAuODAyIDBMMTMuOTI3IDUuMDlsLjk4Mi45ODIgMS40NzMtMS40NzMtLjk4Mi0uOTgyek0xMCA1LjEzOWE0Ljg3MiA0Ljg3MiAwIDAwLTQuODYyIDQuODZBNC44NzIgNC44NzIgMCAwMDEwIDE0Ljg2MiA0Ljg3MiA0Ljg3MiAwIDAwMTQuODYgMTAgNC44NzIgNC44NzIgMCAwMDEwIDUuMTM5em0wIDEuMzg5QTMuNDYyIDMuNDYyIDAgMDExMy40NzEgMTBhMy40NjIgMy40NjIgMCAwMS0zLjQ3MyAzLjQ3MkEzLjQ2MiAzLjQ2MiAwIDAxNi41MjcgMTAgMy40NjIgMy40NjIgMCAwMTEwIDYuNTI4ek0xLjY2NSA5LjMwNXYxLjM5aDIuMDgzdi0xLjM5SDEuNjY2em0xNC41ODMgMHYxLjM5aDIuMDg0di0xLjM5aC0yLjA4NHpNNS4wOSAxMy45MjhMMy42MTYgMTUuNGwuOTgyLjk4MiAxLjQ3My0xLjQ3My0uOTgyLS45ODJ6bTkuODIgMGwtLjk4Mi45ODIgMS40NzMgMS40NzMuOTgyLS45ODItMS40NzMtMS40NzN6TTkuMzA1IDE2LjI1djIuMDgzaDEuMzg5VjE2LjI1aC0xLjM5eiIgLz4KPC9zdmc+");
+			background-repeat: no-repeat;
+			background-position: center center;
+			-webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+			-o-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+			transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			-webkit-box-align: center;
+			-ms-flex-align: center;
+			align-items: center;
+			-webkit-box-pack: center;
+			-ms-flex-pack: center;
+			justify-content: center;
+			box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+			;
+			}
+			.slider .circle::before {
+			content: "";
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background: rgba(255, 255, 255, 0.75);
+			border-radius: inherit;
+			-webkit-transition: all 500ms;
+			-o-transition: all 500ms;
+			transition: all 500ms;
+			opacity: 0;
+			}
+			/* actions */
+			.ui-switch input:checked+.slider .circle {
+			left: calc(100% - var(--circle-diameter));
+			background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTQuMiAyLjVsLS43IDEuOC0xLjguNyAxLjguNy43IDEuOC42LTEuOEw2LjcgNWwtMS45LS43LS42LTEuOHptMTUgOC4zYTYuNyA2LjcgMCAxMS02LjYtNi42IDUuOCA1LjggMCAwMDYuNiA2LjZ6IiAvPgo8L3N2Zz4=");
+			}
+			.ui-switch input:active+.slider .circle::before {
+			-webkit-transition: 0s;
+			-o-transition: 0s;
+			transition: 0s;
+			opacity: 1;
+			width: 0;
+			height: 0;
+			}
+			/* ---------------------------------------------------------------------------*/
+
+
+			/* ---------------------------------------------------------------------------*/
+			/* GPS Launch button from https://uiverse.io/adamgiebl/quiet-duck-78 */
+			#gps_start {
+				display: flex;
+				align-items: center;
+				font-family: inherit;
+				font-weight: 500;
+				font-size: 17px;
+				padding: 0.8em 1.3em 0.8em 0.9em;
+				color: white;
+				background: #ad5389;
+				background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+				border: none;
+				letter-spacing: 0.05em;
+				border-radius: 16px;
+			}
+			#gps_start svg {
+			margin-right: 3px;
+			transform: rotate(30deg);
+			transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+			}
+			#gps_start span {
+			transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+			}
+			#gps_start:hover svg {
+			transform: translateX(5px) rotate(90deg);
+			}
+			#gps_start:hover span {
+			transform: translateX(7px);
+			}
+			/* ---------------------------------------------------------------------------*/
+		</style>
+	</head>
+	<body id="the_body">
+		<p id="theme_value" style="display: none;">Light</p>
+		<header id="the_header">
+			<h1 style="margin: 0px; flex-grow: 8;">SOAR Echo Base</h1>
+			<div>
+				<img src="_global/settings_gear.svg" class="header_svg_color_green" id="settings_gear" />
+				<div
+					style="z-index: 1; position: fixed; right:1%; top: 8%; background-color: white; padding: 5px;"
+					id="settings_gear_div"
+				>
+					<!-- <p style="color: red; margin: 0px;">hi</p> -->
+
+					<br />
+
+					<!-- Theme and Color Buttons -->
+
+					<!-- Theme Switcher Button -->
+					<div style="display: flex; flex-direction: row;">
+						<p style="margin: 0px; color: rgb(0, 103, 71); padding-right: 3px;" id="settings_menu_text">Theme:</p>
+						<label class="ui-switch" style="display: block; width: fit-content;">
+							<input type="checkbox" value="dark" id="theme_toggle" unchecked />
+							<div class="slider">
+								<div class="circle"></div>
+							</div>
+						</label>
+					</div>
+					<br />
+
+					<!-- Optional Header Changing Buttons -->
+					<div>
+						<button id="header_theme_button_white">White</button>
+						<br />
+						<button id="header_theme_button_gold">Gold</button>
+						<br />
+						<button id="header_theme_button_black">Black</button>
+						<br />
+					</div>
+				</div>
+			</div>
+		</header>
+		<br />
+		<br />
+		<br />
+		<div id="main_holder">
+			<div id="gps_data_left_column">
+				<!-- GPS Information and Test Input Values Holder -->
+
+				<h2 class="text">Statistics</h2>
+				<div>
+					<h3 style="margin-top: 0px;">GPS</h3>
+					<p>Latitude is formatted as DD°MM'SS.SSS"<br />Longitude as 0DD°MM'SS.SSS"</p>
+					<div style="display: flex; flex-direction: row; justify-content: flex-start;">
+						<div style="margin-right: 1em; margin-left: 1em;">
+							<p>Rocket Location</p>
+							<p id="side_display_lat_rocket">Latitude:</p>
+							<p id="side_display_long_rocket">Longitude:</p>
+						</div>
+						<br />
+						<div style="margin-right: 2em; margin-left: 1em;">
+							<p>Payload Location</p>
+							<p id="side_display_lat_payload">Latitude:</p>
+							<p id="side_display_long_payload">Longitude:</p>
+						</div>
+					</div>
+				</div>
+
+				<div>
+					<h3 style="margin-top: 0px;">Inputs</h3>
+					<p>These inputs are used for testing function parameters and operation</p>
+					<fieldset style="width: min-content;">
+						NMEA Sentence
+						<br />
+						<div style="display: flex; flex-direction: column;">
+							<input type="text" id="live_nmea" style="width: 500px;" />
+							<div style="display: flex; flex-direction: row; padding: 0.5em; padding-left: 0em;">
+								<button id="rocket_identifier">Rocket</button>
+								<button id="payload_identifier">Payload</button>
+							</div>
+							<button id="dummy_plot" style="width: min-content;">Plot</button>
+						</div>
+					</fieldset>
+				</div>
+				<br />
+
+				<!-- Primary Button Holder -->
+				<div>
+					<!-- COM Port -->
+					<div style="display: flex; flex-direction: row; justify-content: flex-start; align-items: center;">
+						<label for="com_port" style="margin-right: 1em; height: min-content;">COM Port: </label>
+						<input type="text" id="com_port" name="com_port" style="height: min-content;" />
+						<p
+							id="invalid_com_port_notif"
+							class="live_console_error_messages"
+							style="margin: 0px; margin-left: 1em; padding: 1em; display: none"
+						>
+							Invalid COM Port
+						</p>
+					</div>
+					<br />
+					<!-- GPS Start Button -->
+					<button id="gps_start" style="font-size: 0.8em; cursor: pointer;">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+							<path fill="none" d="M0 0h24v24H0z"></path>
+							<path
+								fill="currentColor"
+								d="M5 13c0-5.088 2.903-9.436 7-11.182C16.097 3.564 19 7.912 19 13c0 .823-.076 1.626-.22 2.403l1.94
+									 1.832a.5.5 0 0 1 .095.603l-2.495 4.575a.5.5 0 0 1-.793.114l-2.234-2.234a1 1 0 0 0-.707-.293H9.414a1
+									  1 0 0 0-.707.293l-2.234 2.234a.5.5 0 0 1-.793-.114l-2.495-4.575a.5.5 0 0 1 .095-.603l1.94-1.832C5.077
+									   14.626 5 13.823 5 13zm1.476 6.696l.817-.817A3 3 0 0 1 9.414 
+									   18h5.172a3 3 0 0 1 2.121.879l.817.817.982-1.8-1.1-1.04a2 2 0 0 
+									   1-.593-1.82c.124-.664.187-1.345.187-2.036 0-3.87-1.995-7.3-5-8.96C8.995 5.7 7 9.13 7 13c0 .691.063
+									    1.372.187 2.037a2 2 0 0 1-.593 1.82l-1.1 1.039.982 1.8zM12 13a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"
+							></path>
+						</svg>
+						<span>GPS Start</span>
+					</button>
+					<br />
+					<!-- random_cmd Button -->
+					<button id="random_cmd">random_cmd</button>
+					<button id="close_serial">Close Serial Connection</button>
+					<br />
+					<br />
+					<br />
+				</div>
+				<div id="live_console_holder">
+					<h3 style="margin: 0px; margin-left: 0.5em; margin-bottom: 0.5em;">Live Console</h3>
+					<div
+						id="live_console"
+						style="border: 1px solid black; height: 300px; overflow: scroll; white-space: pre-line; display: flex; flex-direction: column-reverse;"
+					></div>
+					<div style="display: flex; width: auto; padding-top: 0.7em;">
+						<div style="display: flex;flex-grow: 1;">
+							<input
+								type="text"
+								placeholder="Type serial input"
+								style="flex-grow: 5; margin-right: 0.5em; margin-left: 0.5em;"
+								id="live_console_send_msg_field"
+							/>
+							<input
+								type="text"
+								placeholder="ID of module to communicate with"
+								style="flex-grow: 0.2; margin-right: 0.5em; margin-left: 0.5em;"
+								id="live_console_send_msg_id"
+							/>
+						</div>
+						<button id="live_console_send_msg_btn">
+							<div class="svg-wrapper-1">
+								<div class="svg-wrapper">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+										<path fill="none" d="M0 0h24v24H0z"></path>
+										<path
+											fill="currentColor"
+											d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+										></path>
+									</svg>
+								</div>
+							</div>
+							<span>Send</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Canvas Element for the Map -->
+			<div style="width: fit-content; height: fit-content; margin-right: 1.5em;">
+				<!-- Change Maps -->
+				<div>
+					<button id="usf_map">USF</button>
+					<button id="varn_map">Varn Ranch</button>
+					<button id="palm_bay_map">Palm Bay</button>
+					<button id="huntsville_map">Huntsville</button>
+				</div>
+				<!-- <div id="right_column">
+					<canvas id="main_canvas" width="1505" height="1505"></canvas>
+				</div> -->
+				<div style="background-color: white; border: 2px solid black; width: 1000px; height: 800px;" id="viewDiv"></div>
+			</div>
+		</div>
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<div style="width: fit-content">
+			<img src="_global/SubScale_idea.png" width="50%" />
+		</div>
+
+		<script src="_global/socket.io.js"></script>
+		<script src="_global/color_and_themes.js"></script>
+		<!-- <script src="https://js.arcgis.com/4.28/"></script> -->
+
+		<!-- ARCGIS ----------------------------------------------------------------------------------------------------------------->
+		<link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css" />
+		<script src="https://js.arcgis.com/4.19/"></script>
+
+		<!-- This script uses the ArcGIS Maps SDK for JS to create a front-end webmap that references an ONLINE webmap -->
+		<!-- NOTE: Need to add a way to recenter the map at a place at will on screen -->
+		<script type="module" src="gps_data/gps_data.js"></script>
+	</body>
+</html>

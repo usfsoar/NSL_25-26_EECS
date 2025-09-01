@@ -1,0 +1,72 @@
+{
+    "sections": [
+        {
+            "name": "IMU",
+            "items": ["Acceleration X", "Acceleration Y", "Acceleration X",
+                     "Linear Acceleration X", "Linear Acceleration Y", "Linear Acceleration Z",
+                     "Gravity X", "Gravity Y", "Gravity Z",
+                     "Gyroscope X", "Gyroscope Y", "Gyroscope Z"]
+        },
+        {
+            "name": "Altimeter",
+            "items": ["Altitude", "Temperature", "Pressure"]
+        },
+        {
+            "name": "GPS",
+            "items": ["Latitude", "Longitude"]
+        }
+    ],
+    "presets": [
+        {
+            "name": "AV Bay",
+            "sections": [
+                {
+                    "name": "IMU",
+                    "items": ["Acceleration X", "Acceleration Y", "Acceleration X",
+                     "Linear Acceleration X", "Linear Acceleration Y", "Linear Acceleration Z",
+                     "Gravity X", "Gravity Y", "Gravity Z",
+                     "Gyroscope X", "Gyroscope Y", "Gyroscope Z"]
+                },
+                {
+                    "name": "Altimeter",
+                    "items": ["Altitude", "Temperature", "Pressure"]
+                },
+                {
+                    "name": "GPS",
+                    "items": ["Latitude", "Longitude"]
+                }
+            ]
+        },
+        {
+            "name": "Payload",
+            "sections": [
+                {
+                    "name": "Altimeter",
+                    "items": [
+                        "Altitude",
+                        "Pressure"
+                    ]
+                },
+                {
+                    "name": "GPS",
+                    "items": [
+                        "Latitude",
+                        "Longitude"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Ground Receiver",
+            "sections": [
+                {
+                    "name": "GPS",
+                    "items": [
+                        "Latitude",
+                        "Longitude"
+                    ]
+                }
+            ]
+        }
+    ]
+}

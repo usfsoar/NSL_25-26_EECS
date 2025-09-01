@@ -1,0 +1,7 @@
+datetime,serial msg
+02-24-2024 10:26:28,...............................
+02-24-2024 10:26:28,Failed to connect to WiFi. Continuing...
+02-24-2024 10:26:28,"Sending: AT+SEND=1,5,AWAKE"
+02-24-2024 10:26:29,Received: +OK
+02-24-2024 10:26:29,Buzz!
+02-24-2024 10:26:33,Buzz!

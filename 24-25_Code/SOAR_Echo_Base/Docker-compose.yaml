@@ -1,0 +1,10 @@
+version: '3'
+services:
+  soar_echo_base:
+    image: soar_echo_base
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./Templates:/app/Templates
+      - ./static:/app/static
+      - .:/app

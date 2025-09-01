@@ -1,0 +1,2367 @@
+---- Opened the serial port COM5 ----
+0
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3238 Calculated: 3238
+Received--- Address: 7, Length: 47, Data: Altitude: -28.29m, 30.24°C, 101665.49kPaD�, RSSI: 0, SNR: -88
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 10153 Calculated: 10153
+Received--- Address: 7, Length: 161, Data: Accel: [X-0.30,Y9.83,Z-0.08], LinAccel: [X-0.03,Y0.03,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y0.06,Z-0.25]�
+----------Packet End----------
+Serial Read Task is running
+Invalid response format: +ERR=12
++RCV=7
+1
+---------- Packet Begin ----------
+Checksum: 3047 Calculated: 3047
+Received--- Address: 7, Length: 47, Data: Altitude: -28.36m, 30.29°C, 101666.25kPak, RSSI: 0, SNR: -88
+----------Packet End----------
+Serial Read Task is running
+0
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 9961 Calculated: 9961
+Received--- Address: 7, Length: 161, Data: Accel: [X-0.22,Y9.84,Z-0.10], LinAccel: [X0.04,Y0.04,Z-0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.25,Y-0.06,Z-0.31]&
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3201 Calculated: 3201
+Received--- Address: 7, Length: 47, Data: Altitude: -28.37m, 30.31°C, 101665.34kPa�#, RSSI: 0, SNR: -83
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3086 Calculated: 3086
+Received--- Address: 7, Length: 47, Data: Altitude: -28.23m, 30.33°C, 101664.83kPa~1, RSSI: 0, SNR: -85
+----------Packet End----------
+Serial Read Task is running
+Invalid response format: +ERR=12
+
+1
+---------- Packet Begin ----------
+Checksum: 3231 Calculated: 3231
+Received--- Address: 7, Length: 47, Data: Altitude: -28.26m, 30.35°C, 101664.48kPa�>, RSSI: 0, SNR: -86
+----------Packet End----------
+Serial Read Task is running
+0
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 10153 Calculated: 10153
+Received--- Address: 7, Length: 161, Data: Accel: [X-0.24,Y9.84,Z-0.10], LinAccel: [X0.01,Y0.04,Z-0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.19,Y-0.19,Z-0.06]�
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3147 Calculated: 3147
+Received--- Address: 7, Length: 47, Data: Altitude: -28.29m, 30.36°C, 101664.55kPa�L, RSSI: 0, SNR: -90
+----------Packet End----------
+Serial Read Task is running
+Invalid response format: +ERR=12
++RCV=7
+1
+---------- Packet Begin ----------
+Checksum: 10142 Calculated: 10142
+Received--- Address: 7, Length: 160, Data: Accel: [X-0.26,Y9.81,Z-0.12], LinAccel: [X0.00,Y0.01,Z-0.03], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.12,Y0.00,Z-0.06]�_
+----------Packet End----------
+Serial Read Task is running
+0
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 9995 Calculated: 9995
+Received--- Address: 7, Length: 159, Data: Accel: [X-0.24,Y9.83,Z-0.06], LinAccel: [X0.01,Y0.02,Z0.02], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.19,Y0.06,Z0.12]Mm
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3052 Calculated: 3052
+Received--- Address: 7, Length: 47, Data: Altitude: -28.19m, 30.42°C, 101664.84kPau, RSSI: 0, SNR: -92
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 10127 Calculated: 10127
+Received--- Address: 7, Length: 159, Data: Accel: [X-0.25,Y9.82,Z-0.09], LinAccel: [X0.00,Y0.01,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.12,Z-0.19]�z
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3186 Calculated: 3186
+Received--- Address: 7, Length: 47, Data: Altitude: -28.31m, 30.44°C, 101665.64kPa��, RSSI: 0, SNR: -87
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 10007 Calculated: 10007
+Received--- Address: 7, Length: 159, Data: Accel: [X-0.28,Y9.82,Z-0.04], LinAccel: [X0.00,Y0.02,Z0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.12,Y0.00,Z-0.06]I�
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3084 Calculated: 3084
+Received--- Address: 7, Length: 47, Data: Altitude: -28.38m, 30.46°C, 101665.68kPa�, RSSI: 0, SNR: -88
+----------Packet End----------
+Serial Read Task is running
+Invalid response format: +ERR=12
++ERR=12
+
+Invalid response format: +ERR=12
+
+1
+---------- Packet Begin ----------
+Checksum: 3118 Calculated: 3118
+Received--- Address: 7, Length: 47, Data: Altitude: -28.41m, 30.50°C, 101666.67kPa!�, RSSI: 0, SNR: -89
+----------Packet End----------
+Serial Read Task is running
+0
+Serial Read Task is running
+Invalid response format: +ERR=12
+
+Invalid response format: +ERR=12
+
+1
+---------- Packet Begin ----------
+Checksum: 3147 Calculated: 3147
+Received--- Address: 7, Length: 47, Data: Altitude: -28.40m, 30.54°C, 101665.88kPa�, RSSI: 0, SNR: -90
+----------Packet End----------
+Serial Read Task is running
+0
+Serial Read Task is running
+0
+Serial Read Task is running
+0
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 10146 Calculated: 10146
+Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.82,Z-0.09], LinAccel: [X0.03,Y0.02,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.06,Z-0.12]U�
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3165 Calculated: 3165
+Received--- Address: 7, Length: 47, Data: Altitude: -28.30m, 30.57°C, 101665.36kPa�, RSSI: 0, SNR: -90
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3309 Calculated: 3309
+Received--- Address: 7, Length: 47, Data: Altitude: -28.35m, 30.58°C, 101665.16kPa��, RSSI: 0, SNR: -79
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 10169 Calculated: 10169
+Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.82,Z-0.06], LinAccel: [X0.03,Y0.01,Z0.02], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.12,Z0.00]S�
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3188 Calculated: 3188
+Received--- Address: 7, Length: 47, Data: Altitude: -28.30m, 30.60°C, 101665.95kPa�, RSSI: 0, SNR: -80
+----------Packet End----------
+Serial Read Task is running
+0
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 3082 Calculated: 3082
+Received--- Address: 7, Length: 47, Data: Altitude: -28.39m, 30.62°C, 101666.39kPa�    , RSSI: 0, SNR: -85
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 9898 Calculated: 9898
+Received--- Address: 7, Length: 159, Data: Accel: [X-0.25,Y9.81,Z-0.06], LinAccel: [X0.00,Y0.01,Z0.03], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.00,Z-0.19]N
+----------Packet End----------
+Serial Read Task is running
+1
+---------- Packet Begin ----------
+Checksum: 2959 Calculated: 2959
+Received--- Address: 7, Length: 47, Data: Altitude: -28.40m, 30.64°C, 101666.47kP, RSSI: 0, SNR: -84
+----------Packet End----------
+Serial Read Task is running
+15:56:42:832 -> 1
+15:56:42:833 -> ---------- Packet Begin ----------
+15:56:42:833 -> Checksum: 10087 Calculated: 10087
+15:56:42:833 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.84,Z-0.09], LinAccel: [X0.02,Y0.00,Z0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.19,Y0.06,Z-0.12]�
+15:56:42:833 -> ----------Packet End----------
+15:56:43:333 -> Serial Read Task is running
+15:56:44:634 -> 1
+15:56:44:634 -> ---------- Packet Begin ----------
+15:56:44:634 -> Checksum: 3103 Calculated: 3103
+15:56:44:634 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.42m, 30.67°C, 101665.84kPa�, RSSI: 0, SNR: -84
+15:56:44:634 -> ----------Packet End----------
+15:56:45:134 -> Serial Read Task is running
+15:56:46:437 -> 1
+15:56:46:437 -> ---------- Packet Begin ----------
+15:56:46:439 -> Checksum: 9908 Calculated: 9908
+15:56:46:439 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.24,Y9.83,Z-0.08], LinAccel: [X0.00,Y0.02,Z-0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.00,Z0.00]K*
+15:56:46:439 -> ----------Packet End----------
+15:56:46:938 -> Serial Read Task is running
+15:56:48:239 -> 1
+15:56:48:239 -> ---------- Packet Begin ----------
+15:56:48:239 -> Checksum: 2984 Calculated: 2984
+15:56:48:241 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.30m, 30.69°C, 101665.45kPa, RSSI: 0, SNR: -84
+15:56:48:241 -> ----------Packet End----------
+15:56:48:774 -> Serial Read Task is running
+15:56:50:042 -> 1
+15:56:50:047 -> ---------- Packet Begin ----------
+15:56:50:047 -> Checksum: 10113 Calculated: 10113
+15:56:50:047 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.25,Y9.80,Z-0.09], LinAccel: [X0.00,Y0.02,Z-0.04], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y0.06,Z0.06]�7
+15:56:50:047 -> ----------Packet End----------
+15:56:50:542 -> Serial Read Task is running
+15:56:51:844 -> 1
+15:56:51:844 -> ---------- Packet Begin ----------
+15:56:51:846 -> Checksum: 3114 Calculated: 3114
+15:56:51:846 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.26m, 30.71°C, 101664.30kPa�, RSSI: 0, SNR: -85
+15:56:51:846 -> ----------Packet End----------
+15:56:52:343 -> Serial Read Task is running
+15:56:53:647 -> 1
+15:56:53:650 -> ---------- Packet Begin ----------
+15:56:53:650 -> Checksum: 9943 Calculated: 9943
+15:56:53:650 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.26,Y9.82,Z-0.07], LinAccel: [X0.00,Y0.01,Z0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.12,Y-0.06,Z0.12]HE
+15:56:53:650 -> ----------Packet End----------
+15:56:54:149 -> Serial Read Task is running
+15:56:55:448 -> 0
+15:56:55:948 -> Serial Read Task is running
+15:56:57:251 -> 1
+15:56:57:254 -> ---------- Packet Begin ----------
+15:56:57:254 -> Checksum: 10178 Calculated: 10178
+15:56:57:254 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.25,Y9.83,Z-0.11], LinAccel: [X0.00,Y0.03,Z-0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.19,Y-0.06,Z0.06]�
+15:56:57:254 -> ----------Packet End----------
+15:56:57:751 -> Serial Read Task is running
+15:56:59:053 -> 1
+15:56:59:053 -> ---------- Packet Begin ----------
+15:56:59:053 -> Checksum: 3179 Calculated: 3179
+15:56:59:055 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.29m, 30.76°C, 101664.97kPa�, RSSI: 0, SNR: -81
+15:56:59:055 -> ----------Packet End----------
+15:56:59:552 -> Serial Read Task is running
+15:57:00:856 -> 1
+15:57:00:856 -> ---------- Packet Begin ----------
+15:57:00:858 -> Checksum: 9942 Calculated: 9942
+15:57:00:858 -> Received--- Address: 7, Length: 158, Data: Accel: [X-0.26,Y9.82,Z-0.07], LinAccel: [X0.00,Y0.02,Z0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.19,Z0.00]Z,
+15:57:00:858 -> ----------Packet End----------
+15:57:01:357 -> Serial Read Task is running
+15:57:02:676 -> 1
+15:57:02:676 -> ---------- Packet Begin ----------
+15:57:02:678 -> Checksum: 3062 Calculated: 3062
+15:57:02:678 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.33m, 30.79°C, 101666.95kPa, RSSI: 0, SNR: -78
+15:57:02:678 -> ----------Packet End----------
+15:57:03:157 -> Serial Read Task is running
+15:57:04:458 -> Invalid response format: +ERR=12
+15:57:04:460 -> +RCV=7
+15:57:07:322 -> Invalid response format: +ERR=12
+15:57:07:322 -> 
+15:57:08:787 -> Invalid response format: +ERR=12
+15:57:08:787 -> 
+15:57:09:457 -> Timeout reached or no valid '+RCV' message.
+15:57:09:457 -> 0
+15:57:09:958 -> Serial Read Task is running
+15:57:11:258 -> 0
+15:57:11:757 -> Serial Read Task is running
+15:57:13:058 -> 0
+15:57:13:557 -> Serial Read Task is running
+15:57:14:860 -> 1
+15:57:14:861 -> ---------- Packet Begin ----------
+15:57:14:861 -> Checksum: 10085 Calculated: 10085
+15:57:14:861 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.23,Y9.80,Z-0.08], LinAccel: [X0.02,Y0.00,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.19,Y0.31,Z-0.25]S�
+15:57:14:861 -> ----------Packet End----------
+15:57:15:361 -> Serial Read Task is running
+15:57:16:662 -> 1
+15:57:16:662 -> ---------- Packet Begin ----------
+15:57:16:664 -> Checksum: 3111 Calculated: 3111
+15:57:16:664 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.47m, 30.89°C, 101667.71kPa, RSSI: 0, SNR: -80
+15:57:16:664 -> ----------Packet End----------
+15:57:17:162 -> Serial Read Task is running
+15:57:18:466 -> 1
+15:57:18:466 -> ---------- Packet Begin ----------
+15:57:18:470 -> Checksum: 10266 Calculated: 10266
+15:57:18:470 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.28,Y9.82,Z-0.10], LinAccel: [X-0.01,Y0.01,Z-0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.19,Z0.06]�
+15:57:18:470 -> ----------Packet End----------
+15:57:18:966 -> Serial Read Task is running
+15:57:20:268 -> 1
+15:57:20:268 -> ---------- Packet Begin ----------
+15:57:20:271 -> Checksum: 3264 Calculated: 3264
+15:57:20:271 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.52m, 30.92°C, 101666.66kPa�, RSSI: 0, SNR: -80
+15:57:20:271 -> ----------Packet End----------
+15:57:20:767 -> Serial Read Task is running
+15:57:22:069 -> 1
+15:57:22:070 -> ---------- Packet Begin ----------
+15:57:22:070 -> Checksum: 3143 Calculated: 3143
+15:57:22:070 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.40m, 30.94°C, 101666.34kPa*, RSSI: 0, SNR: -81
+15:57:22:070 -> ----------Packet End----------
+15:57:22:568 -> Serial Read Task is running
+15:57:23:871 -> 1
+15:57:23:873 -> ---------- Packet Begin ----------
+15:57:23:873 -> Checksum: 10238 Calculated: 10238
+15:57:23:873 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.29,Y9.82,Z0.00], LinAccel: [X-0.03,Y0.02,Z0.07], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.38,Y0.19,Z-0.12]�
+15:57:23:873 -> ----------Packet End----------
+15:57:24:381 -> Serial Read Task is running
+15:57:25:674 -> 1
+15:57:25:677 -> ---------- Packet Begin ----------
+15:57:25:677 -> Checksum: 3287 Calculated: 3287
+15:57:25:677 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.32m, 30.97°C, 101665.45kPa�, RSSI: 0, SNR: -84
+15:57:25:677 -> ----------Packet End----------
+15:57:26:173 -> Serial Read Task is running
+15:57:27:477 -> 1
+15:57:27:477 -> ---------- Packet Begin ----------
+15:57:27:478 -> Checksum: 10243 Calculated: 10243
+15:57:27:478 -> Received--- Address: 7, Length: 162, Data: Accel: [X-0.22,Y9.82,Z-0.08], LinAccel: [X0.03,Y0.02,Z-0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y-0.06,Z-0.06]
+15:57:27:478 -> ----------Packet End----------
+15:57:27:977 -> Serial Read Task is running
+15:57:29:279 -> 1
+15:57:29:279 -> ---------- Packet Begin ----------
+15:57:29:283 -> Checksum: 3194 Calculated: 3194
+15:57:29:283 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.31m, 30.99°C, 101665.63kPa<, RSSI: 0, SNR: -86
+15:57:29:283 -> ----------Packet End----------
+15:57:29:807 -> Serial Read Task is running
+15:57:31:081 -> 1
+15:57:31:081 -> ---------- Packet Begin ----------
+15:57:31:081 -> Checksum: 10251 Calculated: 10251
+15:57:31:083 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.24,Y9.82,Z-0.10], LinAccel: [X0.01,Y0.02,Z-0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.12,Z0.00]��
+15:57:31:083 -> ----------Packet End----------
+15:57:31:582 -> Serial Read Task is running
+15:57:32:884 -> 1
+15:57:32:884 -> ---------- Packet Begin ----------
+15:57:32:888 -> Checksum: 3327 Calculated: 3327
+15:57:32:888 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.31m, 31.01°C, 101666.89kPa�, RSSI: 0, SNR: -82
+15:57:32:888 -> ----------Packet End----------
+15:57:33:383 -> Serial Read Task is running
+15:57:34:686 -> 1
+15:57:34:688 -> ---------- Packet Begin ----------
+15:57:34:688 -> Checksum: 10248 Calculated: 10248
+15:57:34:688 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.27,Y9.81,Z-0.09], LinAccel: [X-0.01,Y0.00,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y0.06,Z-0.19]u
+15:57:34:688 -> ----------Packet End----------
+15:57:35:187 -> Serial Read Task is running
+15:57:36:488 -> 1
+15:57:36:488 -> ---------- Packet Begin ----------
+15:57:36:491 -> Checksum: 3234 Calculated: 3234
+15:57:36:491 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.45m, 31.04°C, 101666.92kPaN, RSSI: 0, SNR: -92
+15:57:36:491 -> ----------Packet End----------
+15:57:37:004 -> Serial Read Task is running
+15:57:38:292 -> 1
+15:57:38:292 -> ---------- Packet Begin ----------
+15:57:38:292 -> Checksum: 10006 Calculated: 10006
+15:57:38:292 -> Received--- Address: 7, Length: 158, Data: Accel: [X-0.23,Y9.81,Z-0.05], LinAccel: [X0.02,Y0.01,Z0.03], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.12,Z0.00]   ,
+15:57:38:294 -> ----------Packet End----------
+15:57:38:792 -> Serial Read Task is running
+15:57:40:094 -> 1
+15:57:40:098 -> ---------- Packet Begin ----------
+15:57:40:098 -> Checksum: 3377 Calculated: 3377
+15:57:40:098 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.38m, 31.06°C, 101666.55kPa�, RSSI: 0, SNR: -72
+15:57:40:098 -> ----------Packet End----------
+15:57:40:593 -> Serial Read Task is running
+15:57:41:897 -> 1
+15:57:41:897 -> ---------- Packet Begin ----------
+15:57:41:897 -> Checksum: 9999 Calculated: 9999
+15:57:41:897 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.27,Y9.82,Z-0.09], LinAccel: [X-0.01,Y0.01,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.19,Y-0.12,Z0.19]�
+15:57:41:898 -> ----------Packet End----------
+15:57:42:398 -> Serial Read Task is running
+15:57:43:698 -> 1
+15:57:43:698 -> ---------- Packet Begin ----------
+15:57:43:700 -> Checksum: 3005 Calculated: 3005
+15:57:43:700 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.38m, 31.08°C, 101666.43kPaK
+15:57:43:700 ->         , RSSI: 0, SNR: -78
+15:57:43:700 -> ----------Packet End----------
+15:57:44:198 -> Serial Read Task is running
+15:57:45:855 -> Invalid response format: +ERR=12
+15:57:45:855 -> +RCV=7
+15:57:49:310 -> 1
+15:57:49:318 -> ---------- Packet Begin ----------
+15:57:49:318 -> Checksum: 3019 Calculated: 3019
+15:57:49:318 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.34m, 31.12°C, 101665.52kPaH%    , RSSI: 0, SNR: -79
+15:57:49:318 -> ----------Packet End----------
+15:57:49:809 -> Serial Read Task is running
+15:57:51:110 -> 0
+15:57:51:610 -> Serial Read Task is running
+15:57:52:913 -> 1
+15:57:52:913 -> ---------- Packet Begin ----------
+15:57:52:913 -> Checksum: 9805 Calculated: 9805
+15:57:52:913 -> Received--- Address: 7, Length: 158, Data: Accel: [X-0.22,Y9.82,Z-0.05], LinAccel: [X0.03,Y0.01,Z0.03], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.06,Z0.12]+  ,
+15:57:52:915 -> ----------Packet End----------
+15:57:53:413 -> Serial Read Task is running
+15:57:54:714 -> 0
+15:57:55:214 -> Serial Read Task is running
+15:57:56:516 -> 1
+15:57:56:518 -> ---------- Packet Begin ----------
+15:57:56:518 -> Checksum: 10027 Calculated: 10027
+15:57:56:518 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.24,Y9.81,Z-0.09], LinAccel: [X0.01,Y0.00,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.12,Z0.00]�8
+15:57:56:518 -> ----------Packet End----------
+15:57:57:017 -> Serial Read Task is running
+15:57:58:318 -> 0
+15:57:58:818 -> Serial Read Task is running
+15:58:00:119 -> 1
+15:58:00:119 -> ---------- Packet Begin ----------
+15:58:00:120 -> Checksum: 3189 Calculated: 3189
+15:58:00:120 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.43m, 31.17°C, 101666.45kPa�M    , RSSI: 0, SNR: -107
+15:58:00:120 -> ----------Packet End----------
+15:58:00:633 -> Serial Read Task is running
+15:58:01:921 -> 1
+15:58:01:921 -> ---------- Packet Begin ----------
+15:58:01:923 -> Checksum: 10004 Calculated: 10004
+15:58:01:923 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.21,Y9.80,Z-0.07], LinAccel: [X0.04,Y0.00,Z0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.19,Z0.00]|S
+15:58:01:923 -> ----------Packet End----------
+15:58:02:422 -> Serial Read Task is running
+15:58:03:723 -> 1
+15:58:03:726 -> ---------- Packet Begin ----------
+15:58:03:726 -> Checksum: 3066 Calculated: 3066
+15:58:03:726 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.41m, 31.19°C, 101666.20kPa@[    , RSSI: 0, SNR: -90
+15:58:03:726 -> ----------Packet End----------
+15:58:04:223 -> Serial Read Task is running
+15:58:05:526 -> 1
+15:58:05:559 -> ---------- Packet Begin ----------
+15:58:05:559 -> Checksum: 10161 Calculated: 10161
+15:58:05:559 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.24,Y9.80,Z-0.09], LinAccel: [X0.01,Y0.00,Z0.00], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.19,Z0.19]�`
+15:58:05:559 -> ----------Packet End----------
+15:58:06:062 -> Serial Read Task is running
+15:58:07:329 -> 1
+15:58:07:329 -> ---------- Packet Begin ----------
+15:58:07:329 -> Checksum: 3209 Calculated: 3209
+15:58:07:329 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.38m, 31.21°C, 101665.70kPa�h    , RSSI: 0, SNR: -97
+15:58:07:329 -> ----------Packet End----------
+15:58:07:829 -> Serial Read Task is running
+15:58:09:131 -> 1
+15:58:09:133 -> ---------- Packet Begin ----------
+15:58:09:133 -> Checksum: 10040 Calculated: 10040
+15:58:09:133 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.19,Y9.81,Z-0.07], LinAccel: [X0.06,Y0.01,Z0.01], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.44,Z0.12]yn
+15:58:09:133 -> ----------Packet End----------
+15:58:09:643 -> Serial Read Task is running
+15:58:10:931 -> 0
+15:58:11:432 -> Serial Read Task is running
+15:58:12:735 -> 1
+15:58:12:735 -> ---------- Packet Begin ----------
+15:58:12:735 -> Checksum: 10270 Calculated: 10270
+15:58:12:737 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.25,Y9.81,Z-0.10], LinAccel: [X0.06,Y0.01,Z0.02], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y-0.56,Z-0.06]�
+15:58:12:737 -> ----------Packet End----------
+15:58:13:235 -> Serial Read Task is running
+15:58:14:537 -> 1
+15:58:14:540 -> ---------- Packet Begin ----------
+15:58:14:540 -> Checksum: 3252 Calculated: 3252
+15:58:14:540 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.30m, 31.25°C, 101665.36kPaу     , RSSI: 0, SNR: -101
+15:58:14:540 -> ----------Packet End----------
+15:58:15:036 -> Serial Read Task is running
+15:58:17:979 -> Invalid response format: +ERR=12
+15:58:17:979 -> +ERR=12
+15:58:17:979 -> 
+15:58:18:985 -> 1
+15:58:18:985 -> ---------- Packet Begin ----------
+15:58:18:989 -> Checksum: 10001 Calculated: 10001
+15:58:18:989 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.27,Y9.80,Z-0.08], LinAccel: [X0.01,Y0.04,Z-0.03], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.06,Z0.19]�
+15:58:18:989 -> ----------Packet End----------
+15:58:19:504 -> Serial Read Task is running
+15:58:20:787 -> 1
+15:58:20:788 -> ---------- Packet Begin ----------
+15:58:20:788 -> Checksum: 3306 Calculated: 3306
+15:58:20:788 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.21m, 31.29°C, 101664.59kPa�     , RSSI: 0, SNR: -98
+15:58:20:788 -> ----------Packet End----------
+15:58:21:286 -> Serial Read Task is running
+15:58:22:590 -> 1
+15:58:22:590 -> ---------- Packet Begin ----------
+15:58:22:592 -> Checksum: 10215 Calculated: 10215
+15:58:22:592 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.25,Y9.82,Z-0.12], LinAccel: [X0.00,Y0.01,Z-0.03], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.38,Z-0.31]�
+15:58:22:592 -> ----------Packet End----------
+15:58:23:090 -> Serial Read Task is running
+15:58:25:394 -> Invalid response format: +ERR=12
+15:58:25:394 -> 
+15:58:26:900 -> Invalid response format: +ERR=12
+15:58:26:900 -> 
+15:58:27:372 -> 1
+15:58:27:374 -> ---------- Packet Begin ----------
+15:58:27:374 -> Checksum: 3341 Calculated: 3341
+15:58:27:374 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.18m, 31.33°C, 101664.02kPa��    , RSSI: 0, SNR: -97
+15:58:27:374 -> ----------Packet End----------
+15:58:27:871 -> Serial Read Task is running
+15:58:29:172 -> 0
+15:58:29:693 -> Serial Read Task is running
+15:58:30:975 -> 1
+15:58:30:975 -> ---------- Packet Begin ----------
+15:58:30:979 -> Checksum: 10173 Calculated: 10173
+15:58:30:979 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.20,Y9.81,Z-0.06], LinAccel: [X0.06,Y0.01,Z0.02], Gravity: [X-0.26,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.06,Z-0.12]��
+15:58:30:979 -> ----------Packet End----------
+15:58:31:479 -> Serial Read Task is running
+15:58:32:777 -> 1
+15:58:32:777 -> ---------- Packet Begin ----------
+15:58:32:777 -> Checksum: 3241 Calculated: 3241
+15:58:32:777 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.17m, 31.35°C, 101664.89kPau�    , RSSI: 0, SNR: -88
+15:58:32:777 -> ----------Packet End----------
+15:58:33:278 -> Serial Read Task is running
+15:58:35:577 -> Invalid response format: +ERR=12
+15:58:35:577 -> 
+15:58:37:263 -> Invalid response format: +ERR=12
+15:58:37:263 -> 
+15:58:37:736 -> 1
+15:58:37:736 -> ---------- Packet Begin ----------
+15:58:37:736 -> Checksum: 3261 Calculated: 3261
+15:58:37:736 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.32m, 31.39°C, 101665.37kPas�    , RSSI: 0, SNR: -87
+15:58:38:235 -> ----------Packet End----------
+15:58:38:237 -> Serial Read Task is running
+15:58:39:535 -> 0
+15:58:40:035 -> Serial Read Task is running
+15:58:41:339 -> 1
+15:58:41:340 -> ---------- Packet Begin ----------
+15:58:41:340 -> Checksum: 10076 Calculated: 10076
+15:58:41:340 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.27,Y9.82,Z-0.09], LinAccel: [X-0.01,Y0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.00,Z0.00]-�
+15:58:41:340 -> ----------Packet End----------
+15:58:41:839 -> Serial Read Task is running
+15:58:44:189 -> Invalid response format: +ERR=12
+15:58:44:189 -> +ERR=12
+15:58:44:189 -> 
+15:58:44:644 -> 1
+15:58:44:646 -> ---------- Packet Begin ----------
+15:58:44:646 -> Checksum: 3281 Calculated: 3281
+15:58:44:646 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.21m, 31.43°C, 101664.68kPap�    , RSSI: 0, SNR: -94
+15:58:44:646 -> ----------Packet End----------
+15:58:45:144 -> Serial Read Task is running
+15:58:46:444 -> 0
+15:58:46:944 -> Serial Read Task is running
+15:58:48:244 -> 0
+15:58:48:744 -> Serial Read Task is running
+15:58:50:044 -> 0
+15:58:50:544 -> Serial Read Task is running
+15:58:51:844 -> Invalid response format: +ERR=12
+15:58:51:844 -> +RCV=7
+15:58:56:844 -> Timeout reached or no valid '+RCV' message.
+15:58:56:844 -> 0
+15:58:57:344 -> Serial Read Task is running
+15:58:58:645 -> Invalid response format: +ERR=12
+15:58:58:645 -> +RCV=7
+15:59:02:930 -> Invalid response format: +ERR=12
+15:59:02:930 -> 
+15:59:03:643 -> Timeout reached or no valid '+RCV' message.
+15:59:03:643 -> 0
+15:59:04:144 -> Serial Read Task is running
+15:59:05:447 -> 1
+15:59:05:447 -> ---------- Packet Begin ----------
+15:59:05:447 -> Checksum: 10146 Calculated: 10146
+15:59:05:447 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.30,Y9.81,Z-0.06], LinAccel: [X-0.04,Y0.02,Z0.03], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y-0.12,Z0.06]�
+15:59:05:448 -> ----------Packet End----------
+15:59:05:948 -> Serial Read Task is running
+15:59:07:249 -> 1
+15:59:07:249 -> ---------- Packet Begin ----------
+15:59:07:250 -> Checksum: 3134 Calculated: 3134
+15:59:07:250 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.14m, 31.54°C, 101663.41kPa�N
+15:59:07:250 -> , RSSI: 0, SNR: -95
+15:59:07:250 -> ----------Packet End----------
+15:59:07:749 -> Serial Read Task is running
+15:59:09:053 -> 1
+15:59:09:058 -> ---------- Packet Begin ----------
+15:59:09:058 -> Checksum: 10046 Calculated: 10046
+15:59:09:058 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.31,Y9.80,Z-0.11], LinAccel: [X-0.04,Y0.01,Z-0.05], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.12,Z0.06]K
+15:59:09:058 -> ----------Packet End----------
+15:59:09:552 -> Serial Read Task is running
+15:59:10:854 -> 1
+15:59:10:857 -> ---------- Packet Begin ----------
+15:59:10:857 -> Checksum: 3045 Calculated: 3045
+15:59:10:857 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.15m, 31.56°C, 101663.70kPa%\
+15:59:10:857 -> , RSSI: 0, SNR: -93
+15:59:10:857 -> ----------Packet End----------
+15:59:11:353 -> Serial Read Task is running
+15:59:12:657 -> 1
+15:59:12:660 -> ---------- Packet Begin ----------
+15:59:12:660 -> Checksum: 10084 Calculated: 10084
+15:59:12:660 -> Received--- Address: 7, Length: 158, Data: Accel: [X-0.23,Y9.81,Z-0.09], LinAccel: [X0.02,Y0.00,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.19,Y0.00,Z0.19]�a
+15:59:12:660 -> ,
+15:59:12:660 -> ----------Packet End----------
+15:59:13:158 -> Serial Read Task is running
+15:59:14:459 -> 1
+15:59:14:459 -> ---------- Packet Begin ----------
+15:59:14:462 -> Checksum: 3189 Calculated: 3189
+15:59:14:462 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.23m, 31.57°C, 101664.47kPa�i
+15:59:14:462 -> , RSSI: 0, SNR: -97
+15:59:14:462 -> ----------Packet End----------
+15:59:14:959 -> Serial Read Task is running
+15:59:16:259 -> Invalid response format: +ERR=12
+15:59:16:259 -> +RCV=7
+15:59:17:796 -> 1
+15:59:17:798 -> ---------- Packet Begin ----------
+15:59:17:798 -> Checksum: 10151 Calculated: 10151
+15:59:17:798 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.22,Y9.82,Z-0.08], LinAccel: [X0.03,Y0.02,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.25,Z0.12]�|
+15:59:17:798 -> 
+15:59:17:798 -> ----------Packet End----------
+15:59:18:297 -> Serial Read Task is running
+15:59:19:598 -> 0
+15:59:20:098 -> Serial Read Task is running
+15:59:22:397 -> Invalid response format: +ERR=12
+15:59:22:397 -> 
+15:59:22:705 -> 1
+15:59:22:706 -> ---------- Packet Begin ----------
+15:59:22:706 -> Checksum: 3095 Calculated: 3095
+15:59:22:706 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.16m, 31.62°C, 101663.84kPa�
+15:59:22:706 -> , RSSI: 0, SNR: -90
+15:59:22:706 -> ----------Packet End----------
+15:59:23:205 -> Serial Read Task is running
+15:59:24:506 -> 0
+15:59:25:032 -> Serial Read Task is running
+15:59:26:308 -> 1
+15:59:26:311 -> ---------- Packet Begin ----------
+15:59:26:311 -> Checksum: 10183 Calculated: 10183
+15:59:26:311 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.22,Y9.81,Z-0.05], LinAccel: [X0.06,Y0.02,Z0.05], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.44,Z0.06]ٗ
+15:59:26:311 -> 
+15:59:26:311 -> ----------Packet End----------
+15:59:26:809 -> Serial Read Task is running
+15:59:29:150 -> Invalid response format: +ERR=12
+15:59:29:150 -> +ERR=12
+15:59:29:150 -> 
+15:59:29:620 -> 1
+15:59:29:622 -> ---------- Packet Begin ----------
+15:59:29:622 -> Checksum: 3123 Calculated: 3123
+15:59:29:622 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.05m, 31.66°C, 101662.62kPa"�
+15:59:29:622 -> , RSSI: 0, SNR: -94
+15:59:29:622 -> ----------Packet End----------
+15:59:30:121 -> Serial Read Task is running
+15:59:31:436 -> 0
+15:59:31:922 -> Serial Read Task is running
+15:59:34:221 -> Invalid response format: +ERR=12
+15:59:34:221 -> 
+15:59:35:074 -> 1
+15:59:35:074 -> ---------- Packet Begin ----------
+15:59:35:076 -> Checksum: 10086 Calculated: 10086
+15:59:35:076 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.15,Y9.81,Z-0.01], LinAccel: [X0.07,Y0.03,Z0.03], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.06,Z-0.06]Y�
+15:59:35:076 -> 
+15:59:35:076 -> ----------Packet End----------
+15:59:35:576 -> Serial Read Task is running
+15:59:36:877 -> 1
+15:59:36:879 -> ---------- Packet Begin ----------
+15:59:36:879 -> Checksum: 3155 Calculated: 3155
+15:59:36:879 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.06m, 31.69°C, 101661.86kPa�
+15:59:36:879 -> , RSSI: 0, SNR: -88
+15:59:36:879 -> ----------Packet End----------
+15:59:37:381 -> Serial Read Task is running
+15:59:39:675 -> Invalid response format: +ERR=12
+15:59:39:675 -> 
+15:59:40:977 -> Invalid response format: +ERR=12
+15:59:40:977 -> 
+15:59:42:987 -> Invalid response format: +ERR=12
+15:59:42:987 -> 
+15:59:43:458 -> 1
+15:59:43:458 -> ---------- Packet Begin ----------
+15:59:43:460 -> Checksum: 3180 Calculated: 3180
+15:59:43:460 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.04m, 31.72°C, 101662.20kPa/�
+15:59:43:460 -> , RSSI: 0, SNR: -102
+15:59:43:460 -> ----------Packet End----------
+15:59:43:958 -> Serial Read Task is running
+15:59:45:258 -> 0
+15:59:45:758 -> Serial Read Task is running
+15:59:47:076 -> Invalid response format: +ERR=12
+15:59:47:076 -> +RCV=7
+15:59:50:367 -> 1
+15:59:50:367 -> ---------- Packet Begin ----------
+15:59:50:367 -> Checksum: 3213 Calculated: 3213
+15:59:50:369 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.05m, 31.75°C, 101663.42kPa,�
+15:59:50:369 -> , RSSI: 0, SNR: -103
+15:59:50:369 -> ----------Packet End----------
+15:59:50:869 -> Serial Read Task is running
+15:59:52:167 -> 0
+15:59:52:667 -> Serial Read Task is running
+15:59:54:967 -> Invalid response format: +ERR=12
+15:59:54:967 -> 
+15:59:57:310 -> 1
+15:59:57:310 -> ---------- Packet Begin ----------
+15:59:57:310 -> Checksum: 2984 Calculated: 2984
+15:59:57:310 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.15m, 31.77°C, 101663.42kPa(
+                                                                                                   , RSSI: 0, SNR: -101
+15:59:57:310 -> ----------Packet End----------
+15:59:57:775 -> Serial Read Task is running
+15:59:59:074 -> 0
+15:59:59:574 -> Serial Read Task is running
+16:00:00:875 -> Invalid response format: +ERR=12
+16:00:00:875 -> +RCV=7
+16:00:05:873 -> Timeout reached or no valid '+RCV' message.
+16:00:05:873 -> 0
+16:00:06:374 -> Serial Read Task is running
+16:00:07:679 -> Invalid response format: +ERR=12
+16:00:07:679 -> +RCV=7
+16:00:12:673 -> Timeout reached or no valid '+RCV' message.
+16:00:12:673 -> 0
+16:00:13:174 -> Serial Read Task is running
+16:00:14:609 -> Invalid response format: +ERR=12
+16:00:14:610 -> +RCV=7
+16:00:19:474 -> Timeout reached or no valid '+RCV' message.
+16:00:19:474 -> 0
+16:00:19:974 -> Serial Read Task is running
+16:00:21:277 -> 1
+16:00:21:277 -> ---------- Packet Begin ----------
+16:00:21:280 -> Checksum: 9967 Calculated: 9967
+16:00:21:280 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.26,Y9.80,Z-0.09], LinAccel: [X0.01,Y0.02,Z0.03], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.12,Y-0.06,Z0.12]/p
+
+16:00:21:280 -> ----------Packet End----------
+16:00:21:778 -> Serial Read Task is running
+16:00:23:079 -> 1
+16:00:23:079 -> ---------- Packet Begin ----------
+16:00:23:079 -> Checksum: 3286 Calculated: 3286
+16:00:23:080 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.01m, 31.86°C, 101661.99kPa�w
+                                                                                                    , RSSI: 0, SNR: -92
+16:00:23:080 -> ----------Packet End----------
+16:00:23:578 -> Serial Read Task is running
+16:00:24:881 -> 1
+16:00:24:882 -> ---------- Packet Begin ----------
+16:00:24:882 -> Checksum: 10149 Calculated: 10149
+16:00:24:882 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.26,Y9.81,Z-0.06], LinAccel: [X0.00,Y0.01,Z0.02], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y-0.06,Z0.06]�}
+16:00:24:882 -> ----------Packet End----------
+16:00:25:382 -> Serial Read Task is running
+16:00:26:683 -> 1
+16:00:26:683 -> ---------- Packet Begin ----------
+16:00:26:683 -> Checksum: 3177 Calculated: 3177
+16:00:26:683 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.99m, 31.88°C, 101662.32kPar�
+                                                                                                    , RSSI: 0, SNR: -91
+16:00:26:683 -> ----------Packet End----------
+16:00:27:183 -> Serial Read Task is running
+16:00:28:486 -> Invalid response format: +ERR=12
+16:00:28:488 -> +RCV=7
+16:00:31:905 -> 1
+16:00:31:905 -> ---------- Packet Begin ----------
+16:00:31:905 -> Checksum: 3185 Calculated: 3185
+16:00:31:905 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.10m, 31.90°C, 101662.85kPan�
+                                                                                                    , RSSI: 0, SNR: -90
+16:00:31:905 -> ----------Packet End----------
+16:00:32:404 -> Serial Read Task is running
+16:00:33:705 -> 0
+16:00:34:204 -> Serial Read Task is running
+16:00:35:507 -> 1
+16:00:35:508 -> ---------- Packet Begin ----------
+16:00:35:508 -> Checksum: 10055 Calculated: 10055
+16:00:35:508 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.25,Y9.82,Z-0.05], LinAccel: [X0.00,Y0.01,Z0.03], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y0.00,Z-0.19](�
+16:00:35:508 -> ----------Packet End----------
+16:00:36:007 -> Serial Read Task is running
+16:00:37:308 -> 0
+16:00:37:808 -> Serial Read Task is running
+16:00:40:108 -> Invalid response format: +ERR=12
+16:00:40:108 -> 
+16:00:40:812 -> 1
+16:00:40:815 -> ---------- Packet Begin ----------
+16:00:40:815 -> Checksum: 10084 Calculated: 10084
+16:00:40:815 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.26,Y9.82,Z-0.09], LinAccel: [X-0.01,Y0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.06,Z0.19]$�
+16:00:40:815 -> ----------Packet End----------
+16:00:41:312 -> Serial Read Task is running
+16:00:42:613 -> 1
+16:00:42:613 -> ---------- Packet Begin ----------
+16:00:42:615 -> Checksum: 3352 Calculated: 3352
+16:00:42:615 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.02m, 31.95°C, 101662.65kPa��
+                                                                                                    , RSSI: 0, SNR: -91
+16:00:42:615 -> ----------Packet End----------
+16:00:43:113 -> Serial Read Task is running
+16:00:44:416 -> 1
+16:00:44:417 -> ---------- Packet Begin ----------
+16:00:44:417 -> Checksum: 10179 Calculated: 10179
+16:00:44:417 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.26,Y9.83,Z-0.06], LinAccel: [X0.00,Y0.02,Z0.02], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.19,Z0.00]��
+
+16:00:44:417 -> ----------Packet End----------
+16:00:44:917 -> Serial Read Task is running
+16:00:46:218 -> 1
+16:00:46:222 -> ---------- Packet Begin ----------
+16:00:46:222 -> Checksum: 3233 Calculated: 3233
+16:00:46:222 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.05m, 31.97°C, 101663.11kPag�
+                                                                                                    , RSSI: 0, SNR: -91
+16:00:46:222 -> ----------Packet End----------
+16:00:46:718 -> Serial Read Task is running
+16:00:48:021 -> 1
+16:00:48:021 -> ---------- Packet Begin ----------
+16:00:48:023 -> Checksum: 10097 Calculated: 10097
+16:00:48:023 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.26,Y9.82,Z-0.07], LinAccel: [X-0.01,Y0.01,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y0.00,Z0.00]!�
+16:00:48:023 -> ----------Packet End----------
+16:00:48:522 -> Serial Read Task is running
+16:00:49:824 -> 1
+16:00:49:824 -> ---------- Packet Begin ----------
+16:00:49:825 -> Checksum: 3379 Calculated: 3379
+16:00:49:825 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.16m, 31.99°C, 101663.14kPa��
+                                                                                                    , RSSI: 0, SNR: -92
+16:00:49:825 -> ----------Packet End----------
+16:00:50:323 -> Serial Read Task is running
+16:00:51:627 -> 1
+16:00:51:627 -> ---------- Packet Begin ----------
+16:00:51:628 -> Checksum: 10198 Calculated: 10198
+16:00:51:628 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.24,Y9.83,Z-0.09], LinAccel: [X0.00,Y0.01,Z-0.02], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.06,Z0.00]��
+
+16:00:51:628 -> ----------Packet End----------
+16:00:52:127 -> Serial Read Task is running
+16:00:53:429 -> 1
+16:00:53:432 -> ---------- Packet Begin ----------
+16:00:53:432 -> Checksum: 3247 Calculated: 3247
+16:00:53:432 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.13m, 32.01°C, 101662.72kPac�
+                                                                                                    , RSSI: 0, SNR: -96
+16:00:53:432 -> ----------Packet End----------
+16:00:53:929 -> Serial Read Task is running
+16:00:55:232 -> 1
+16:00:55:235 -> ---------- Packet Begin ----------
+16:00:55:235 -> Checksum: 10092 Calculated: 10092
+16:00:55:235 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.25,Y9.81,Z-0.08], LinAccel: [X0.00,Y0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.19,Z0.19]�
+
+16:00:55:235 -> ----------Packet End----------
+16:00:55:733 -> Serial Read Task is running
+16:00:57:037 -> 1
+16:00:57:037 -> ---------- Packet Begin ----------
+16:00:57:041 -> Checksum: 3383 Calculated: 3383
+16:00:57:041 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.06m, 32.02°C, 101663.20kPa��
+                                                                                                    , RSSI: 0, SNR: -90
+16:00:57:041 -> ----------Packet End----------
+16:00:57:534 -> Serial Read Task is running
+16:00:58:837 -> 1
+16:00:58:837 -> ---------- Packet Begin ----------
+16:00:58:838 -> Checksum: 10066 Calculated: 10066
+16:00:58:838 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.23,Y9.79,Z-0.07], LinAccel: [X0.02,Y0.00,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.19,Y-0.12,Z-0.25]�
+16:00:58:838 -> ----------Packet End----------
+16:00:59:338 -> Serial Read Task is running
+16:01:00:638 -> 0
+16:01:01:138 -> Serial Read Task is running
+16:01:03:013 -> Invalid response format: +ERR=12
+16:01:03:013 -> +RCV=7
+16:01:05:012 -> 1
+16:01:05:015 -> ---------- Packet Begin ----------
+16:01:05:015 -> Checksum: 10017 Calculated: 10017
+16:01:05:015 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.24,Y9.82,Z-0.03], LinAccel: [X0.00,Y0.00,Z0.05], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.19,Z0.06]�
+
+16:01:05:015 -> ----------Packet End----------
+16:01:05:512 -> Serial Read Task is running
+16:01:06:814 -> 1
+16:01:06:814 -> ---------- Packet Begin ----------
+16:01:06:823 -> Checksum: 3074 Calculated: 3074
+16:01:06:823 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.96m, 32.08°C, 101661.42kPar'
+                                                                                                    , RSSI: 0, SNR: -96
+16:01:06:823 -> ----------Packet End----------
+16:01:07:321 -> Serial Read Task is running
+16:01:09:613 -> Invalid response format: +ERR=12
+16:01:09:613 -> 
+16:01:09:921 -> 1
+16:01:09:921 -> ---------- Packet Begin ----------
+16:01:09:922 -> Checksum: 3206 Calculated: 3206
+16:01:09:922 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.94m, 32.10°C, 101661.71kPa�4
+                                                                                                    , RSSI: 0, SNR: -92
+16:01:09:922 -> ----------Packet End----------
+16:01:10:422 -> Serial Read Task is running
+16:01:11:722 -> 0
+16:01:12:221 -> Serial Read Task is running
+16:01:13:522 -> Invalid response format: +ERR=12
+16:01:13:522 -> +RCV=7
+16:01:16:829 -> 1
+16:01:16:829 -> ---------- Packet Begin ----------
+16:01:16:832 -> Checksum: 3223 Calculated: 3223
+16:01:16:832 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.00m, 32.14°C, 101660.74kPa�O
+                                                                                                    , RSSI: 0, SNR: -71
+16:01:16:832 -> ----------Packet End----------
+16:01:17:329 -> Serial Read Task is running
+16:01:18:648 -> 0
+16:01:19:129 -> Serial Read Task is running
+16:01:20:433 -> 1
+16:01:20:433 -> ---------- Packet Begin ----------
+16:01:20:435 -> Checksum: 10110 Calculated: 10110
+16:01:20:435 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.82,Z-0.07], LinAccel: [X0.02,Y0.02,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.19,Z-0.06]�U
+16:01:20:435 -> ----------Packet End----------
+16:01:20:935 -> Serial Read Task is running
+16:01:22:235 -> 0
+16:01:22:735 -> Serial Read Task is running
+16:01:24:036 -> 1
+16:01:24:036 -> ---------- Packet Begin ----------
+16:01:24:036 -> Checksum: 9936 Calculated: 9936
+16:01:24:036 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.22,Y9.82,Z-0.09], LinAccel: [X0.02,Y0.02,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.25,Y0.00,Z0.00]$c
+
+16:01:24:040 -> ----------Packet End----------
+16:01:24:542 -> Serial Read Task is running
+16:01:25:839 -> 1
+16:01:25:841 -> ---------- Packet Begin ----------
+16:01:25:841 -> Checksum: 3271 Calculated: 3271
+16:01:25:841 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.86m, 32.18°C, 101659.64kPa�j
+                                                                                                    , RSSI: 0, SNR: -74
+16:01:25:841 -> ----------Packet End----------
+16:01:26:339 -> Serial Read Task is running
+16:01:27:642 -> 1
+16:01:27:642 -> ---------- Packet Begin ----------
+16:01:27:645 -> Checksum: 10174 Calculated: 10174
+16:01:27:645 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.27,Y9.80,Z-0.09], LinAccel: [X-0.01,Y0.00,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.12,Z0.25]�
+16:01:27:645 -> ----------Packet End----------
+16:01:28:142 -> Serial Read Task is running
+16:01:29:444 -> 1
+16:01:29:446 -> ---------- Packet Begin ----------
+16:01:29:446 -> Checksum: 3169 Calculated: 3169
+16:01:29:446 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.79m, 32.20°C, 101658.62kPa}x
+                                                                                                    , RSSI: 0, SNR: -78
+16:01:29:446 -> ----------Packet End----------
+16:01:29:943 -> Serial Read Task is running
+16:01:31:247 -> 1
+16:01:31:249 -> ---------- Packet Begin ----------
+16:01:31:249 -> Checksum: 10041 Calculated: 10041
+16:01:31:249 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.27,Y9.81,Z-0.09], LinAccel: [X-0.02,Y0.00,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.19,Y0.00,Z-0.19]7~
+16:01:31:249 -> ----------Packet End----------
+16:01:31:771 -> Serial Read Task is running
+16:01:33:049 -> 1
+16:01:33:049 -> ---------- Packet Begin ----------
+16:01:33:049 -> Checksum: 3301 Calculated: 3301
+16:01:33:049 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.74m, 32.22°C, 101659.21kPa��
+                                                                                                    , RSSI: 0, SNR: -77
+16:01:33:051 -> ----------Packet End----------
+16:01:33:549 -> Serial Read Task is running
+16:01:34:852 -> 1
+16:01:34:852 -> ---------- Packet Begin ----------
+16:01:34:852 -> Checksum: 10169 Calculated: 10169
+16:01:34:852 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.21,Y9.81,Z-0.07], LinAccel: [X0.03,Y0.00,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.06,Z0.12]��
+16:01:34:855 -> ----------Packet End----------
+16:01:35:352 -> Serial Read Task is running
+16:01:36:654 -> 1
+16:01:36:655 -> ---------- Packet Begin ----------
+16:01:36:655 -> Checksum: 3190 Calculated: 3190
+16:01:36:655 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.84m, 32.24°C, 101660.94kPay�
+                                                                                                    , RSSI: 0, SNR: -76
+16:01:36:655 -> ----------Packet End----------
+16:01:37:153 -> Serial Read Task is running
+16:01:38:456 -> 1
+16:01:38:456 -> ---------- Packet Begin ----------
+16:01:38:457 -> Checksum: 10057 Calculated: 10057
+16:01:38:457 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.83,Z-0.10], LinAccel: [X0.02,Y0.02,Z-0.01], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.31,Z-0.38]3�
+16:01:38:457 -> ----------Packet End----------
+16:01:38:979 -> Serial Read Task is running
+16:01:40:260 -> 1
+16:01:40:263 -> ---------- Packet Begin ----------
+16:01:40:263 -> Checksum: 10186 Calculated: 10186
+16:01:40:263 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.82,Z-0.11], LinAccel: [X0.00,Y0.02,Z-0.02], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.06,Z0.06]��
+16:01:40:263 -> ----------Packet End----------
+16:01:40:761 -> Serial Read Task is running
+16:01:42:064 -> 1
+16:01:42:064 -> ---------- Packet Begin ----------
+16:01:42:071 -> Checksum: 3216 Calculated: 3216
+16:01:42:071 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.09m, 32.28°C, 101663.27kPaw�
+                                                                                                    , RSSI: 0, SNR: -81
+16:01:42:071 -> ----------Packet End----------
+16:01:42:562 -> Serial Read Task is running
+16:01:43:866 -> 1
+16:01:43:870 -> ---------- Packet Begin ----------
+16:01:43:870 -> Checksum: 10080 Calculated: 10080
+16:01:43:870 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.80,Z-0.08], LinAccel: [X0.04,Y0.00,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.19,Z0.00]1�
+16:01:43:870 -> ----------Packet End----------
+16:01:44:366 -> Serial Read Task is running
+16:01:45:667 -> 1
+16:01:45:667 -> ---------- Packet Begin ----------
+16:01:45:667 -> Checksum: 3359 Calculated: 3359
+16:01:45:667 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.09m, 32.29°C, 101662.49kPa��
+                                                                                                    , RSSI: 0, SNR: -80
+16:01:45:669 -> ----------Packet End----------
+16:01:46:168 -> Serial Read Task is running
+16:01:47:470 -> 1
+16:01:47:472 -> ---------- Packet Begin ----------
+16:01:47:472 -> Checksum: 10171 Calculated: 10171
+16:01:47:472 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.25,Y9.81,Z-0.09], LinAccel: [X0.00,Y0.00,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.12,Y-0.12,Z0.06]��
+
+16:01:47:472 -> ----------Packet End----------
+16:01:47:971 -> Serial Read Task is running
+16:01:49:274 -> 1
+16:01:49:274 -> ---------- Packet Begin ----------
+16:01:49:277 -> Checksum: 3234 Calculated: 3234
+16:01:49:277 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.13m, 32.30°C, 101662.98kPas�
+                                                                                                    , RSSI: 0, SNR: -76
+16:01:49:277 -> ----------Packet End----------
+16:01:49:772 -> Serial Read Task is running
+16:01:51:075 -> 1
+16:01:51:077 -> ---------- Packet Begin ----------
+16:01:51:077 -> Checksum: 10010 Calculated: 10010
+16:01:51:077 -> Received--- Address: 7, Length: 158, Data: Accel: [X-0.22,Y9.82,Z-0.09], LinAccel: [X0.03,Y0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.19,Z0.00]-�
+                                                                                                       ,
+16:01:51:077 -> ----------Packet End----------
+16:01:51:576 -> Serial Read Task is running
+16:01:52:876 -> 0
+16:01:53:376 -> Serial Read Task is running
+16:01:54:679 -> 1
+16:01:54:679 -> ---------- Packet Begin ----------
+16:01:54:681 -> Checksum: 10333 Calculated: 10333
+16:01:54:681 -> Received--- Address: 7, Length: 162, Data: Accel: [X-0.24,Y9.82,Z-0.09], LinAccel: [X-0.01,Y0.00,Z-0.02], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y0.31,Z-0.12]
+16:01:54:681 -> ----------Packet End----------
+16:01:55:180 -> Serial Read Task is running
+16:01:56:480 -> 0
+16:01:56:980 -> Serial Read Task is running
+16:01:58:284 -> 1
+16:01:58:284 -> ---------- Packet Begin ----------
+16:01:58:284 -> Checksum: 10110 Calculated: 10110
+16:01:58:284 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.22,Y9.82,Z-0.06], LinAccel: [X0.00,Y0.02,Z0.03], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.19,Z-0.06]?�
+
+16:01:58:286 -> ----------Packet End----------
+16:01:58:784 -> Serial Read Task is running
+16:02:00:085 -> 1
+16:02:00:085 -> ---------- Packet Begin ----------
+16:02:00:088 -> Checksum: 3165 Calculated: 3165
+16:02:00:088 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.81m, 32.34°C, 101659.23kPa�
+                                                                                                   , RSSI: 0, SNR: -84
+16:02:00:088 -> ----------Packet End----------
+16:02:00:585 -> Serial Read Task is running
+16:02:01:888 -> 1
+16:02:01:890 -> ---------- Packet Begin ----------
+16:02:01:890 -> Checksum: 10284 Calculated: 10284
+16:02:01:890 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.26,Y9.81,Z-0.09], LinAccel: [X-0.01,Y0.00,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.09], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y0.12,Z0.12]��
+16:02:01:890 -> ----------Packet End----------
+16:02:02:405 -> Serial Read Task is running
+16:02:03:692 -> 1
+16:02:03:692 -> ---------- Packet Begin ----------
+16:02:03:737 -> Checksum: 3315 Calculated: 3315
+16:02:03:737 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.83m, 32.35°C, 101659.39kPa��
+                                                                                                    , RSSI: 0, SNR: -77
+16:02:03:737 -> ----------Packet End----------
+16:02:04:191 -> Serial Read Task is running
+16:02:05:494 -> 1
+16:02:05:495 -> ---------- Packet Begin ----------
+16:02:05:495 -> Checksum: 2948 Calculated: 2948
+16:02:05:495 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.82m, 32.37°C, 101659.69kPa, RSSI: 0, SNR: -84
+16:02:05:495 -> ----------Packet End----------
+16:02:05:991 -> Serial Read Task is running
+16:02:07:295 -> 1
+16:02:07:295 -> ---------- Packet Begin ----------
+16:02:07:297 -> Checksum: 10099 Calculated: 10099
+16:02:07:297 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.25,Y9.81,Z-0.08], LinAccel: [X-0.02,Y0.00,Z-0.02], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.06,Z-0.06]�
+16:02:07:297 -> ----------Packet End----------
+16:02:07:795 -> Serial Read Task is running
+16:02:09:114 -> 1
+16:02:09:114 -> ---------- Packet Begin ----------
+16:02:09:116 -> Checksum: 3109 Calculated: 3109
+16:02:09:116 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.87m, 32.38°C, 101660.89kPa�, RSSI: 0, SNR: -84
+16:02:09:116 -> ----------Packet End----------
+16:02:09:596 -> Serial Read Task is running
+16:02:10:896 -> 0
+16:02:11:397 -> Serial Read Task is running
+16:02:12:698 -> 1
+16:02:12:702 -> ---------- Packet Begin ----------
+16:02:12:702 -> Checksum: 2975 Calculated: 2975
+16:02:12:702 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.98m, 32.40°C, 101662.20kPa(, RSSI: 0, SNR: -82
+16:02:12:702 -> ----------Packet End----------
+16:02:13:197 -> Serial Read Task is running
+16:02:14:500 -> 1
+16:02:14:502 -> ---------- Packet Begin ----------
+16:02:14:502 -> Checksum: 10128 Calculated: 10128
+16:02:14:502 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.23,Y9.80,Z-0.10], LinAccel: [X0.01,Y0.00,Z-0.02], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.31,Z-0.12]�
+16:02:14:502 -> ----------Packet End----------
+16:02:15:011 -> Serial Read Task is running
+16:02:16:303 -> 1
+16:02:16:305 -> ---------- Packet Begin ----------
+16:02:16:305 -> Checksum: 3124 Calculated: 3124
+16:02:16:305 -> Received--- Address: 7, Length: 47, Data: Altitude: -28.01m, 32.41°C, 101661.23kPa�5, RSSI: 0, SNR: -83
+16:02:16:305 -> ----------Packet End----------
+16:02:16:803 -> Serial Read Task is running
+16:02:18:106 -> 1
+16:02:18:106 -> ---------- Packet Begin ----------
+16:02:18:106 -> Checksum: 10051 Calculated: 10051
+16:02:18:106 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.28,Y9.79,Z-0.08], LinAccel: [X-0.03,Y-0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y0.00,Z-0.12]`
+16:02:18:107 -> ----------Packet End----------
+16:02:18:606 -> Serial Read Task is running
+16:02:19:908 -> 1
+16:02:19:908 -> ---------- Packet Begin ----------
+16:02:19:910 -> Checksum: 3053 Calculated: 3053
+16:02:19:910 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.98m, 32.43°C, 101661.56kPa:C, RSSI: 0, SNR: -88
+16:02:19:910 -> ----------Packet End----------
+16:02:20:414 -> Serial Read Task is running
+16:02:22:568 -> Invalid response format: +ERR=12
+16:02:22:568 -> +RCV=7
+16:02:26:707 -> Timeout reached or no valid '+RCV' message.
+16:02:26:707 -> 0
+16:02:27:214 -> Serial Read Task is running
+16:02:28:510 -> 1
+16:02:28:512 -> ---------- Packet Begin ----------
+16:02:28:512 -> Checksum: 10009 Calculated: 10009
+16:02:28:512 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.25,Y9.79,Z-0.10], LinAccel: [X0.00,Y-0.01,Z-0.02], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.19,Z0.19]
+16:02:28:512 -> ----------Packet End----------
+16:02:29:011 -> Serial Read Task is running
+16:02:30:313 -> 1
+16:02:30:316 -> ---------- Packet Begin ----------
+16:02:30:316 -> Checksum: 3248 Calculated: 3248
+16:02:30:316 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.90m, 32.48°C, 101661.20kPa�k, RSSI: 0, SNR: -85
+16:02:30:316 -> ----------Packet End----------
+16:02:30:833 -> Serial Read Task is running
+16:02:32:148 -> 1
+16:02:32:148 -> ---------- Packet Begin ----------
+16:02:32:148 -> Checksum: 10168 Calculated: 10168
+16:02:32:148 -> Received--- Address: 7, Length: 161, Data: Accel: [X-0.26,Y9.81,Z-0.08], LinAccel: [X-0.01,Y0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.06,Z-0.06]�
+16:02:32:151 -> ----------Packet End----------
+16:02:32:616 -> Serial Read Task is running
+16:02:34:916 -> Invalid response format: +ERR=12
+16:02:34:925 -> 
+16:02:36:000 -> Invalid response format: +ERR=12
+16:02:36:000 -> 
+16:02:36:472 -> 1
+16:02:36:474 -> ---------- Packet Begin ----------
+16:02:36:474 -> Checksum: 3062 Calculated: 3062
+16:02:36:474 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.93m, 32.51°C, 101660.62kPa      �, RSSI: 0, SNR: -80
+16:02:36:474 -> ----------Packet End----------
+16:02:36:992 -> Serial Read Task is running
+16:02:38:273 -> 0
+16:02:38:772 -> Serial Read Task is running
+16:02:40:076 -> 1
+16:02:40:078 -> ---------- Packet Begin ----------
+16:02:40:078 -> Checksum: 10270 Calculated: 10270
+16:02:40:078 -> Received--- Address: 7, Length: 162, Data: Accel: [X-0.26,Y9.80,Z-0.11], LinAccel: [X-0.01,Y0.00,Z-0.03], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.12,Y-0.06,Z-0.12]
+16:02:40:078 -> ----------Packet End----------
+16:02:40:627 -> Serial Read Task is running
+16:02:41:877 -> 1
+16:02:41:877 -> ---------- Packet Begin ----------
+16:02:41:880 -> Checksum: 3224 Calculated: 3224
+16:02:41:880 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.88m, 32.53°C, 101660.11kPa��, RSSI: 0, SNR: -76
+16:02:41:880 -> ----------Packet End----------
+16:02:42:377 -> Serial Read Task is running
+16:02:43:682 -> 1
+16:02:43:682 -> ---------- Packet Begin ----------
+16:02:43:682 -> Checksum: 10094 Calculated: 10094
+16:02:43:682 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.28,Y9.81,Z-0.04], LinAccel: [X-0.03,Y0.01,Z0.03], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.06,Z0.00]X�
+16:02:43:685 -> ----------Packet End----------
+16:02:44:181 -> Serial Read Task is running
+16:02:45:482 -> 1
+16:02:45:482 -> ---------- Packet Begin ----------
+16:02:45:482 -> Checksum: 3111 Calculated: 3111
+16:02:45:483 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.83m, 32.54°C, 101660.53kPa�, RSSI: 0, SNR: -83
+16:02:45:483 -> ----------Packet End----------
+16:02:45:982 -> Serial Read Task is running
+16:02:47:285 -> 1
+16:02:47:285 -> ---------- Packet Begin ----------
+16:02:47:285 -> Checksum: 10313 Calculated: 10313
+16:02:47:287 -> Received--- Address: 7, Length: 162, Data: Accel: [X-0.26,Y9.80,Z-0.11], LinAccel: [X0.00,Y0.00,Z-0.01], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.12,Z-0.12]
+16:02:47:287 -> ----------Packet End----------
+16:02:47:787 -> Serial Read Task is running
+16:02:49:087 -> 1
+16:02:49:087 -> ---------- Packet Begin ----------
+16:02:49:089 -> Checksum: 3274 Calculated: 3274
+16:02:49:089 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.96m, 32.56°C, 101661.12kPa��, RSSI: 0, SNR: -75
+16:02:49:089 -> ----------Packet End----------
+16:02:49:587 -> Serial Read Task is running
+16:02:50:892 -> 1
+16:02:50:892 -> ---------- Packet Begin ----------
+16:02:50:893 -> Checksum: 10091 Calculated: 10091
+16:02:50:893 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.25,Y9.82,Z-0.07], LinAccel: [X0.00,Y0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.06,Z0.06]l�
+16:02:50:893 -> ----------Packet End----------
+16:02:51:391 -> Serial Read Task is running
+16:02:52:692 -> 1
+16:02:52:692 -> ---------- Packet Begin ----------
+16:02:52:694 -> Checksum: 3161 Calculated: 3161
+16:02:52:694 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.93m, 32.57°C, 101660.80kPa0�, RSSI: 0, SNR: -82
+16:02:52:694 -> ----------Packet End----------
+16:02:53:191 -> Serial Read Task is running
+16:02:54:495 -> 1
+16:02:54:497 -> ---------- Packet Begin ----------
+16:02:54:497 -> Checksum: 10280 Calculated: 10280
+16:02:54:497 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.24,Y9.82,Z-0.06], LinAccel: [X0.00,Y0.01,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.12,Z0.12]��
+16:02:54:497 -> ----------Packet End----------
+16:02:55:005 -> Serial Read Task is running
+16:02:56:296 -> 1
+16:02:56:296 -> ---------- Packet Begin ----------
+16:02:56:296 -> Checksum: 3306 Calculated: 3306
+16:02:56:296 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.90m, 32.59°C, 101661.35kPa��, RSSI: 0, SNR: -70
+16:02:56:296 -> ----------Packet End----------
+16:02:56:796 -> Serial Read Task is running
+16:02:58:100 -> 1
+16:02:58:105 -> ---------- Packet Begin ----------
+16:02:58:105 -> Checksum: 10164 Calculated: 10164
+16:02:58:105 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.80,Z-0.11], LinAccel: [X0.01,Y0.02,Z-0.01], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.06,Z-0.06]n�
+16:02:58:105 -> ----------Packet End----------
+16:02:58:610 -> Serial Read Task is running
+16:02:59:901 -> 1
+16:02:59:901 -> ---------- Packet Begin ----------
+16:02:59:901 -> Checksum: 3204 Calculated: 3204
+16:02:59:903 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.89m, 32.60°C, 101659.96kPa2�, RSSI: 0, SNR: -77
+16:02:59:903 -> ----------Packet End----------
+16:03:00:401 -> Serial Read Task is running
+16:03:01:705 -> 1
+16:03:01:705 -> ---------- Packet Begin ----------
+16:03:01:705 -> Checksum: 10307 Calculated: 10307
+16:03:01:707 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.22,Y9.81,Z-0.06], LinAccel: [X0.02,Y0.01,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.31,Z-0.06]��
+16:03:01:707 -> ----------Packet End----------
+16:03:02:205 -> Serial Read Task is running
+16:03:03:506 -> 1
+16:03:03:506 -> ---------- Packet Begin ----------
+16:03:03:508 -> Checksum: 3329 Calculated: 3329
+16:03:03:508 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.87m, 32.61°C, 101660.09kPa��, RSSI: 0, SNR: -79
+16:03:03:508 -> ----------Packet End----------
+16:03:04:006 -> Serial Read Task is running
+16:03:05:308 -> 1
+16:03:05:308 -> ---------- Packet Begin ----------
+16:03:05:349 -> Checksum: 10150 Calculated: 10150
+16:03:05:349 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.19,Y9.81,Z-0.08], LinAccel: [X0.08,Y0.00,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.50,Z0.12]k�
+16:03:05:349 -> ----------Packet End----------
+16:03:05:810 -> Serial Read Task is running
+16:03:07:114 -> 1
+16:03:07:114 -> ---------- Packet Begin ----------
+16:03:07:114 -> Checksum: 10336 Calculated: 10336
+16:03:07:114 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.24,Y9.80,Z-0.05], LinAccel: [X0.00,Y0.02,Z0.02], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y-0.31,Z0.06]��
+16:03:07:116 -> ----------Packet End----------
+16:03:07:614 -> Serial Read Task is running
+16:03:08:916 -> 1
+16:03:08:916 -> ---------- Packet Begin ----------
+16:03:08:917 -> Checksum: 3115 Calculated: 3115
+16:03:08:917 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.83m, 32.63°C, 101659.77kPa�, RSSI: 0, SNR: -80
+16:03:08:917 -> ----------Packet End----------
+16:03:09:414 -> Serial Read Task is running
+16:03:10:715 -> 0
+16:03:11:223 -> Serial Read Task is running
+16:03:12:514 -> 0
+16:03:13:015 -> Serial Read Task is running
+16:03:14:525 -> Invalid response format: +ERR=12
+16:03:14:525 -> +RCV=7
+16:03:18:973 -> Invalid response format: +ERR=12
+16:03:18:978 -> 
+16:03:19:314 -> Timeout reached or no valid '+RCV' message.
+16:03:19:314 -> 0
+16:03:19:815 -> Serial Read Task is running
+16:03:21:434 -> Invalid response format: +ERR=12
+16:03:21:434 -> +RCV=7
+16:03:24:417 -> Invalid response format: +ERR=12
+16:03:24:417 -> 
+16:03:25:882 -> Invalid response format: +ERR=12
+16:03:25:882 -> 
+16:03:26:114 -> Timeout reached or no valid '+RCV' message.
+16:03:26:114 -> 0
+16:03:26:614 -> Serial Read Task is running
+16:03:27:918 -> 1
+16:03:27:918 -> ---------- Packet Begin ----------
+16:03:27:918 -> Checksum: 10059 Calculated: 10059
+16:03:27:918 -> Received--- Address: 7, Length: 158, Data: Accel: [X-0.24,Y9.82,Z-0.03], LinAccel: [X0.00,Y0.01,Z0.04], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y0.00,Z0.06]�I,
+16:03:27:918 -> ----------Packet End----------
+16:03:28:418 -> Serial Read Task is running
+16:03:29:718 -> 1
+16:03:29:718 -> ---------- Packet Begin ----------
+16:03:29:720 -> Checksum: 3171 Calculated: 3171
+16:03:29:720 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.90m, 32.71°C, 101661.19kPa�Q, RSSI: 0, SNR: -93
+16:03:29:720 -> ----------Packet End----------
+16:03:30:223 -> Serial Read Task is running
+16:03:31:518 -> 0
+16:03:32:019 -> Serial Read Task is running
+16:03:33:320 -> 1
+16:03:33:320 -> ---------- Packet Begin ----------
+16:03:33:320 -> Checksum: 3055 Calculated: 3055
+16:03:33:320 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.91m, 32.71°C, 101660.73kPa'_, RSSI: 0, SNR: -88
+16:03:33:322 -> ----------Packet End----------
+16:03:33:819 -> Serial Read Task is running
+16:03:35:123 -> 1
+16:03:35:125 -> ---------- Packet Begin ----------
+16:03:35:125 -> Checksum: 10179 Calculated: 10179
+16:03:35:125 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.24,Y9.81,Z-0.08], LinAccel: [X0.00,Y0.02,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.06,Y-0.06,Z-0.06]�d
+16:03:35:125 -> ----------Packet End----------
+16:03:35:623 -> Serial Read Task is running
+16:03:36:928 -> 0
+16:03:37:423 -> Serial Read Task is running
+16:03:38:727 -> 1
+16:03:38:727 -> ---------- Packet Begin ----------
+16:03:38:729 -> Checksum: 10020 Calculated: 10020
+16:03:38:729 -> Received--- Address: 7, Length: 159, Data: Accel: [X-0.22,Y9.79,Z-0.03], LinAccel: [X0.03,Y0.00,Z0.04], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.06,Y0.12,Z0.06]_r
+16:03:38:729 -> ----------Packet End----------
+16:03:39:235 -> Serial Read Task is running
+16:03:40:528 -> 1
+16:03:40:528 -> ---------- Packet Begin ----------
+16:03:40:528 -> Checksum: 3084 Calculated: 3084
+16:03:40:528 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.85m, 32.73°C, 101659.11kPa$z, RSSI: 0, SNR: -98
+16:03:40:528 -> ----------Packet End----------
+16:03:41:028 -> Serial Read Task is running
+16:03:42:331 -> 1
+16:03:42:332 -> ---------- Packet Begin ----------
+16:03:42:332 -> Checksum: 10198 Calculated: 10198
+16:03:42:332 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.24,Y9.79,Z-0.04], LinAccel: [X0.00,Y-0.01,Z0.03], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.12,Z0.06]�
+16:03:42:332 -> ----------Packet End----------
+16:03:42:832 -> Serial Read Task is running
+16:03:44:134 -> 1
+16:03:44:135 -> ---------- Packet Begin ----------
+16:03:44:135 -> Checksum: 3228 Calculated: 3228
+16:03:44:135 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.74m, 32.73°C, 101659.09kPa��, RSSI: 0, SNR: -91
+16:03:44:135 -> ----------Packet End----------
+16:03:44:633 -> Serial Read Task is running
+16:03:45:936 -> 1
+16:03:45:938 -> ---------- Packet Begin ----------
+16:03:45:938 -> Checksum: 10093 Calculated: 10093
+16:03:45:938 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.25,Y9.79,Z-0.06], LinAccel: [X0.00,Y-0.01,Z0.01], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X-0.12,Y0.06,Z0.19][�
+16:03:45:938 -> ----------Packet End----------
+16:03:46:437 -> Serial Read Task is running
+16:03:47:739 -> 1
+16:03:47:739 -> ---------- Packet Begin ----------
+16:03:47:741 -> Checksum: 3114 Calculated: 3114
+16:03:47:741 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.75m, 32.74°C, 101658.91kPa �, RSSI: 0, SNR: -94
+16:03:47:741 -> ----------Packet End----------
+16:03:48:238 -> Serial Read Task is running
+16:03:49:541 -> 1
+16:03:49:545 -> ---------- Packet Begin ----------
+16:03:49:545 -> Checksum: 10224 Calculated: 10224
+16:03:49:545 -> Received--- Address: 7, Length: 160, Data: Accel: [X-0.26,Y9.80,Z-0.08], LinAccel: [X0.00,Y0.01,Z0.00], Gravity: [X-0.25,Y9.80,Z-0.07], Quat: [W0.71,X0.01,Y-0.01,Z0.70], Gyro: [X0.00,Y-0.06,Z-0.19]ښ
+16:03:49:545 -> ----------Packet End----------
+16:03:50:042 -> Serial Read Task is running
+16:03:51:843 -> 1
+16:03:51:843 -> ---------- Packet Begin ----------
+16:03:51:845 -> Checksum: 3246 Calculated: 3246
+16:03:51:845 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.83m, 32.75°C, 101659.02kPa��, RSSI: 0, SNR: -93
+16:03:51:845 -> ----------Packet End----------
+16:03:51:845 -> Serial Read Task is running
+16:03:53:144 -> Invalid response format: +ERR=12
+16:03:53:144 -> +RCV=7
+16:03:56:970 -> Invalid response format: +ERR=12
+16:03:56:970 -> 
+16:03:58:980 -> Invalid response format: +ERR=12
+16:03:58:980 -> 
+16:03:58:980 -> Timeout reached or no valid '+RCV' message.
+16:03:58:980 -> 0
+16:03:59:480 -> Serial Read Task is running
+16:04:00:781 -> 1
+16:04:00:781 -> ---------- Packet Begin ----------
+16:04:00:781 -> Checksum: 3185 Calculated: 3185
+16:04:00:781 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.83m, 32.78°C, 101659.27kPa.�, RSSI: 0, SNR: -87
+16:04:00:783 -> ----------Packet End----------
+16:04:01:281 -> Serial Read Task is running
+16:04:02:582 -> 0
+16:04:03:081 -> Serial Read Task is running
+16:04:05:911 -> Invalid response format: +ERR=12
+16:04:05:911 -> +ERR=12
+16:04:05:911 -> 
+16:04:06:383 -> 1
+16:04:06:383 -> ---------- Packet Begin ----------
+16:04:06:448 -> Checksum: 3229 Calculated: 3229
+16:04:06:448 -> Received--- Address: 7, Length: 47, Data: Altitude: -27.73m, 32.80°C, 101658.79kPaA�, RSSI: 0, SNR: -92
+16:04:06:448 -> ----------Packet End----------
+16:04:06:882 -> Serial Read Task is running
+16:04:08:182 -> 0
+16:04:08:683 -> Serial Read Task is running
+16:04:10:983 -> Invalid response format: +ERR=12
+16:04:10:983 -> 
+16:04:12:819 -> Invalid response format: +ERR=12
+16:04:12:819 -> 
+16:04:14:981 -> Timeout reached or no valid '+RCV' message.
+16:04:14:981 -> 0
+16:04:15:482 -> Serial Read Task is running
+16:04:17:781 -> Invalid response format: +ERR=12
+16:04:17:781 -> +ERR=12
+16:04:17:781 -> 
+16:04:21:782 -> Timeout reached or no valid '+RCV' message.
+16:04:21:782 -> 0
+16:04:22:282 -> Serial Read Task is running
+16:04:23:673 -> Invalid response format: +ERR=12
+16:04:23:673 -> +RCV=7
+16:04:28:614 -> Timeout reached or no valid '+RCV' message.
+16:04:28:614 -> 0
+16:04:29:082 -> Serial Read Task is running
+16:04:30:603 -> Invalid response format: +ERR=12
+16:04:30:603 -> +RCV=7
+16:04:35:381 -> Timeout reached or no valid '+RCV' message.
+16:04:35:381 -> 0
+16:04:35:882 -> Serial Read Task is running
+16:04:37:512 -> Invalid response format: +ERR=12
+16:04:37:512 -> +RCV=7
+16:04:42:181 -> Timeout reached or no valid '+RCV' message.
+16:04:42:181 -> 0
+16:04:42:682 -> Serial Read Task is running
+16:04:44:982 -> Invalid response format: +ERR=12
+16:04:44:982 -> 
+16:04:47:475 -> Invalid response format: +ERR=12
+16:04:47:475 -> 
+16:04:48:940 -> Invalid response format: +ERR=12
+16:04:48:940 -> 
+16:04:48:981 -> Timeout reached or no valid '+RCV' message.
+16:04:48:981 -> 0
+16:04:49:482 -> Serial Read Task is running
+16:04:51:422 -> Invalid response format: +ERR=12
+16:04:51:422 -> +RCV=7
+16:04:55:899 -> Invalid response format: +ERR=12
+16:04:55:899 -> 
+16:04:55:901 -> Timeout reached or no valid '+RCV' message.
+16:04:55:901 -> 0
+16:04:56:400 -> Serial Read Task is running
+16:04:58:382 -> Invalid response format: +ERR=12
+16:04:58:382 -> +RCV=7
+16:05:02:850 -> Invalid response format: +ERR=12
+16:05:02:850 -> 
+16:05:02:850 -> Timeout reached or no valid '+RCV' message.
+16:05:02:850 -> 0
+16:05:03:332 -> Serial Read Task is running
+16:05:05:632 -> Invalid response format: +ERR=12
+16:05:05:632 -> 
+16:05:08:296 -> Invalid response format: +ERR=12
+16:05:08:296 -> 
+16:05:09:762 -> Invalid response format: +ERR=12
+16:05:09:762 -> 
+16:05:09:762 -> Timeout reached or no valid '+RCV' message.
+16:05:09:762 -> 0
+16:05:10:263 -> Serial Read Task is running
+16:05:11:561 -> 0
+16:05:12:062 -> Serial Read Task is running
+16:05:13:361 -> 0
+16:05:13:861 -> Serial Read Task is running
+16:05:15:720 -> Invalid response format: +ERR=12
+16:05:15:720 -> +RCV=7
+16:05:20:161 -> Timeout reached or no valid '+RCV' message.
+16:05:20:161 -> 0
+16:05:20:661 -> Serial Read Task is running
+16:05:22:619 -> Invalid response format: +ERR=12
+16:05:22:619 -> +RCV=7
+16:05:26:961 -> Timeout reached or no valid '+RCV' message.
+16:05:26:961 -> 0
+16:05:27:461 -> Serial Read Task is running
+16:05:29:560 -> Invalid response format: +ERR=12
+16:05:29:560 -> +RCV=7
+16:05:29:562 -> Invalid response format: +
+                                          �
+16:05:33:760 -> Timeout reached or no valid '+RCV' message.
+16:05:33:760 -> 0
+16:05:34:261 -> Serial Read Task is running
+16:05:36:504 -> Invalid response format: +ERR=12
+16:05:36:504 -> +RCV=7
+16:05:39:503 -> Invalid response format: +ERR=12
+16:05:39:503 -> 
+16:05:40:967 -> Invalid response format: +ERR=12
+16:05:40:967 -> 
+16:05:40:969 -> Timeout reached or no valid '+RCV' message.
+16:05:40:969 -> 0
+16:05:41:468 -> Serial Read Task is running
+16:05:43:449 -> Invalid response format: +ERR=12
+16:05:43:449 -> +RCV=7
+16:05:46:459 -> Invalid response format: +ERR=12
+16:05:46:459 -> 
+16:05:47:920 -> Invalid response format: +ERR=12
+16:05:47:920 -> 
+16:05:47:920 -> Timeout reached or no valid '+RCV' message.
+16:05:47:920 -> 0
+16:05:48:420 -> Serial Read Task is running
+16:05:50:410 -> Invalid response format: +ERR=12
+16:05:50:410 -> +RCV=7
+16:05:53:394 -> Invalid response format: +ERR=12
+16:05:53:394 -> 
+16:05:54:860 -> Invalid response format: +ERR=12
+16:05:54:860 -> 
+16:05:54:863 -> Timeout reached or no valid '+RCV' message.
+16:05:54:863 -> 0
+16:05:55:359 -> Serial Read Task is running
+16:05:57:318 -> Invalid response format: +ERR=12
+16:05:57:318 -> +RCV=7
+16:06:00:281 -> Invalid response format: +ERR=12
+16:06:00:281 -> 
+16:06:01:746 -> Invalid response format: +ERR=12
+16:06:01:746 -> 
+16:06:01:747 -> Timeout reached or no valid '+RCV' message.
+16:06:01:747 -> 0
+16:06:02:246 -> Serial Read Task is running
+16:06:03:546 -> 0
+16:06:04:046 -> Serial Read Task is running
+16:06:05:348 -> 0
+16:06:05:847 -> Serial Read Task is running
+16:06:07:680 -> Invalid response format: +ERR=12
+16:06:07:680 -> +RCV=7
+16:06:12:145 -> Timeout reached or no valid '+RCV' message.
+16:06:12:145 -> 0
+16:06:12:646 -> Serial Read Task is running
+16:06:14:632 -> Invalid response format: +ERR=12
+16:06:14:632 -> +RCV=7
+16:06:18:945 -> Timeout reached or no valid '+RCV' message.
+16:06:18:945 -> 0
+16:06:19:446 -> Serial Read Task is running
+16:06:21:584 -> Invalid response format: +ERR=12
+16:06:21:587 -> +RCV=7
+16:06:25:745 -> Timeout reached or no valid '+RCV' message.
+16:06:25:745 -> 0
+16:06:26:246 -> Serial Read Task is running
+16:06:28:514 -> Invalid response format: +ERR=12
+16:06:28:514 -> +RCV=7
+16:06:32:546 -> Timeout reached or no valid '+RCV' message.
+16:06:32:546 -> 0
+16:06:33:046 -> Serial Read Task is running
+16:06:34:346 -> 0
+16:06:34:846 -> Serial Read Task is running
+16:06:36:146 -> 0
+16:06:36:646 -> Serial Read Task is running
+16:06:37:945 -> 0
+16:06:38:446 -> Serial Read Task is running
+16:06:39:746 -> 0
+16:06:40:246 -> Serial Read Task is running
+16:06:41:546 -> 0
+16:06:42:046 -> Serial Read Task is running
+16:06:43:346 -> 0
+16:06:43:846 -> Serial Read Task is running
+16:06:45:145 -> 0
+16:06:45:645 -> Serial Read Task is running
+16:06:46:945 -> 0
+16:06:47:446 -> Serial Read Task is running
+16:06:48:746 -> 0
+16:06:49:246 -> Serial Read Task is running
+16:06:50:546 -> 0
+16:06:51:046 -> Serial Read Task is running
+16:06:52:346 -> 0
+16:06:52:845 -> Serial Read Task is running
+16:06:54:145 -> 0
+16:06:54:645 -> Serial Read Task is running
+16:06:55:944 -> 0
+16:06:56:446 -> Serial Read Task is running
+16:06:57:745 -> 0
+16:06:58:245 -> Serial Read Task is running
+16:06:59:544 -> 0
+16:07:00:044 -> Serial Read Task is running
+16:07:02:344 -> Invalid response format: +ERR=12
+16:07:02:344 -> 
+16:07:06:344 -> Timeout reached or no valid '+RCV' message.
+16:07:06:346 -> 0
+16:07:06:845 -> Serial Read Task is running
+16:07:08:145 -> 0
+16:07:08:644 -> Serial Read Task is running
+16:07:09:944 -> 0
+16:07:10:444 -> Serial Read Task is running
+16:07:11:745 -> 0
+16:07:12:244 -> Serial Read Task is running
+16:07:13:544 -> 0
+16:07:14:045 -> Serial Read Task is running
+16:07:15:344 -> 0
+16:07:15:845 -> Serial Read Task is running
+16:07:17:145 -> 0
+16:07:17:645 -> Serial Read Task is running
+16:07:18:944 -> 0
+16:07:19:445 -> Serial Read Task is running
+16:07:20:744 -> 0
+16:07:21:245 -> Serial Read Task is running
+16:07:22:544 -> 0
+16:07:23:045 -> Serial Read Task is running
+16:07:24:344 -> 0
+16:07:24:845 -> Serial Read Task is running
+16:07:26:144 -> 0
+16:07:26:644 -> Serial Read Task is running
+16:07:27:944 -> 0
+16:07:28:444 -> Serial Read Task is running
+16:07:29:745 -> 0
+16:07:30:244 -> Serial Read Task is running
+16:07:31:549 -> 0
+16:07:32:044 -> Serial Read Task is running
+16:07:33:344 -> 0
+16:07:33:844 -> Serial Read Task is running
+16:07:35:144 -> 0
+16:07:35:644 -> Serial Read Task is running
+16:07:36:944 -> 0
+16:07:37:444 -> Serial Read Task is running
+16:07:38:745 -> 0
+16:07:39:245 -> Serial Read Task is running
+16:07:40:544 -> 0
+16:07:41:079 -> Serial Read Task is running
+16:07:42:345 -> 0
+16:07:42:844 -> Serial Read Task is running
+16:07:44:145 -> 0
+16:07:44:644 -> Serial Read Task is running
+16:07:45:945 -> 0
+16:07:46:445 -> Serial Read Task is running
+16:07:47:744 -> 0
+16:07:48:245 -> Serial Read Task is running
+16:07:49:545 -> 0
+16:07:50:044 -> Serial Read Task is running
+16:07:51:357 -> 0
+16:07:51:844 -> Serial Read Task is running
+16:07:53:144 -> 0
+16:07:53:644 -> Serial Read Task is running
+16:07:54:944 -> 0
+16:07:55:445 -> Serial Read Task is running
+16:07:56:744 -> 0
+16:07:57:245 -> Serial Read Task is running
+16:07:58:545 -> 0
+16:07:59:044 -> Serial Read Task is running
+16:08:00:345 -> 0
+16:08:00:844 -> Serial Read Task is running
+16:08:02:144 -> 0
+16:08:02:644 -> Serial Read Task is running
+16:08:03:944 -> 0
+16:08:04:444 -> Serial Read Task is running
+16:08:05:744 -> 0
+16:08:06:244 -> Serial Read Task is running
+16:08:07:544 -> 0
+16:08:08:044 -> Serial Read Task is running
+16:08:09:344 -> 0
+16:08:09:845 -> Serial Read Task is running
+16:08:11:147 -> 0
+16:08:11:644 -> Serial Read Task is running
+16:08:12:944 -> 0
+16:08:13:444 -> Serial Read Task is running
+16:08:14:744 -> 0
+16:08:15:244 -> Serial Read Task is running
+16:08:16:544 -> 0
+16:08:17:044 -> Serial Read Task is running
+16:08:18:344 -> 0
+16:08:18:844 -> Serial Read Task is running
+16:08:20:144 -> 0
+16:08:20:644 -> Serial Read Task is running
+16:08:21:944 -> 0
+16:08:22:444 -> Serial Read Task is running
+16:08:23:744 -> 0
+16:08:24:244 -> Serial Read Task is running
+16:08:25:544 -> 0
+16:08:26:044 -> Serial Read Task is running
+16:08:27:344 -> 0
+16:08:27:844 -> Serial Read Task is running
+16:08:29:144 -> 0
+16:08:29:643 -> Serial Read Task is running
+16:08:30:948 -> 0
+16:08:31:444 -> Serial Read Task is running
+16:08:32:744 -> 0
+16:08:33:244 -> Serial Read Task is running
+16:08:34:543 -> 0
+16:08:35:044 -> Serial Read Task is running
+16:08:36:343 -> 0
+16:08:36:871 -> Serial Read Task is running
+16:08:38:144 -> 0
+16:08:38:644 -> Serial Read Task is running
+16:08:39:944 -> 0
+16:08:40:445 -> Serial Read Task is running
+16:08:41:744 -> 0
+16:08:42:245 -> Serial Read Task is running
+16:08:43:545 -> 0
+16:08:44:044 -> Serial Read Task is running
+16:08:45:345 -> 0
+16:08:45:845 -> Serial Read Task is running
+16:08:47:145 -> 0
+16:08:47:646 -> Serial Read Task is running
+16:08:48:945 -> 0
+16:08:49:444 -> Serial Read Task is running
+16:08:50:743 -> 0
+16:08:51:243 -> Serial Read Task is running
+16:08:52:543 -> 0
+16:08:53:043 -> Serial Read Task is running
+16:08:54:343 -> 0
+16:08:54:845 -> Serial Read Task is running
+16:08:56:143 -> 0
+16:08:56:643 -> Serial Read Task is running
+16:08:57:943 -> 0
+16:08:58:443 -> Serial Read Task is running
+16:08:59:744 -> 0
+16:09:00:243 -> Serial Read Task is running
+16:09:01:544 -> 0
+16:09:02:043 -> Serial Read Task is running
+16:09:03:344 -> 0
+16:09:03:843 -> Serial Read Task is running
+16:09:05:143 -> 0
+16:09:05:644 -> Serial Read Task is running
+16:09:06:943 -> 0
+16:09:07:443 -> Serial Read Task is running
+16:09:08:744 -> 0
+16:09:09:244 -> Serial Read Task is running
+16:09:10:543 -> 0
+16:09:11:044 -> Serial Read Task is running
+16:09:12:343 -> 0
+16:09:12:844 -> Serial Read Task is running
+16:09:14:144 -> 0
+16:09:14:643 -> Serial Read Task is running
+16:09:15:944 -> 0
+16:09:16:443 -> Serial Read Task is running
+16:09:17:743 -> 0
+16:09:18:243 -> Serial Read Task is running
+16:09:19:544 -> 0
+16:09:20:043 -> Serial Read Task is running
+16:09:21:356 -> 0
+16:09:21:843 -> Serial Read Task is running
+16:09:23:143 -> 0
+16:09:23:644 -> Serial Read Task is running
+16:09:24:943 -> 0
+16:09:25:443 -> Serial Read Task is running
+16:09:26:743 -> 0
+16:09:27:242 -> Serial Read Task is running
+16:09:28:542 -> 0
+16:09:29:043 -> Serial Read Task is running
+16:09:30:343 -> 0
+16:09:30:843 -> Serial Read Task is running
+16:09:32:147 -> 0
+16:09:32:643 -> Serial Read Task is running
+16:09:33:943 -> 0
+16:09:34:443 -> Serial Read Task is running
+16:09:35:743 -> 0
+16:09:36:243 -> Serial Read Task is running
+16:09:37:542 -> 0
+16:09:38:042 -> Serial Read Task is running
+16:09:39:342 -> 0
+16:09:39:843 -> Serial Read Task is running
+16:09:41:143 -> 0
+16:09:41:642 -> Serial Read Task is running
+16:09:42:942 -> 0
+16:09:43:450 -> Serial Read Task is running
+16:09:44:742 -> 0
+16:09:45:242 -> Serial Read Task is running
+16:09:46:542 -> 0
+16:09:47:042 -> Serial Read Task is running
+16:09:48:342 -> 0
+16:09:48:842 -> Serial Read Task is running
+16:09:50:142 -> 0
+16:09:50:643 -> Serial Read Task is running
+16:09:51:942 -> 0
+16:09:52:444 -> Serial Read Task is running
+16:09:53:743 -> 0
+16:09:54:242 -> Serial Read Task is running
+16:09:55:542 -> 0
+16:09:56:042 -> Serial Read Task is running
+16:09:57:342 -> 0
+16:09:57:842 -> Serial Read Task is running
+16:09:59:142 -> 0
+16:09:59:642 -> Serial Read Task is running
+16:10:00:942 -> 0
+16:10:01:443 -> Serial Read Task is running
+16:10:02:742 -> 0
+16:10:03:242 -> Serial Read Task is running
+16:10:04:541 -> 0
+16:10:05:041 -> Serial Read Task is running
+16:10:06:342 -> 0
+16:10:06:842 -> Serial Read Task is running
+16:10:08:142 -> 0
+16:10:08:642 -> Serial Read Task is running
+16:10:09:944 -> 0
+16:10:10:441 -> Serial Read Task is running
+16:10:11:742 -> 0
+16:10:12:242 -> Serial Read Task is running
+16:10:13:542 -> 0
+16:10:14:042 -> Serial Read Task is running
+16:10:15:341 -> 0
+16:10:15:841 -> Serial Read Task is running
+16:10:17:142 -> 0
+16:10:17:642 -> Serial Read Task is running
+16:10:18:942 -> 0
+16:10:19:441 -> Serial Read Task is running
+16:10:20:741 -> 0
+16:10:21:242 -> Serial Read Task is running
+16:10:22:542 -> 0
+16:10:23:041 -> Serial Read Task is running
+16:10:24:341 -> 0
+16:10:24:842 -> Serial Read Task is running
+16:10:26:141 -> 0
+16:10:26:641 -> Serial Read Task is running
+16:10:27:942 -> 0
+16:10:28:441 -> Serial Read Task is running
+16:10:29:742 -> 0
+16:10:30:243 -> Serial Read Task is running
+16:10:31:542 -> 0
+16:10:32:043 -> Serial Read Task is running
+16:10:33:341 -> 0
+16:10:33:841 -> Serial Read Task is running
+16:10:35:142 -> 0
+16:10:35:642 -> Serial Read Task is running
+16:10:36:941 -> 0
+16:10:37:442 -> Serial Read Task is running
+16:10:38:741 -> 0
+16:10:39:241 -> Serial Read Task is running
+16:10:40:542 -> 0
+16:10:41:043 -> Serial Read Task is running
+16:10:42:342 -> 0
+16:10:42:841 -> Serial Read Task is running
+16:10:44:141 -> 0
+16:10:44:642 -> Serial Read Task is running
+16:10:45:942 -> 0
+16:10:46:442 -> Serial Read Task is running
+16:10:47:741 -> 0
+16:10:48:241 -> Serial Read Task is running
+16:10:49:541 -> 0
+16:10:50:041 -> Serial Read Task is running
+16:10:51:350 -> 0
+16:10:51:842 -> Serial Read Task is running
+16:10:53:141 -> 0
+16:10:53:641 -> Serial Read Task is running
+16:10:54:941 -> 0
+16:10:55:441 -> Serial Read Task is running
+16:10:56:741 -> 0
+16:10:57:241 -> Serial Read Task is running
+16:10:58:541 -> 0
+16:10:59:042 -> Serial Read Task is running
+16:11:00:341 -> 0
+16:11:00:841 -> Serial Read Task is running
+16:11:02:155 -> 0
+16:11:02:641 -> Serial Read Task is running
+16:11:03:959 -> 0
+16:11:04:441 -> Serial Read Task is running
+16:11:05:741 -> 0
+16:11:06:241 -> Serial Read Task is running
+16:11:07:542 -> 0
+16:11:08:040 -> Serial Read Task is running
+16:11:09:341 -> 0
+16:11:09:840 -> Serial Read Task is running
+16:11:11:141 -> 0
+16:11:11:641 -> Serial Read Task is running
+16:11:13:940 -> Invalid response format: +ERR=12
+16:11:13:940 -> 
+16:11:17:941 -> Timeout reached or no valid '+RCV' message.
+16:11:17:941 -> 0
+16:11:18:443 -> Serial Read Task is running
+16:11:19:741 -> 0
+16:11:20:241 -> Serial Read Task is running
+16:11:21:541 -> 0
+16:11:22:040 -> Serial Read Task is running
+16:11:23:341 -> 0
+16:11:23:842 -> Serial Read Task is running
+16:11:25:140 -> 0
+16:11:25:641 -> Serial Read Task is running
+16:11:26:941 -> 0
+16:11:27:440 -> Serial Read Task is running
+16:11:28:740 -> 0
+16:11:29:240 -> Serial Read Task is running
+16:11:30:540 -> 0
+16:11:31:040 -> Serial Read Task is running
+16:11:32:340 -> 0
+16:11:32:840 -> Serial Read Task is running
+16:11:34:140 -> 0
+16:11:34:641 -> Serial Read Task is running
+16:11:35:941 -> 0
+16:11:36:440 -> Serial Read Task is running
+16:11:37:740 -> 0
+16:11:38:241 -> Serial Read Task is running
+16:11:39:541 -> 0
+16:11:40:041 -> Serial Read Task is running
+16:11:41:341 -> 0
+16:11:41:841 -> Serial Read Task is running
+16:11:43:140 -> 0
+16:11:43:641 -> Serial Read Task is running
+16:11:44:951 -> 0
+16:11:45:441 -> Serial Read Task is running
+16:11:46:741 -> 0
+16:11:47:241 -> Serial Read Task is running
+16:11:48:543 -> 0
+16:11:49:078 -> Serial Read Task is running
+16:11:50:340 -> 0
+16:11:50:841 -> Serial Read Task is running
+16:11:52:140 -> 0
+16:11:52:640 -> Serial Read Task is running
+16:11:53:939 -> 0
+16:11:54:441 -> Serial Read Task is running
+16:11:55:740 -> 0
+16:11:56:240 -> Serial Read Task is running
+16:11:57:540 -> 0
+16:11:58:040 -> Serial Read Task is running
+16:11:59:339 -> 0
+16:11:59:840 -> Serial Read Task is running
+16:12:01:149 -> 0
+16:12:01:645 -> Serial Read Task is running
+16:12:02:940 -> 0
+16:12:03:440 -> Serial Read Task is running
+16:12:04:739 -> 0
+16:12:05:240 -> Serial Read Task is running
+16:12:06:539 -> 0
+16:12:07:040 -> Serial Read Task is running
+16:12:08:339 -> 0
+16:12:08:839 -> Serial Read Task is running
+16:12:10:168 -> 0
+16:12:10:639 -> Serial Read Task is running
+16:12:11:939 -> 0
+16:12:12:439 -> Serial Read Task is running
+16:12:13:740 -> 0
+16:12:14:239 -> Serial Read Task is running
+16:12:15:540 -> 0
+16:12:16:040 -> Serial Read Task is running
+16:12:17:340 -> 0
+16:12:17:839 -> Serial Read Task is running
+16:12:19:140 -> 1
+16:12:19:140 -> ---------- Packet Begin ----------
+16:12:19:140 -> Checksum: 3202 Calculated: 3202
+16:12:19:170 -> Received--- Address: 7, Length: 47, Data: Altitude: -30.56m, 28.32°C, 101692.69kPa�d, RSSI: 0, SNR: -100
+16:12:19:170 -> ----------Packet End----------
+16:12:19:654 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Timeout reached or no valid '+RCV' message.
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Timeout reached or no valid '+RCV' message.
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Timeout reached or no valid '+RCV' message.
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> +RCV=7
+16:16:45:671 -> Timeout reached or no valid '+RCV' message.
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 1
+16:16:45:671 -> ---------- Packet Begin ----------
+16:16:45:671 -> Checksum: 3378 Calculated: 3378
+16:16:45:671 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.50m, 28.06°C, 101679.91kPa��, RSSI: 0, SNR: -100
+16:16:45:671 -> ----------Packet End----------
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Timeout reached or no valid '+RCV' message.
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> 1
+16:16:45:671 -> ---------- Packet Begin ----------
+16:16:45:671 -> Checksum: 3218 Calculated: 3218
+16:16:45:671 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.24m, 27.85°C, 101677.50kPa��, RSSI: 0, SNR: -103
+16:16:45:671 -> ----------Packet End----------
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> Timeout reached or no valid '+RCV' message.
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> 0
+16:16:45:671 -> Serial Read Task is running
+16:16:45:671 -> Invalid response format: +ERR=12
+16:16:45:671 -> +ERR=12
+16:16:45:671 -> 
+16:16:45:671 -> 1
+16:16:45:671 -> ---------- Packet Begin ----------
+16:16:45:671 -> Checksum: 3359 Calculated: 3359
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.29m, 27.78°C, 101677.32kPa�, RSSI: 0, SNR: -102
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> +RCV=7
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3220 Calculated: 3220
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.32m, 27.59°C, 101676.85kPa�g, RSSI: 0, SNR: -101
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3279 Calculated: 3279
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.13m, 27.56°C, 101675.09kPa҂, RSSI: 0, SNR: -101
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3389 Calculated: 3389
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.16m, 27.49°C, 101676.41kPa��, RSSI: 0, SNR: -97
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> +RCV=7
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> +RCV=7
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3151 Calculated: 3151
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.22m, 27.45°C, 101676.65kPa�N, RSSI: 0, SNR: -100
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3208 Calculated: 3208
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.20m, 27.43°C, 101676.03kPa�i, RSSI: 0, SNR: -93
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> +RCV=7
+16:16:45:843 -> Timeout reached or no valid '+RCV' message.
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10546 Calculated: 10546
+16:16:45:843 -> Received--- Address: 7, Length: 164, Data: Accel: [X6.71,Y-0.37,Z4.85], LinAccel: [X-1.47,Y-0.04,Z-0.52], Gravity: [X8.19,Y-0.33,Z5.37], Quat: [W-0.35,X-0.32,Y-0.63,Z0.62], Gyro: [X4.25,Y-13.62,Z-4.7
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10518 Calculated: 10518
+16:16:45:843 -> Received--- Address: 7, Length: 164, Data: Accel: [X10.37,Y-2.79,Z3.69], LinAccel: [X1.81,Y-1.77,Z-0.98], Gravity: [X8.54,Y-0.97,Z4.70], Quat: [W-0.41,X-0.30,Y-0.63,Z0.59], Gyro: [X46.88,Y18.69,Z-3.6
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3251 Calculated: 3251
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.43m, 27.36°C, 101678.95kPaX�, RSSI: 0, SNR: -79
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10452 Calculated: 10452
+16:16:45:843 -> Received--- Address: 7, Length: 165, Data: Accel: [X7.56,Y-1.68,Z4.91], LinAccel: [X-0.66,Y0.25,Z-0.05], Gravity: [X8.22,Y-1.94,Z4.97], Quat: [W-0.45,X-0.22,Y-0.67,Z0.56], Gyro: [X-27.12,Y-28.88,Z18.
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3411 Calculated: 3411
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.45m, 27.35°C, 101679.92kPa��, RSSI: 0, SNR: -78
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> Invalid response format: +ERR=12
+16:16:45:843 -> 
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3209 Calculated: 3209
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.53m, 27.33°C, 101680.43kPa�, RSSI: 0, SNR: -84
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10259 Calculated: 10259
+16:16:45:843 -> Received--- Address: 7, Length: 162, Data: Accel: [X4.27,Y0.13,Z3.96], LinAccel: [X-3.14,Y0.90,Z-2.39], Gravity: [X7.41,Y-0.76,Z6.36], Quat: [W-0.33,X-0.25,Y-0.66,Z0.62], Gyro: [X39.56,Y41.06,Z-5.62]
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10076 Calculated: 10076
+16:16:45:843 -> Received--- Address: 7, Length: 160, Data: Accel: [X7.85,Y0.05,Z7.12], LinAccel: [X0.48,Y-0.05,Z0.64], Gravity: [X7.36,Y0.10,Z6.47], Quat: [W-0.32,X-0.26,Y-0.71,Z0.57], Gyro: [X17.06,Y17.25,Z38.69]c
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10314 Calculated: 10314
+16:16:45:843 -> Received--- Address: 7, Length: 162, Data: Accel: [X4.50,Y0.79,Z4.37], LinAccel: [X-3.28,Y0.13,Z-1.55], Gravity: [X7.78,Y0.65,Z5.92], Quat: [W-0.31,X-0.32,Y-0.67,Z0.59], Gyro: [X-21.88,Y28.12,Z-2.81]
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3170 Calculated: 3170
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.40m, 27.30°C, 101678.97kPa�', RSSI: 0, SNR: -70
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10304 Calculated: 10304
+16:16:45:843 -> Received--- Address: 7, Length: 164, Data: Accel: [X14.74,Y1.01,Z5.51], LinAccel: [X6.57,Y0.27,Z0.13], Gravity: [X8.16,Y0.73,Z5.37], Quat: [W-0.31,X-0.37,Y-0.61,Z0.63], Gyro: [X-37.69,Y-102.12,Z-12.6
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3087 Calculated: 3087
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.39m, 27.28°C, 101678.92kPaQ5, RSSI: 0, SNR: -49
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10170 Calculated: 10170
+16:16:45:843 -> Received--- Address: 7, Length: 164, Data: Accel: [X8.60,Y-0.55,Z5.23], LinAccel: [X0.48,Y-0.18,Z-0.24], Gravity: [X8.13,Y-0.35,Z5.45], Quat: [W-0.33,X-0.34,Y-0.58,Z0.66], Gyro: [X11.00,Y-20.00,Z-4.0
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3242 Calculated: 3242
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.38m, 27.27°C, 101678.52kPa�B, RSSI: 0, SNR: -54
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10365 Calculated: 10365
+16:16:45:843 -> Received--- Address: 7, Length: 164, Data: Accel: [X10.59,Y-2.39,Z4.09], LinAccel: [X1.71,Y-1.33,Z0.07], Gravity: [X8.88,Y-1.06,Z4.02], Quat: [W-0.38,X-0.39,Y-0.51,Z0.67], Gyro: [X23.31,Y-28.19,Z20.0
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3141 Calculated: 3141
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.41m, 27.26°C, 101679.24kPayP, RSSI: 0, SNR: -49
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 0
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3049 Calculated: 3049
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.48m, 27.24°C, 101681.46kPa^, RSSI: 0, SNR: -49
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10386 Calculated: 10386
+16:16:45:843 -> Received--- Address: 7, Length: 163, Data: Accel: [X8.14,Y0.29,Z3.29], LinAccel: [X-0.75,Y0.90,Z-1.30], Gravity: [X8.60,Y-0.66,Z4.66], Quat: [W-0.43,X-0.28,Y-0.68,Z0.53], Gyro: [X-10.31,Y47.19,Z-5.31
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 3213 Calculated: 3213
+16:16:45:843 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.67m, 27.23°C, 101681.75kPa�k, RSSI: 0, SNR: -54
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:45:843 -> 1
+16:16:45:843 -> ---------- Packet Begin ----------
+16:16:45:843 -> Checksum: 10254 Calculated: 10254
+16:16:45:843 -> Received--- Address: 7, Length: 162, Data: Accel: [X7.34,Y-0.80,Z6.41], LinAccel: [X-0.62,Y0.67,Z0.89], Gravity: [X7.94,Y-1.48,Z5.55], Quat: [W-0.44,X-0.15,Y-0.77,Z0.43], Gyro: [X11.00,Y22.38,Z10.56]
+16:16:45:843 -> ----------Packet End----------
+16:16:45:843 -> Serial Read Task is running
+16:16:46:065 -> 1
+16:16:46:065 -> ---------- Packet Begin ----------
+16:16:46:070 -> Checksum: 3118 Calculated: 3118
+16:16:46:070 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.65m, 27.22°C, 101680.87kPa6y, RSSI: 0, SNR: -56
+16:16:46:070 -> ----------Packet End----------
+16:16:46:551 -> Serial Read Task is running
+16:16:47:854 -> 1
+16:16:47:854 -> ---------- Packet Begin ----------
+16:16:47:855 -> Checksum: 10560 Calculated: 10560
+16:16:47:855 -> Received--- Address: 7, Length: 165, Data: Accel: [X8.02,Y-1.79,Z5.18], LinAccel: [X0.33,Y-0.13,Z-0.55], Gravity: [X7.81,Y-1.63,Z5.68], Quat: [W-0.44,X-0.14,Y-0.77,Z0.44], Gyro: [X-23.88,Y-39.56,Z-7.
+16:16:47:855 -> ----------Packet End----------
+16:16:48:354 -> Serial Read Task is running
+16:16:49:655 -> 1
+16:16:49:656 -> ---------- Packet Begin ----------
+16:16:49:656 -> Checksum: 3282 Calculated: 3282
+16:16:49:656 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.56m, 27.20°C, 101679.66kPaʆ, RSSI: 0, SNR: -58
+16:16:49:656 -> ----------Packet End----------
+16:16:50:155 -> Serial Read Task is running
+16:16:51:472 -> 1
+16:16:51:472 -> ---------- Packet Begin ----------
+16:16:51:476 -> Checksum: 10286 Calculated: 10286
+16:16:51:476 -> Received--- Address: 7, Length: 161, Data: Accel: [X11.65,Y9.06,Z1.68], LinAccel: [X5.21,Y2.15,Z-0.92], Gravity: [X6.44,Y6.91,Z2.60], Quat: [W-0.37,X-0.48,Y-0.79,Z0.07], Gyro: [X0.75,Y30.62,Z-35.81]�
+16:16:51:476 -> ----------Packet End----------
+16:16:51:960 -> Serial Read Task is running
+16:16:53:260 -> 1
+16:16:53:260 -> ---------- Packet Begin ----------
+16:16:53:260 -> Checksum: 3176 Calculated: 3176
+16:16:53:260 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.43m, 27.19°C, 101680.13kPa^�, RSSI: 0, SNR: -42
+16:16:53:267 -> ----------Packet End----------
+16:16:53:760 -> Serial Read Task is running
+16:16:55:063 -> 1
+16:16:55:064 -> ---------- Packet Begin ----------
+16:16:55:064 -> Checksum: 10352 Calculated: 10352
+16:16:55:064 -> Received--- Address: 7, Length: 165, Data: Accel: [X9.22,Y-1.35,Z0.95], LinAccel: [X-0.43,Y-0.41,Z-0.48], Gravity: [X9.65,Y-0.93,Z1.43], Quat: [W-0.59,X-0.29,Y-0.64,Z0.40], Gyro: [X50.19,Y-13.50,Z16.
+16:16:55:064 -> ----------Packet End----------
+16:16:55:564 -> Serial Read Task is running
+16:16:56:866 -> 1
+16:16:56:866 -> ---------- Packet Begin ----------
+16:16:56:866 -> Checksum: 3347 Calculated: 3347
+16:16:56:867 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.54m, 27.17°C, 101681.66kPa�, RSSI: 0, SNR: -44
+16:16:56:867 -> ----------Packet End----------
+16:16:57:370 -> Serial Read Task is running
+16:16:58:668 -> 1
+16:16:58:668 -> ---------- Packet Begin ----------
+16:16:58:668 -> Checksum: 10340 Calculated: 10340
+16:16:58:669 -> Received--- Address: 7, Length: 162, Data: Accel: [X9.37,Y-1.37,Z2.11], LinAccel: [X-0.12,Y-0.19,Z-0.01], Gravity: [X9.50,Y-1.18,Z2.12], Quat: [W-0.50,X-0.37,Y-0.56,Z0.54], Gyro: [X1.62,Y5.25,Z-1.81]
+16:16:58:669 -> ----------Packet End----------
+16:16:59:169 -> Serial Read Task is running
+16:17:00:470 -> 1
+16:17:00:473 -> ---------- Packet Begin ----------
+16:17:00:473 -> Checksum: 3242 Calculated: 3242
+16:17:00:473 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.72m, 27.15°C, 101682.20kPa��, RSSI: 0, SNR: -48
+16:17:00:473 -> ----------Packet End----------
+16:17:00:970 -> Serial Read Task is running
+16:17:02:273 -> 1
+16:17:02:273 -> ---------- Packet Begin ----------
+16:17:02:275 -> Checksum: 10282 Calculated: 10282
+16:17:02:275 -> Received--- Address: 7, Length: 162, Data: Accel: [X-0.81,Y4.50,Z9.32], LinAccel: [X0.13,Y-0.65,Z1.03], Gravity: [X-0.95,Y5.15,Z8.28], Quat: [W0.18,X-0.21,Y-0.83,Z0.49], Gyro: [X-19.50,Y34.50,Z13.81]
+16:17:02:275 -> ----------Packet End----------
+16:17:02:774 -> Serial Read Task is running
+16:17:04:075 -> 1
+16:17:04:075 -> ---------- Packet Begin ----------
+16:17:04:076 -> Checksum: 3162 Calculated: 3162
+16:17:04:076 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.69m, 27.14°C, 101681.84kPa, RSSI: 0, SNR: -45
+16:17:04:076 -> ----------Packet End----------
+16:17:04:576 -> Serial Read Task is running
+16:17:05:878 -> 1
+16:17:05:878 -> ---------- Packet Begin ----------
+16:17:05:879 -> Checksum: 10439 Calculated: 10439
+16:17:05:879 -> Received--- Address: 7, Length: 162, Data: Accel: [X-3.54,Y3.97,Z8.27], LinAccel: [X-0.03,Y-0.04,Z0.04], Gravity: [X-3.51,Y4.01,Z8.22], Quat: [W0.27,X-0.09,Y-0.82,Z0.49], Gyro: [X8.69,Y-16.50,Z-8.12]
+16:17:05:879 -> ----------Packet End----------
+16:17:06:379 -> Serial Read Task is running
+16:17:07:680 -> 1
+16:17:07:681 -> ---------- Packet Begin ----------
+16:17:07:681 -> Checksum: 3308 Calculated: 3308
+16:17:07:681 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.60m, 27.12°C, 101681.62kPa��, RSSI: 0, SNR: -47
+16:17:07:681 -> ----------Packet End----------
+16:17:08:180 -> Serial Read Task is running
+16:17:09:483 -> 1
+16:17:09:483 -> ---------- Packet Begin ----------
+16:17:09:484 -> Checksum: 10305 Calculated: 10305
+16:17:09:484 -> Received--- Address: 7, Length: 161, Data: Accel: [X1.62,Y5.12,Z7.87], LinAccel: [X-0.52,Y-0.49,Z0.12], Gravity: [X2.17,Y5.60,Z7.74], Quat: [W0.07,X-0.32,Y-0.79,Z0.52], Gyro: [X-9.25,Y-14.19,Z20.50]j
+16:17:09:484 -> ----------Packet End----------
+16:17:09:984 -> Serial Read Task is running
+16:17:11:285 -> 1
+16:17:11:285 -> ---------- Packet Begin ----------
+16:17:11:304 -> Checksum: 3209 Calculated: 3209
+16:17:11:304 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.60m, 27.11°C, 101681.22kPaC�, RSSI: 0, SNR: -67
+16:17:11:304 -> ----------Packet End----------
+16:17:11:785 -> Serial Read Task is running
+16:17:13:088 -> 1
+16:17:13:088 -> ---------- Packet Begin ----------
+16:17:13:090 -> Checksum: 10647 Calculated: 10647
+16:17:13:090 -> Received--- Address: 7, Length: 165, Data: Accel: [X-1.20,Y-6.55,Z8.20], LinAccel: [X-0.40,Y-0.57,Z0.46], Gravity: [X-0.80,Y-5.97,Z7.73], Quat: [W-0.13,X0.30,Y-0.80,Z0.50], Gyro: [X25.81,Y-26.19,Z47.
+16:17:13:090 -> ----------Packet End----------
+16:17:13:589 -> Serial Read Task is running
+16:17:14:890 -> 1
+16:17:14:892 -> ---------- Packet Begin ----------
+16:17:14:892 -> Checksum: 3376 Calculated: 3376
+16:17:14:892 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.61m, 27.10°C, 101680.29kPa��, RSSI: 0, SNR: -65
+16:17:14:892 -> ----------Packet End----------
+16:17:15:391 -> Serial Read Task is running
+16:17:16:693 -> 1
+16:17:16:694 -> ---------- Packet Begin ----------
+16:17:16:694 -> Checksum: 10391 Calculated: 10391
+16:17:16:694 -> Received--- Address: 7, Length: 161, Data: Accel: [X4.39,Y4.16,Z7.35], LinAccel: [X0.53,Y-0.39,Z-0.41], Gravity: [X3.86,Y4.55,Z7.77], Quat: [W0.03,X-0.32,Y-0.66,Z0.67], Gyro: [X29.00,Y-28.12,Z-2.69]�
+16:17:16:694 -> ----------Packet End----------
+16:17:17:194 -> Serial Read Task is running
+16:17:18:495 -> 1
+16:17:18:509 -> ---------- Packet Begin ----------
+16:17:18:509 -> Checksum: 3297 Calculated: 3297
+16:17:18:509 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.58m, 27.09°C, 101681.38kPak�, RSSI: 0, SNR: -66
+16:17:18:509 -> ----------Packet End----------
+16:17:19:009 -> Serial Read Task is running
+16:17:20:298 -> 1
+16:17:20:300 -> ---------- Packet Begin ----------
+16:17:20:300 -> Checksum: 10216 Calculated: 10216
+16:17:20:300 -> Received--- Address: 7, Length: 160, Data: Accel: [X7.50,Y3.16,Z5.79], LinAccel: [X0.08,Y0.02,Z0.11], Gravity: [X7.40,Y3.10,Z5.62], Quat: [W-0.18,X-0.43,Y-0.63,Z0.62], Gyro: [X-0.69,Y-14.25,Z12.19]'�
+16:17:20:300 -> ----------Packet End----------
+16:17:20:799 -> Serial Read Task is running
+16:17:22:100 -> 1
+16:17:22:101 -> ---------- Packet Begin ----------
+16:17:22:101 -> Checksum: 3181 Calculated: 3181
+16:17:22:101 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.58m, 27.08°C, 101681.45kPa�, RSSI: 0, SNR: -77
+16:17:22:101 -> ----------Packet End----------
+16:17:22:600 -> Serial Read Task is running
+16:17:23:903 -> 1
+16:17:23:903 -> ---------- Packet Begin ----------
+16:17:23:904 -> Checksum: 10084 Calculated: 10084
+16:17:23:904 -> Received--- Address: 7, Length: 159, Data: Accel: [X7.40,Y3.17,Z-6.48], LinAccel: [X0.74,Y0.14,Z0.18], Gravity: [X6.68,Y2.79,Z-6.61], Quat: [W-0.21,X-0.89,Y-0.24,Z0.33], Gyro: [X7.19,Y-1.69,Z2.25]�
+6:17:23:904 -> ----------Packet End----------
+16:17:24:404 -> Serial Read Task is running
+16:17:25:705 -> 1
+16:17:25:705 -> ---------- Packet Begin ----------
+16:17:25:705 -> Checksum: 3064 Calculated: 3064
+16:17:25:707 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.62m, 27.06°C, 101680.97kPajSSI: 0, SNR: -62
+16:17:25:707 -> ----------Packet End----------
+16:17:26:205 -> Serial Read Task is running
+16:17:27:508 -> 1
+16:17:27:509 -> ---------- Packet Begin ----------
+16:17:27:509 -> Checksum: 10197 Calculated: 10197
+16:17:27:509 -> Received--- Address: 7, Length: 164, Data: Accel: [X5.69,Y6.00,Z-2.74], LinAccel: [X-0.83,Y0.14,Z1.25], Gravity: [X6.59,Y5.91,Z-4.20], Quat: [W-0.55,X-0.64,Y-0.53,Z0.07], Gyro: [X-55.38,Y-12.44,Z34.2
+16:17:27:509 -> ----------Packet End----------
+16:17:28:009 -> Serial Read Task is running
+16:17:29:310 -> 1
+16:17:29:310 -> ---------- Packet Begin ----------
+16:17:29:310 -> Checksum: 3217 Calculated: 3217
+16:17:29:310 -> Received--- Address: 7, Length: 47, Data: Altitude: -29.57m, 27.04°C, 101680.52kPa�SSI: 0, SNR: -70
+16:17:29:310 -> ----------Packet End----------
+16:17:29:810 -> Serial Read Task is running
+---- Closed the serial port COM5 ----

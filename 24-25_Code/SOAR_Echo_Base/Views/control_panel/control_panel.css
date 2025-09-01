@@ -1,0 +1,248 @@
+body, html{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+.wrapper{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+#main_holder {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	flex-grow: 1;
+	overflow: hidden;
+	/* justify-content: space-between; */
+}
+#left_column {
+	/* Internal --------------------- */
+	display: flex;
+	flex-direction: column;
+	/* justify-content: center; */
+	flex-wrap: wrap;
+	background: white;
+
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	/* flex-grow: 10; */
+	width: 30%;
+	height: 100%;
+	/* height: 100%; */
+}
+#middle_column {
+	/* Internal --------------------- */
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	border: 1px solid white;
+	padding: 0.5em;
+	padding-top: 0em;
+	/* External --------------------- */
+	height: 100%;
+	background: white;
+	flex-grow: 1;
+}
+#rocket_status_diagram{
+	margin-right: 1rem;
+}
+
+#right_column {
+	/* Internal --------------------- */
+	background-color: #71797e;
+	height: 100%;
+	overflow-y: auto;
+	/* External --------------------- */
+}
+#live_console_holder {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	padding-top: 1em;
+	width: 100%;
+	padding-bottom: 1em;
+	background: white;
+}
+.chart_holder {
+	display: flex;
+	flex-direction: column;
+	flex-grow:1;
+	overflow-y: auto;
+	height: 100%;
+}
+#rocket_status{
+	flex-grow: 0;
+}
+.chart_formatter {
+	/* width: fit-content; */
+	height: auto;
+	border: 1px solid #cfc493;
+	background-color: #71797e;
+	color: white;
+}
+.chart_title {
+	/* color: white; */
+	margin: 0px;
+}
+.tab_btn{
+	text-decoration: none;
+	color: white;
+	background-color: black;
+	border-radius: 1rem;
+	padding: 1rem;
+	margin-right: 1rem;
+}
+.tab_btn:hover{
+	background-color: white;
+	color:black;
+}
+h1 {
+	margin: 0px;
+	flex-grow: 8;
+}
+h3 {
+	margin-top: 0px;
+}
+.com-port-style {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+}
+#settings_gear_div {
+	z-index: 1;
+	position: fixed;
+	right: 1%;
+	top: 8%;
+	background-color: white;
+	padding: 5px;
+}
+#settings_menu_text {
+	margin: 0px;
+	color: rgb(0, 103, 71);
+	padding-right: 3px;
+}
+#settings_menu_div {
+	display: flex;
+	flex-direction: row;
+}
+.ui-switch {
+	display: block;
+	width: fit-content;
+}
+#div-telemetry-style {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+#div-telemetry-rocket-location {
+	margin-right: 1em;
+	margin-left: 1em;
+}
+#div-telemetry-payload-location {
+	margin-right: 2em;
+	margin-left: 1em;
+}
+.live_console_error_messages {
+	margin: 0px;
+	margin-left: 1em;
+	padding: 1em;
+	display: none;
+}
+.live_console_header3 {
+	margin: 0px;
+}
+#live_console {
+	border: 1px solid black;
+	flex-grow: 1;
+	overflow: scroll;
+	white-space: pre-line;
+	display: flex;
+	flex-direction: column-reverse;
+}
+#live_console_send_msg_field{
+	flex-grow: 1;
+}
+
+#live_console_send_msg_btn{
+	justify-content: center;
+}
+/* ----------------------------------------------------------------------------------------------------------------------------------------*/
+/* Control Panel Command Buttons from https://uiverse.io/cssbuttons-io/fat-tiger-100 */
+.ctrl_panel_btn {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	width: fit-content;
+	font-family: inherit;
+	appearance: button;
+	font-size: 10px;
+	background-color: #005432;
+	border: solid transparent;
+	border-radius: 16px;
+	border-width: 0 0 4px;
+	box-sizing: border-box;
+	color: #ffffff;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 15px;
+	font-weight: 700;
+	letter-spacing: 0.8px;
+	line-height: 20px;
+	margin-left: 0.2em;
+	margin-right: 0.2em;
+	outline: none;
+	overflow: visible;
+	padding: 13px 19px;
+	text-align: center;
+	text-transform: uppercase;
+	touch-action: manipulation;
+	transform: translateZ(0);
+	transition: filter 0.2s;
+	user-select: none;
+	-webkit-user-select: none;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+/* on disabled make them all dark green*/
+.ctrl_panel_btn:disabled {
+	background-color: #003333;
+}
+
+.ctrl_panel_btn:after {
+	background-clip: padding-box;
+	background-color: #006747;
+	border: solid transparent;
+	border-radius: 16px;
+	border-width: 0 0 4px;
+	bottom: -4px;
+	content: "";
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: -1;
+}
+
+.ctrl_panel_btn:main,
+.ctrl_panel_btn:focus {
+	user-select: auto;
+}
+
+.ctrl_panel_btn:hover:not(:disabled) {
+	filter: brightness(1.1);
+}
+
+.ctrl_panel_btn:disabled {
+	cursor: auto;
+}
+
+.ctrl_panel_btn:active:after {
+	border-width: 0 0 0px;
+}
+
+.ctrl_panel_btn:active {
+	padding-bottom: 10px;
+}
+

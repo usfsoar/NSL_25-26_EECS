@@ -1,0 +1,47 @@
+23:11:13.569 -> Mutex returned
+23:11:20.587 -> Processing receive task
+23:11:20.587 -> Mutex exists receive
+23:11:20.587 -> Mutex taken, receiving
+23:11:20.587 -> Mutex returned
+23:11:27.561 -> Processing receive task
+23:11:27.561 -> Mutex exists receive
+23:11:27.561 -> Mutex taken, receiving
+23:11:27.561 -> Mutex returned
+23:11:37.795 -> 
+23:11:37.795 -> ---LORA_Receive Test of the F24 V1 AV Bay Pieces---
+23:11:37.795 -> Sending: AT+ADDRESS=7
+23:11:37.795 -> Received: 
+23:11:38.605 -> Sending: AT+ADDRESS=7
+23:11:38.605 -> Received: 
+23:11:39.616 -> Sending: AT+ADDRESS=7
+23:11:39.636 -> Received: 
+23:11:40.589 -> Sending: AT+BAND=915000000
+23:11:40.589 -> Received: 
+23:11:41.622 -> Sending: AT+BAND=915000000
+23:11:41.622 -> Received: 
+23:11:42.625 -> Sending: AT+BAND=915000000
+23:11:42.625 -> Received: 
+23:11:43.606 -> Sending: AT+NETWORKID=5
+23:11:43.606 -> Received: 
+23:11:44.589 -> Sending: AT+NETWORKID=5
+23:11:44.589 -> Received: 
+23:11:45.618 -> Sending: AT+NETWORKID=5
+23:11:45.618 -> Received: 
+23:11:46.622 -> Sending: AT+SEND=6,8,WU ' 
+23:11:46.622 -> Received: 
+23:11:47.633 -> Sending: AT+SEND=6,8,WU ' 
+23:11:47.633 -> Received: 
+23:11:48.618 -> Sending: AT+SEND=6,8,WU ' 
+23:11:48.618 -> Received: 
+23:11:49.618 -> Processing receive task
+23:11:49.618 -> Mutex exists receive
+23:11:49.618 -> Mutex taken, receiving
+23:11:49.618 -> Mutex returned
+23:11:56.612 -> Processing receive task
+23:12:03.611 -> Mutex exists receive
+23:12:03.611 -> Mutex taken, receiving
+23:12:03.611 -> Mutex returned
+23:12:03.611 -> Processing receive task
+23:12:03.611 -> Mutex exists receive
+23:12:03.611 -> Mutex taken, receiving
+23:12:03.611 -> Mutex returned

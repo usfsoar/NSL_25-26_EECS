@@ -1,0 +1,404 @@
+@font-face {
+	font-family: "Orbitron";
+	src: url("./Orbitron/Orbitron-VariableFont_wght.ttf");
+}
+
+body {
+	font-family: "Orbitron", sans-serif;
+	margin: 0px;
+	color: black;
+	background-color: #cad2d8;
+}
+header {
+	/* Green to white */
+	background: linear-gradient(135deg, rgba(0, 103, 71, 1) 0%, rgba(255, 255, 255, 1) 81%);
+	/* Green to gold */
+	/* background: linear-gradient(135deg, rgba(0,103,71,1) 0%, rgba(207,196,147,1) 81%); */
+	/* Green to black */
+	/* background: linear-gradient(to right, #003300, black); */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 1em;
+	color: white;
+	align-items: center;
+}
+
+/* Code to change SVG header color gradients */
+/* ----------------------------------------------------------------------------------------------------------------------------------------*/
+.header_svg_color_black {
+	filter: invert(0%) sepia(1%) saturate(3%) hue-rotate(239deg) brightness(99%) contrast(100%);
+	/* Note: The percentages should be used if a responsive resizing icon is desired 
+	width: 30%;
+	height: 30%;*/
+	width: 60px;
+	height: 60px;
+	display: block;
+	cursor: pointer;
+}
+.header_svg_color_white {
+	filter: invert(100%) sepia(0%) saturate(7438%) hue-rotate(297deg) brightness(106%) contrast(88%);
+	/* Note: The percentages should be used if a responsive resizing icon is desired 
+	width: 30%;
+	height: 30%;*/
+	width: 60px;
+	height: 60px;
+	display: block;
+	cursor: pointer;
+}
+.header_svg_color_green {
+	filter: invert(29%) sepia(46%) saturate(967%) hue-rotate(115deg) brightness(93%) contrast(103%);
+	/* Note: The percentages should be used if a responsive resizing icon is desired 
+	width: 30%;
+	height: 30%;*/
+	width: 60px;
+	height: 60px;
+	display: block;
+	cursor: pointer;
+}
+#settings_gear:hover + #settings_gear_div {
+	display: block;
+}
+#settings_gear_div:hover {
+	display: block;
+}
+#settings_gear_div {
+	width: min-content;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	height: min-content;
+	display: none;
+	border-radius: 5px;
+	border: 1px solid rgb(0, 103, 71);
+}
+
+.live_console_error_messages_light {
+	background-color: rgb(253, 242, 245);
+	color: red;
+	/* background-color: rgb(75, 47, 54);
+	color: rgb(255, 179, 210); */
+}
+.live_console_error_messages_dark {
+	/* background-color: rgb(253, 242, 245);
+	color: red; */
+	background-color: rgb(75, 47, 54);
+	color: rgb(255, 179, 210);
+}
+.live_console_messages_light {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 5px;
+	border-top: 0.5px solid black;
+	color: black;
+}
+
+.live_console_messages_dark {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 5px;
+	border-top: 0.5px solid white;
+	color: white;
+}
+/* Input Range Slider Customization */
+/* https://blog.logrocket.com/creating-custom-css-range-slider-javascript-upgrades/ */
+/* input[type="range"] {
+	removing default appearance
+	-webkit-appearance: none;
+	appearance: none;
+	creating a custom design
+	width: 100%;
+	cursor: pointer;
+	outline: none;
+	-moz-orient: vertical;
+}
+
+Track: webkit browsers
+input[type="range"]::-webkit-slider-runnable-track {
+	height: 15px;
+	background: #e00000;
+	border-radius: 16px;
+}
+Track: Mozilla Firefox
+input[type="range"]::-moz-range-track {
+	height: 15px;
+	background: #e00000;
+	border-radius: 16px;
+	-moz-orient: vertical;
+}
+
+Thumb: webkit
+input[type="range"]::-webkit-slider-thumb {
+	removing default appearance
+	-webkit-appearance: none;
+	appearance: none;
+	creating a custom design
+	height: 15px;
+	width: 15px;
+	background-color: #fff;
+	border-radius: 50%;
+	border: 2px solid #f50;
+}
+Thumb: Firefox
+input[type="range"]::-moz-range-thumb {
+	height: 15px;
+	width: 15px;
+	background-color: #fff;
+	border-radius: 50%;
+	border: 1px solid #f50;
+	-moz-orient: vertical;
+} */
+
+/* Code that is borrowed from elements on https://uiverse.io */
+/* Code for theme changing buttons from https://uiverse.io/nikk7007/chatty-bulldog-58 */
+/* ----------------------------------------------------------------------------------------------------------------------------------------*/
+/*Green to White Button*/
+#header_theme_button_white {
+	padding: 0.8em 1.8em;
+	border: 2px solid #006747;
+	position: relative;
+	overflow: hidden;
+	background-color: transparent;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 16px;
+	transition: 0.3s;
+	z-index: 1;
+	font-family: inherit;
+	color: #006747;
+	cursor: pointer;
+}
+#header_theme_button_white::before {
+	content: "";
+	width: 0;
+	height: 300%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(45deg);
+	background: #006747;
+	transition: 0.5s ease;
+	display: block;
+	z-index: -1;
+}
+#header_theme_button_white:hover::before {
+	width: 105%;
+}
+#header_theme_button_white:hover {
+	color: #ffffff;
+}
+
+/*Green to Gold Button*/
+#header_theme_button_gold {
+	padding: 0.8em 1.8em;
+	border: 2px solid #cfc493;
+	position: relative;
+	overflow: hidden;
+	background-color: transparent;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 16px;
+	transition: 0.3s;
+	z-index: 1;
+	font-family: inherit;
+	color: #006747;
+	cursor: pointer;
+}
+#header_theme_button_gold::before {
+	content: "";
+	width: 0;
+	height: 300%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(45deg);
+	background: #cfc493;
+	transition: 0.5s ease;
+	display: block;
+	z-index: -1;
+}
+#header_theme_button_gold:hover::before {
+	width: 105%;
+}
+#header_theme_button_gold:hover {
+	color: #006747;
+}
+
+/*Green to Black Button*/
+#header_theme_button_black {
+	padding: 0.8em 1.8em;
+	border: 2px solid #000000;
+	position: relative;
+	overflow: hidden;
+	background-color: transparent;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 16px;
+	transition: 0.3s;
+	z-index: 1;
+	font-family: inherit;
+	color: #000000;
+	cursor: pointer;
+}
+#header_theme_button_black::before {
+	content: "";
+	width: 0;
+	height: 300%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(45deg);
+	background: #000000;
+	transition: 0.5s ease;
+	display: block;
+	z-index: -1;
+}
+#header_theme_button_black:hover::before {
+	width: 105%;
+}
+#header_theme_button_black:hover {
+	color: #ffffff;
+}
+/* ----------------------------------------------------------------------------------------------------------------------------------------*/
+
+/* ----------------------------------------------------------------------------------------------------------------------------------------*/
+/* Toggle Switch for theme changing from https://uiverse.io/Galahhad/heavy-dog-14 */
+/* switch settings */
+.ui-switch {
+	/* switch */
+	--switch-bg: rgb(135, 150, 165);
+	--switch-width: 48px;
+	--switch-height: 20px;
+	/* circle */
+	--circle-diameter: 32px;
+	--circle-bg: rgb(0, 56, 146);
+	--circle-inset: calc((var(--circle-diameter) - var(--switch-height)) / 2);
+}
+.ui-switch input {
+	display: none;
+}
+.slider {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: var(--switch-width);
+	height: var(--switch-height);
+	background: var(--switch-bg);
+	border-radius: 999px;
+	position: relative;
+	cursor: pointer;
+}
+.slider .circle {
+	top: calc(var(--circle-inset) * -1);
+	left: 0;
+	width: var(--circle-diameter);
+	height: var(--circle-diameter);
+	position: absolute;
+	background: var(--circle-bg);
+	border-radius: inherit;
+	background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTkuMzA1IDEuNjY3VjMuNzVoMS4zODlWMS42NjdoLTEuMzl6bS00LjcwNyAxLjk1bC0uOTgyLjk4Mkw1LjA5IDYuMDcybC45ODItLjk4Mi0xLjQ3My0xLjQ3M3ptMTAuODAyIDBMMTMuOTI3IDUuMDlsLjk4Mi45ODIgMS40NzMtMS40NzMtLjk4Mi0uOTgyek0xMCA1LjEzOWE0Ljg3MiA0Ljg3MiAwIDAwLTQuODYyIDQuODZBNC44NzIgNC44NzIgMCAwMDEwIDE0Ljg2MiA0Ljg3MiA0Ljg3MiAwIDAwMTQuODYgMTAgNC44NzIgNC44NzIgMCAwMDEwIDUuMTM5em0wIDEuMzg5QTMuNDYyIDMuNDYyIDAgMDExMy40NzEgMTBhMy40NjIgMy40NjIgMCAwMS0zLjQ3MyAzLjQ3MkEzLjQ2MiAzLjQ2MiAwIDAxNi41MjcgMTAgMy40NjIgMy40NjIgMCAwMTEwIDYuNTI4ek0xLjY2NSA5LjMwNXYxLjM5aDIuMDgzdi0xLjM5SDEuNjY2em0xNC41ODMgMHYxLjM5aDIuMDg0di0xLjM5aC0yLjA4NHpNNS4wOSAxMy45MjhMMy42MTYgMTUuNGwuOTgyLjk4MiAxLjQ3My0xLjQ3My0uOTgyLS45ODJ6bTkuODIgMGwtLjk4Mi45ODIgMS40NzMgMS40NzMuOTgyLS45ODItMS40NzMtMS40NzN6TTkuMzA1IDE2LjI1djIuMDgzaDEuMzg5VjE2LjI1aC0xLjM5eiIgLz4KPC9zdmc+");
+	background-repeat: no-repeat;
+	background-position: center center;
+	-webkit-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	-o-transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+		-webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+.slider .circle::before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.75);
+	border-radius: inherit;
+	-webkit-transition: all 500ms;
+	-o-transition: all 500ms;
+	transition: all 500ms;
+	opacity: 0;
+}
+/* actions */
+.ui-switch input:checked + .slider .circle {
+	left: calc(100% - var(--circle-diameter));
+	background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj4KICAgIDxwYXRoIGZpbGw9IiNmZmYiCiAgICAgICAgZD0iTTQuMiAyLjVsLS43IDEuOC0xLjguNyAxLjguNy43IDEuOC42LTEuOEw2LjcgNWwtMS45LS43LS42LTEuOHptMTUgOC4zYTYuNyA2LjcgMCAxMS02LjYtNi42IDUuOCA1LjggMCAwMDYuNiA2LjZ6IiAvPgo8L3N2Zz4=");
+}
+.ui-switch input:active + .slider .circle::before {
+	-webkit-transition: 0s;
+	-o-transition: 0s;
+	transition: 0s;
+	opacity: 1;
+	width: 0;
+	height: 0;
+}
+/* ----------------------------------------------------------------------------------------------------------------------------------------*/
+/* ---------------------------------------------------------------------------*/
+/* Live Console Send Message Button from https://uiverse.io/adamgiebl/smart-moth-68*/
+#live_console_send_msg_btn {
+	font-family: inherit;
+	font-size: 20px;
+	background: #006747;
+	color: white;
+	padding: 0.7em 1em;
+	padding-left: 0.9em;
+	display: flex;
+	align-items: center;
+	border: none;
+	border-radius: 16px;
+	overflow: hidden;
+	transition: all 0.2s;
+	cursor: pointer;
+
+	/* Stuff that has been added and deviates from  the UIVerse button*/
+	margin-right: 0.5em;
+	margin-left: 0.5em;
+}
+
+#live_console_send_msg_btn span {
+	display: block;
+	margin-left: 0.3em;
+	transition: all 0.3s ease-in-out;
+}
+
+#live_console_send_msg_btn svg {
+	display: block;
+	transform-origin: center center;
+	transition: transform 0.3s ease-in-out;
+}
+
+#live_console_send_msg_btn:hover .svg-wrapper {
+	animation: fly-1 0.6s ease-in-out infinite alternate;
+}
+
+button:hover svg {
+	transform: translateX(1.2em) rotate(45deg) scale(1.1);
+}
+
+#live_console_send_msg_btn:hover span {
+	transform: translateX(5em);
+}
+
+#live_console_send_msg_btn:active {
+	transform: scale(0.95);
+}
+
+@keyframes fly-1 {
+	from {
+		transform: translateY(0.1em);
+	}
+
+	to {
+		transform: translateY(-0.1em);
+	}
+}
+
+/* ---------------------------------------------------------------------------*/

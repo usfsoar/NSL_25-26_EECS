@@ -1,0 +1,28 @@
+datetime,serial msg
+2024-03-16 15:49:01.819527,Sending: AT+ADDRESS=6
+2024-03-16 15:49:01.961443,Received: +OK
+2024-03-16 15:49:02.198003,Sending: AT+BAND=905000000
+2024-03-16 15:49:02.433873,Received: +OK
+2024-03-16 15:49:02.497819,Sending: AT+NETWORKID=5
+2024-03-16 15:49:02.700243,Received: +OK
+2024-03-16 15:50:45.071320,Checksum: 301 Calculated: 301
+2024-03-16 15:50:45.927298,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 8, Data Bytes: bytearray(b'WUb\x1f\x00\x00'), Checksum: 301, RSSI: 0, SNR: 65430"
+2024-03-16 15:50:46.860495,Checksum: 333 Calculated: 333
+2024-03-16 15:50:47.669640,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 9, Data Bytes: bytearray(b'DS\x00\x96 \x00\x00'), Checksum: 333, RSSI: 0, SNR: 65430"
+2024-03-16 15:51:03.674675,"Sending: AT+SEND=5,4,PI\x00\x99"
+2024-03-16 15:51:04.068928,Received: +OK
+2024-03-16 15:51:05.878513,Checksum: 355 Calculated: 355
+2024-03-16 15:51:06.144611,Latency: 100
+2024-03-16 15:51:07.033078,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 8, Data Bytes: bytearray(b'PO[i\x00\x00'), Checksum: 355, RSSI: 0, SNR: 65433"
+2024-03-16 15:52:07.832949,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 9, Data Bytes: bytearray(b'DS\x00\x96 \x00\x00'), Checksum: 19712, RSSI: 255, SNR: 38483"
+2024-03-16 15:52:08.701609,"ending: AT+SEND=5,4,PI\x00\x99"
+2024-03-16 15:52:09.587238,Reeived: +OK
+2024-03-16 15:52:10.718033,Checksum: 355 Calculated: 355
+2024-03-16 15:52:11.240078,Latency: 100
+2024-03-16 15:52:12.365458,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 8, Data Bytes: bytearray(b'PO[i\x00\x00'), Checksum: 355, RSSI: 0, SNR: 65433"
+2024-03-16 15:52:12.540959,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 9, Data Bytes: bytearray(b'DS\x00\x96 \x00\x00'), Checksum: 333, RSSI: 0, SNR: 65430"
+2024-03-16 15:52:13.929449,"Sending: AT+SEND=5,4,PI\x00\x99"
+2024-03-16 15:52:14.653417,Received: +OK
+2024-03-16 15:52:15.587954,Checksum: 355 Calculated: 355
+2024-03-16 15:52:16.320770,Latency: 100
+2024-03-16 15:52:16.920240,"LORA: Valid data:True, Address Bytes: 5, Length Bytes: 8, Data Bytes: bytearray(b'PO[i\x00\x00'), Checksum: 355, RSSI: 0, SNR: 65433"
