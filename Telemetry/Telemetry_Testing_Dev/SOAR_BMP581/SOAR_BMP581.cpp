@@ -1,21 +1,28 @@
 #include "SOAR_BMP581.h"
 
 // Constructor: sets starting values for variables when the sensor object is created
-BMP581Sensor::BMP581Sensor() 
-    : bmp_fail(0),            // start with 0 failed attempts
-      fail_checkpoint(0)      // no failure timestamp yet
-{}
+BMP581Sensor::BMP581Sensor() {}
+    // : bmp_fail(0),            // start with 0 failed attempts
+    //   fail_checkpoint(0)      // no failure timestamp yet
+
 
 
 bool BMP581Sensor::begin() { // Communicate with sensor, used bool to check if successfull.  
     Serial.println("Initializing BMP581 sensor..."); //combine bool with print to have both debug messages and return value.
-    if (!bmp.begin()) {
+    if (!this->bmp.begin(BMP5XX_ALTERNATIVE_ADDRESS, &Wire)) {
         bmp_fail++; //keep track of how many failures happened since boot.(Check Serial Monitor)
         fail_checkpoint = millis(); // records the time (ms) when the last failure happened. (Check Serial Monitor)
         Serial.println("ERROR: Could not find a valid BMP581 sensor, check wiring!");
         return false;
     }
     Serial.println("BMP581 initialized successfully.");
+
+      // Set up oversampling and filter initialization
+    this->bmp.setTemperatureOversampling(BMP5XX_OVERSAMPLING_8X);
+    this->bmp.setPressureOversampling(BMP5XX_OVERSAMPLING_16X);
+    this->bmp.setIIRFilterCoeff(BMP5XX_IIR_FILTER_COEFF_3);
+    this->bmp.setOutputDataRate(BMP5XX_ODR_50_HZ);
+    
     return true;
 }
 
@@ -39,7 +46,7 @@ float BMP581Sensor ::get_last_altitude_reading(){ //retries initialization if th
 }
 
 float BMP581Sensor::get_altitude() {
-    if (!bmp.performReading()) {
+    if (!this->bmp.performReading()) {
         bmp_fail++;
         fail_checkpoint = millis();
         Serial.println("ERROR: Failed to read altitude.");
@@ -49,7 +56,7 @@ float BMP581Sensor::get_altitude() {
 }
 
 float BMP581Sensor::get_pressure() {
-    if (!bmp.performReading()) {
+    if (!this->bmp.performReading()) {
         bmp_fail++;
         fail_checkpoint = millis();
         Serial.println("ERROR: Failed to read pressure.");
@@ -59,7 +66,7 @@ float BMP581Sensor::get_pressure() {
 }
 
 float BMP581Sensor::get_temperature() {
-    if (!bmp.performReading()) {
+    if (!this->bmp.performReading()) {
         bmp_fail++;
         fail_checkpoint = millis();
         Serial.println("ERROR: Failed to read temperature.");
