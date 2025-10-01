@@ -1,4 +1,4 @@
-// Arduino9x_RX
+ // Arduino9x_RX
 // -*- mode: C++ -*-
 // Example sketch showing how to create a simple messaging client (receiver)
 // with the RH_RF95 class. RH_RF95 class does not provide for addressing or
@@ -9,8 +9,8 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 
-#define RFM95_CS 10
-#define RFM95_RST 9
+#define RFM95_CS 0
+#define RFM95_RST 1
 #define RFM95_INT 2
 
 // Change to 434.0 or other frequency, must match RX's freq!
