@@ -96,6 +96,7 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include "..\\LoRa_Protocol\\LoRaProtocol.h"
 
 // Pin definitions for Arduino Uno
 #define RFM95_CS  10
@@ -143,23 +144,37 @@ void loop()
 {
   if (rf95.available())
   {
-    // Buffer for incoming message
-    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(buf);
+    // Buffer for incoming message (leave room for NUL so we can safely print as string)
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN + 1];
+    uint8_t len = RH_RF95_MAX_MESSAGE_LEN; // capacity without NUL
 
     if (rf95.recv(buf, &len))
     {
-      Serial.print("Got message: ");
-      Serial.println((char*)buf);
+  // Unpack header and data
+  char data[RH_RF95_MAX_MESSAGE_LEN + 1];
+  DataType dtype = TYPE_GENERIC;
+  unpackData(buf, len, &dtype, data, sizeof(data));
 
-      Serial.print("RSSI: ");
-      Serial.println(rf95.lastRssi(), DEC);
+        // Map types to V3 filenames (conceptually)
+        const char* fileForType = "";
+        switch (dtype) {
+          case TYPE_IMU: fileForType = "/imu.csv"; break;
+          case TYPE_ALTIMETER: fileForType = "/altimeter.csv"; break;
+          case TYPE_GPS: fileForType = "/gps.csv"; break;
+          default: fileForType = "/generic.txt"; break;
+        }
 
-      // Send a reply back
-      uint8_t reply[] = "Ack";
-      rf95.send(reply, sizeof(reply));
-      rf95.waitPacketSent();
-      Serial.println("Sent reply: Ack");
+        Serial.print("Got message (type "); Serial.print((int)dtype); Serial.print(") -> "); Serial.println(fileForType);
+  Serial.println(data);
+
+        Serial.print("RSSI: ");
+        Serial.println(rf95.lastRssi(), DEC);
+
+        // Send a reply back (send only the visible characters, no trailing NUL)
+        const char replyStr[] = "Ack";
+        rf95.send((uint8_t*)replyStr, (uint8_t)strlen(replyStr));
+        rf95.waitPacketSent();
+        Serial.println("Sent reply: Ack");
     }
     else
     {
