@@ -114,9 +114,9 @@ void SOAR_BNO085::updateVelocity() {
   const float VELOCITY_DECAY = 0.98;
   const float ACCEL_THRESHOLD = 0.1;
 
-  float accelX = (abs(sensorData.linearAcceleration.x) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.x : 0.0;
-  float accelY = (abs(sensorData.linearAcceleration.y) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.y : 0.0;
-  float accelZ = (abs(sensorData.linearAcceleration.z) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.z : 0.0;
+  float accelX = (sensorData.linearAcceleration.x);
+  float accelY = (sensorData.linearAcceleration.y);
+  float accelZ = (sensorData.linearAcceleration.z);
   
   unsigned long currentTime = millis();
   if (lastVelocityUpdate != 0) {
