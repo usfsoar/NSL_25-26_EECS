@@ -1,63 +1,142 @@
- // Arduino9x_RX
-// -*- mode: C++ -*-
-// Example sketch showing how to create a simple messaging client (receiver)
-// with the RH_RF95 class. RH_RF95 class does not provide for addressing or
-// reliability, so you should only use RH_RF95 if you do not need the higher
-// level messaging abilities.
-// It is designed to work with the other example Arduino9x_TX
+//  // Arduino9x_RX
+// // -*- mode: C++ -*-
+// // Example sketch showing how to create a simple messaging client (receiver)
+// // with the RH_RF95 class. RH_RF95 class does not provide for addressing or
+// // reliability, so you should only use RH_RF95 if you do not need the higher
+// // level messaging abilities.
+// // It is designed to work with the other example Arduino9x_TX
+
+// #include <SPI.h>
+// #include <RH_RF95.h>
+
+// #define RFM95_CS 10
+// #define RFM95_RST 9
+// #define RFM95_INT 2
+
+// // Change to 434.0 or other frequency, must match RX's freq!
+// #define RF95_FREQ 915.0
+
+// // Singleton instance of the radio driver
+// RH_RF95 rf95(RFM95_CS, RFM95_INT);
+
+// // Blinky on receipt
+// #define LED 13
+
+// void setup() 
+// {
+  
+//   pinMode(LED, OUTPUT);     
+//   pinMode(RFM95_RST, OUTPUT);
+//   digitalWrite(RFM95_RST, HIGH);
+
+//   while (!Serial);
+//   Serial.begin(9600);
+//   delay(100);
+
+//   Serial.println("Arduino LoRa RX Test!");
+  
+//   // manual reset
+//   digitalWrite(RFM95_RST, LOW);
+//   delay(10);
+//   digitalWrite(RFM95_RST, HIGH);
+//   delay(10);
+
+//   while (!rf95.init()) {
+//     Serial.println("LoRa radio init failed");
+//     while (1);
+//   }
+//   Serial.println("LoRa radio init OK!");
+
+//   // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
+//   if (!rf95.setFrequency(RF95_FREQ)) {
+//     Serial.println("setFrequency failed");
+//     while (1);
+//   }
+//   Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
+
+//   // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
+
+//   // The default transmitter power is 13dBm, using PA_BOOST.
+//   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then 
+//   // you can set transmitter powers from 5 to 23 dBm:
+//   rf95.setTxPower(23, false);
+// }
+
+// void loop()
+// {
+//   if (rf95.available())
+//   {
+//     // Should be a message for us now   
+//     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+//     uint8_t len = sizeof(buf);
+    
+//     if (rf95.recv(buf, &len))
+//     {
+//       digitalWrite(LED, HIGH);
+//       RH_RF95::printBuffer("Received: ", buf, len);
+//       Serial.print("Got: ");
+//       Serial.println((char*)buf);
+//        Serial.print("RSSI: ");
+//       Serial.println(rf95.lastRssi(), DEC);
+      
+//       // Send a reply
+//       uint8_t data[] = "And hello back to you";
+//       rf95.send(data, sizeof(data));
+//       rf95.waitPacketSent();
+//       Serial.println("Sent a reply");
+//       digitalWrite(LED, LOW);
+//     }
+//     else
+//     {
+//       Serial.println("Receive failed");
+//     }
+//   }
+// }
+
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include "..\\LoRa_Protocol\\LoRaProtocol.h"
 
-#define RFM95_CS 0
-#define RFM95_RST 1
-#define RFM95_INT 2
+// Pin definitions for Arduino Uno
+#define RFM95_CS  10
+#define RFM95_RST 9
+#define RFM95_INT 2   // DIO0
 
-// Change to 434.0 or other frequency, must match RX's freq!
-#define RF95_FREQ 915.0
+// Must match the transmitter
+#define RF95_FREQ 433.0
 
-// Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
-
-// Blinky on receipt
-#define LED 13
 
 void setup() 
 {
-  pinMode(LED, OUTPUT);     
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
-  while (!Serial);
   Serial.begin(9600);
-  delay(100);
+  while (!Serial); // Wait for Serial
 
-  Serial.println("Arduino LoRa RX Test!");
-  
-  // manual reset
+  Serial.println("Arduino Uno LoRa RX Test!");
+
+  // Manual reset
   digitalWrite(RFM95_RST, LOW);
   delay(10);
   digitalWrite(RFM95_RST, HIGH);
   delay(10);
 
-  while (!rf95.init()) {
+  if (!rf95.init()) {
     Serial.println("LoRa radio init failed");
     while (1);
   }
   Serial.println("LoRa radio init OK!");
 
-  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
   if (!rf95.setFrequency(RF95_FREQ)) {
     Serial.println("setFrequency failed");
     while (1);
   }
   Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
 
-  // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
-
-  // The default transmitter power is 13dBm, using PA_BOOST.
-  // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then 
-  // you can set transmitter powers from 5 to 23 dBm:
+  // Boost receive sensitivity (default is fine, but this helps in noisy environments)
   rf95.setTxPower(23, false);
 }
 
@@ -65,25 +144,37 @@ void loop()
 {
   if (rf95.available())
   {
-    // Should be a message for us now   
-    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(buf);
-    
+    // Buffer for incoming message (leave room for NUL so we can safely print as string)
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN + 1];
+    uint8_t len = RH_RF95_MAX_MESSAGE_LEN; // capacity without NUL
+
     if (rf95.recv(buf, &len))
     {
-      digitalWrite(LED, HIGH);
-      RH_RF95::printBuffer("Received: ", buf, len);
-      Serial.print("Got: ");
-      Serial.println((char*)buf);
-       Serial.print("RSSI: ");
-      Serial.println(rf95.lastRssi(), DEC);
-      
-      // Send a reply
-      uint8_t data[] = "And hello back to you";
-      rf95.send(data, sizeof(data));
-      rf95.waitPacketSent();
-      Serial.println("Sent a reply");
-      digitalWrite(LED, LOW);
+  // Unpack header and data
+  char data[RH_RF95_MAX_MESSAGE_LEN + 1];
+  DataType dtype = TYPE_GENERIC;
+  unpackData(buf, len, &dtype, data, sizeof(data));
+
+        // Map types to V3 filenames (conceptually)
+        const char* fileForType = "";
+        switch (dtype) {
+          case TYPE_IMU: fileForType = "/imu.csv"; break;
+          case TYPE_ALTIMETER: fileForType = "/altimeter.csv"; break;
+          case TYPE_GPS: fileForType = "/gps.csv"; break;
+          default: fileForType = "/generic.txt"; break;
+        }
+
+        Serial.print("Got message (type "); Serial.print((int)dtype); Serial.print(") -> "); Serial.println(fileForType);
+  Serial.println(data);
+
+        Serial.print("RSSI: ");
+        Serial.println(rf95.lastRssi(), DEC);
+
+        // Send a reply back (send only the visible characters, no trailing NUL)
+        const char replyStr[] = "Ack";
+        rf95.send((uint8_t*)replyStr, (uint8_t)strlen(replyStr));
+        rf95.waitPacketSent();
+        Serial.println("Sent reply: Ack");
     }
     else
     {
