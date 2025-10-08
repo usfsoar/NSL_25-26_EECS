@@ -24,11 +24,11 @@ void setup()
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
-  while (!Serial);
-  Serial.begin(9600);
+  //while (!Serial);
+  Serial.begin(115200);
   delay(100);
 
-  Serial.println("Arduino LoRa TX Test!");
+  Serial.println("Esp32 LoRa TX Test!");
 
   // manual reset
   digitalWrite(RFM95_RST, LOW);
@@ -36,6 +36,9 @@ void setup()
   digitalWrite(RFM95_RST, HIGH);
   delay(10);
 
+  //USE THESE SPI PINS
+  SPI.begin(8, 9, 10, RFM95_CS);  // SCK, MISO, MOSI, CS
+  
   while (!rf95.init()) {
     Serial.println("LoRa radio init failed");
     while (1);
