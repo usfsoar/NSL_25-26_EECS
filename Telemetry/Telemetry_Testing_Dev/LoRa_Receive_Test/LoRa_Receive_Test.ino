@@ -7,7 +7,7 @@
 #define RFM95_INT 2   // DIO0
 
 // Must match the transmitter
-#define RF95_FREQ 915.0
+#define RF95_FREQ 433
 
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
