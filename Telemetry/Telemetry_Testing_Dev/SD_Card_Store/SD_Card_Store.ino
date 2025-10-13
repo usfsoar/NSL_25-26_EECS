@@ -1,15 +1,11 @@
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 #include "V1_SOAR_RTOS_SD_CARD.h"
 #include "sensor_data_types.h"
 #include "_config.h"
 
-// Use only one core for testing
-#if CONFIG_FREERTOS_UNICORE
-static const BaseType_t app_cpu = 0;
-#else
-static const BaseType_t app_cpu = 1;
-#endif
-
-SOAR_SD_CARD sd_card(D0);
+SOAR_SD_CARD sd_card(0);
 static QueueHandle_t sdStoreQu; // Global queue handle
 
 void write_sd_file_headers() {
@@ -76,14 +72,13 @@ void setup()
   write_sd_file_headers();
 
   // Create SD card writing task
-  xTaskCreatePinnedToCore(
+  xTaskCreate(
     sd_card_task,
     "SD Card Task",
     4096,
     NULL,
     2,
-    NULL,
-    app_cpu);
+    NULL);
 }
 
 void loop()

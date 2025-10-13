@@ -112,7 +112,7 @@ void SOAR_BNO085::processSensorEvent() {
 // Private helper to calculate velocity
 void SOAR_BNO085::updateVelocity() {
   const float VELOCITY_DECAY = 0.98;
-  const float ACCEL_THRESHOLD = 0.1;
+  // const float ACCEL_THRESHOLD = 0.1;
 
   float accelX = (sensorData.linearAcceleration.x);
   float accelY = (sensorData.linearAcceleration.y);

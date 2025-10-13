@@ -1,8 +1,6 @@
-#if CONFIG_FREERTOS_UNICORE
-  static const BaseType_t app_cpu = 0;
-#else
-  static const BaseType_t app_cpu = 1;
-#endif
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 
 #include "RTC_Test.h"
 
@@ -27,7 +25,7 @@ void setup() {
   Serial.println("Setting initial time...");
   
   // Set time to: January 28, 2025, 15:06:10
-  bool timeSet = rtc.adjustTime(1, 28, 2025, 15, 6, 10, 0);
+  bool timeSet = rtc.adjustTime(1, 28, 2025, 0, 0, 0);
   
   if (timeSet) {
     Serial.println("✓ Time set successfully!");

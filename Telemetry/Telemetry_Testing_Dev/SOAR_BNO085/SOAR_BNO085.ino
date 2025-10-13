@@ -10,12 +10,9 @@
  * 2. printDataTask: Periodically fetches the latest data from the sensor object
  * and prints it to the Serial Monitor.
  */
-
-#if CONFIG_FREERTOS_UNICORE
-static const BaseType_t app_cpu = 0;
-#else
-static const BaseType_t app_cpu = 1;
-#endif
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 
 #include "SOAR_BNO085.h"
 
@@ -29,7 +26,7 @@ void sensorUpdateTask(void *parameter) {
     // This single function call handles polling and updating all sensor values
     imu.update();
     // A small delay is crucial to allow other tasks to run.
-    vTaskDelay(5 / portTICK_PERIOD_MS);
+    delay(5);
   }
 }
 
@@ -72,7 +69,7 @@ void printDataTask(void *parameter) {
     Serial.print(" Z: "); Serial.println(data.magneticField.z, 2);
 
     // This delay controls the print rate
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    delay(500);
   }
 }
 
@@ -88,11 +85,11 @@ void setup() {
   }
 
   // Create and pin the tasks to a specific core
-  xTaskCreatePinnedToCore(sensorUpdateTask, "Update IMU", 4096, NULL, 2, NULL, app_cpu);
-  xTaskCreatePinnedToCore(printDataTask, "Print Data", 4096, NULL, 1, NULL, app_cpu);
+  xTaskCreate(sensorUpdateTask, "Update IMU", 4096, NULL, 2, NULL);
+  xTaskCreate(printDataTask, "Print Data", 4096, NULL, 1, NULL);
 }
 
 void loop() {
   // The main loop is empty. FreeRTOS is now in control.
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  delay(1000);
 }

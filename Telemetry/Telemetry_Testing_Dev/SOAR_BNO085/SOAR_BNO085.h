@@ -11,8 +11,12 @@
 
 #include <Adafruit_BNO08x.h>
 #include <Wire.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
+#include <semphr.h>
+// #include "freertos/FreeRTOS.h"
+// #include "freertos/semphr.h"
 
 class SOAR_BNO085 {
 public:
