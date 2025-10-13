@@ -1,9 +1,6 @@
-#if CONFIG_FREERTOS_UNICORE
-static const BaseType_t app_cpu = 0;
-#else
-static const BaseType_t app_cpu = 1;
-#endif
-
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 #include "_config.h"
 #include "sensor_data_types.h"
 #include "SOAR_LoRa_RFM96.h"
@@ -12,7 +9,7 @@ static const BaseType_t app_cpu = 1;
 int byteMax = 8192 * 2;
 static QueueHandle_t SensQu;
 SOAR_LoRa_RFM96 lora;
-SOAR_SD_CARD sd(D0);
+SOAR_SD_CARD sd(0);
 
 void ReceiveSensorTask(void* Parameters) {
   while (1) {
@@ -71,14 +68,13 @@ void setup() {
   sd.appendFile(ifileGPS.c_str(), initialGPS.c_str());
 
   // Create the Read Sensor Task
-  xTaskCreatePinnedToCore(
+  xTaskCreate(
     ReceiveSensorTask,
     "Read Sensor Task",
     byteMax,
     NULL,
     3,
-    NULL,
-    app_cpu
+    NULL
   );
 }
 

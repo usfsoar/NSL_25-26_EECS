@@ -7,17 +7,16 @@ SOAR_LoRa_RFM96::SOAR_LoRa_RFM96() : rf95(RFM95_CS, RFM95_INT) {}
 void SOAR_LoRa_RFM96::LoRa_begin() {
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
+  delay(100);
   digitalWrite(RFM95_RST, LOW);
   delay(10);
   digitalWrite(RFM95_RST, HIGH);
   delay(10);
   if (!rf95.init()) { Serial.println("init failed"); while(1); }
-   if (!LoRa.begin(433E6)) {
-    // Handle error
-  }
+
   rf95.setFrequency(RF95_FREQ);
-  LoRa.setSignalBandwidth(62.5E3);
-  LoRa.setSpreadingFactor(12);
+  rf95.setSpreadingFactor(12);
+  rf95.setSignalBandwidth(65.5E3);
   rf95.setTxPower(23, false);
 }
 
