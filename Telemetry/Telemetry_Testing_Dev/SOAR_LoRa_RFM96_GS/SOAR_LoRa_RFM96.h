@@ -13,8 +13,8 @@ public:
   bool receiveTyped(char* outData, size_t outCap, DataType* outType, unsigned long timeoutMs = 0);
 
 private:
-  static constexpr uint8_t RFM95_CS = 10;
-  static constexpr uint8_t RFM95_RST = 9;
+  static constexpr uint8_t RFM95_CS = 3;
+  static constexpr uint8_t RFM95_RST = 1;
   static constexpr uint8_t RFM95_INT = 2;
   static constexpr float RF95_FREQ = 433.0f;
   RH_RF95 rf95;
