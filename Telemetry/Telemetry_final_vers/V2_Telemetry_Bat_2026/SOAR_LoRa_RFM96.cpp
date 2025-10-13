@@ -1,6 +1,6 @@
 #include "SOAR_LoRa_RFM96.h"
 
-// SOAR_LoRa_RFM96::SOAR_LoRa_RFM96() {}
+SOAR_LoRa_RFM96::SOAR_LoRa_RFM96() {}
 
 SOAR_LoRa_RFM96::SOAR_LoRa_RFM96() : rf95(RFM95_CS, RFM95_INT) {}
 
@@ -12,12 +12,8 @@ void SOAR_LoRa_RFM96::LoRa_begin() {
   digitalWrite(RFM95_RST, HIGH);
   delay(10);
   if (!rf95.init()) { Serial.println("init failed"); while(1); }
-   if (!LoRa.begin(433E6)) {
-    // Handle error
-  }
   rf95.setFrequency(RF95_FREQ);
-  LoRa.setSignalBandwidth(62.5E3);
-  LoRa.setSpreadingFactor(12);
+  rf95.
   rf95.setTxPower(23, false);
 }
 
