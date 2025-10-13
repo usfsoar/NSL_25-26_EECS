@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <LoRa.h>
+// #include <LoRa.h>
 
 // Packet types aligned to sensor types in V3_Telemetry_Bay
 enum DataType : uint8_t {

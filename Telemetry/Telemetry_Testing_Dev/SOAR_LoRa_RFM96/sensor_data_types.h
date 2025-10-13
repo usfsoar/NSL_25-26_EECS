@@ -31,34 +31,24 @@ struct altimeter_packet
 
 // };
 
-struct pi_packet
-{
-  // int hours;
-  // int minutes;
-  // int seconds;
-  // int microseconds;j
-  char pidata[300];
-};
-
 struct gps_packet 
 {
   int hours;
   int minutes;
   int seconds;
   int microseconds;
-  char* status;
-  char* lat; 
-  char* N_S;
-  char* longitude; 
-  char* E_W;
+  const char* status;
+  const char* lat; 
+  const char* N_S;
+  const char* longitude; 
+  const char* E_W;
 };
 
 enum SensorType
 {
 	IMU = 0,
 	ALTIMETER,
-	GPS,
-	PI_R
+	GPS
 	// BAT
 };
 
@@ -72,7 +62,6 @@ struct SensorData
 		imu_packet imu;
 		altimeter_packet alt;
 		gps_packet gps;
-		pi_packet pi_r;
 	} data;
 	// uint8_t timestamp;
 };

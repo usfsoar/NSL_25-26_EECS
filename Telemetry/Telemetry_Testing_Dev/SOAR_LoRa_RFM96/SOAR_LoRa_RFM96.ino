@@ -1,9 +1,6 @@
-#if CONFIG_FREERTOS_UNICORE
-static const BaseType_t app_cpu = 0;
-#else
-static const BaseType_t app_cpu = 1;
-#endif
-
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 #include "_config.h"
 #include "sensor_data_types.h"
 #include "SOAR_LoRa_RFM96.h"
@@ -26,13 +23,6 @@ void GetIMUTask(void* Parameters) {
         imu_data.data.imu.seconds = current_seconds;
         imu_data.data.imu.microseconds = current_microseconds;
         // imu_sensor.loop_iterations++;
-
-        // Initialize IMU Variables
-        float accel[3];
-        float lin_accel[3];
-        float gravity[3];
-        float quat[4];
-        float gyro[3];
 
         // Update the struct
         imu_data.data.imu.accel[0] = 5;
@@ -101,16 +91,11 @@ void GetGPSTask(void* Parameters) {
         gps_data.data.gps.seconds = current_seconds;
         gps_data.data.gps.microseconds = current_microseconds;
 
-        char stat[6];
-        char lat[6];
-        char N_S[1];
-        char longitude[6];
-        char E_W[1];
-        char* i_status = "hi";
-        char* i_lat = "hello";
-        char* i_N_S = "hi";
-        char* i_longitude = "hello";
-        char* i_E_W = "hi";
+        const char* i_status = "hi";
+        const char* i_lat = "hi";
+        const char* i_N_S = "hi";
+        const char* i_longitude = "hi";
+        const char* i_E_W = "hi";
 
 
         // Update the struct
@@ -127,7 +112,6 @@ void GetGPSTask(void* Parameters) {
 
 void ReadSensorTask(void* Parameters) {
   while (1) {
-    const uint16_t warningThreshold = byteMax * 0.98;
     SensorData all_sensors;
     // Store in the SD Card -------------------------------------------------------------------
     if (xQueueReceive(SensQu, &all_sensors, portMAX_DELAY) == pdTRUE) {
@@ -179,49 +163,45 @@ void ReadSensorTask(void* Parameters) {
 
 void setup() {
   Serial.begin(115200);
-
+  SPI.begin();
   lora.LoRa_begin();
   // Create the sensor data queue
   SensQu = xQueueCreate(10, sizeof(SensorData));
 
-  xTaskCreatePinnedToCore(
+  xTaskCreate(
     GetIMUTask,
     "Get IMU Task",
     byteMax,
     NULL,
     2,
-    NULL,
-    app_cpu
+    NULL
   );
-  xTaskCreatePinnedToCore(
+  xTaskCreate(
     GetALTTask,
     "Get Altimeter Task",
     byteMax,
     NULL,
     2,
-    NULL,
-    app_cpu
+    NULL
   );
 
-  xTaskCreatePinnedToCore(
+  xTaskCreate(
     GetGPSTask,
     "Get GPS Task",
     byteMax,
     NULL,
     2,
-    NULL,
-    app_cpu
+    NULL
   );
 
   // Create the Read Sensor Task
-  xTaskCreatePinnedToCore(
+  xTaskCreate(
     ReadSensorTask,
     "Read Sensor Task",
     byteMax,
     NULL,
     3,
-    NULL,
-    app_cpu
+    NULL
   );
 }
 
