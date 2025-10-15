@@ -2,7 +2,6 @@
 #define SOAR_RTC_H
 // #include <vector>
 // using namespace std;
-#include <TimeLib.h> 
 
 class SOAR_RTC {
 public:
@@ -15,7 +14,7 @@ public:
     int getTimeSeconds();
     int getTimeMicroseconds();
     // char* getDate(char* date);
-    bool adjustTime(int month, int day, int year, int hour, int minute, int second);
+    bool adjustTime(int month, int day, int year, int hour, int minute, int second, int microsecond);
 
     // std::vector<int> time;
 };

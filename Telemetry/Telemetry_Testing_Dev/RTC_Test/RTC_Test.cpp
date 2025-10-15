@@ -1,140 +1,69 @@
 #include "RTC_Test.h"
-#include <sys/time.h>
-#include "esp_timer.h"
-#include <vector>
-using namespace std;
-// #include <stdio.h>
-struct timeval tv;
+#include <Arduino.h> // For micros()
+
+// The time_t type and hour(), minute(), second() functions are part of TimeLib.h
+
+// Global variable is not needed with TimeLib. The library handles the time tracking.
+// struct timeval tv; 
 
 SOAR_RTC::SOAR_RTC() {
- // Constructor
+
+    // Start the hardware RTC (this is the key initialization step)
+    Teensy3Clock.get();
+    // Check if the RTC is running and set a default if not (optional)
+    if (timeStatus() == timeNotSet) {
+        // Serial.println("RTC time is not set. Please call adjustTime() once.");
+    }
 }
 
-// void SOAR_RTC::TimeInitialize() {
-//   esp_timer_create_args_t timer_args = {
-//         .callback = [](void*) {
-//             struct timeval now;
-//             gettimeofday(&now, NULL);
-//             // Update system time here if needed
-            
-//         },
-//         .name = "system_time_timer"
-//    };
+// NOTE: The 'while(1)' loops in the original getters are wrong for a class method.
+// They would prevent the task from ever returning. They have been removed.
 
-//    esp_timer_handle_t timer;
-//     esp_timer_create(&timer_args, &timer);
-//     esp_timer_start_periodic(timer, 1000000); // 1-second interval
-// }
-// char* SOAR_RTC::getTimeString(char* time) {
-//   int result = gettimeofday(&tv, NULL);
-//   if (result == 0) {
-//     struct tm* timeinfo = localtime(&tv.tv_sec);
-//     char timeWithoutMicroseconds[30];
-//     strftime(timeWithoutMicroseconds, sizeof(timeWithoutMicroseconds), "%H:%M:%S", timeinfo);
-//     int microseconds = tv.tv_usec;
-//     snprintf(time, 20, "%s:%06d", timeWithoutMicroseconds, microseconds);
-//     // Serial.println(time);
-//   } else {
-//     // Serial.println("Failure to Retrieve time - String");
-//   }
-// }
-
+// --- Time Retrieval Methods ---
 
 int SOAR_RTC::getTimeHours() {
-  while(1) {
-  int result = gettimeofday(&tv, NULL);
-    if (result == 0) {
-      struct tm* timeinfo = localtime(&tv.tv_sec);
-      int hours = timeinfo->tm_hour; // Int Version
-      // int minutes = timeinfo->tm_min;
-      // int seconds = timeinfo->tm_sec;
-      // int microseconds = tv.tv_usec;
-      // int time = {hours, minutes, seconds, microseconds};
-      // snprintf(time, 20, "%02d:%02d:%02d:%06d", hours, minutes, seconds, microseconds);
-      // Serial.println(time);
-      // true_time = '\0';
-      return hours;
-    }
-    else {
-    // Serial.println("Failure to Retrieve time - Hours");
-    return 9999999;
-  }
-  }
+    // TimeLib's hour() function returns the hour based on the last sync
+    return hour();
 }
 
 int SOAR_RTC::getTimeMinutes() {
-   while(1) {
-  int result = gettimeofday(&tv, NULL);
-    if (result == 0) {
-      struct tm* timeinfo = localtime(&tv.tv_sec);
-      int minutes = timeinfo->tm_min; // Int Version
-      return minutes;
-    } else {
-      return 9999999;
-    }
-}
+    return minute();
 }
 
 int SOAR_RTC::getTimeSeconds() {
-   while(1) {
-  int result = gettimeofday(&tv, NULL);
-    if (result == 0) {
-      struct tm* timeinfo = localtime(&tv.tv_sec);
-      int seconds = timeinfo->tm_sec; // Int Version
-      return seconds;
-    } else {
-      return 9999999;
-    }
-}
+    return second();
 }
 
 int SOAR_RTC::getTimeMicroseconds() {
-   while(1) {
-  int result = gettimeofday(&tv, NULL);
-    if (result == 0) {
-      struct tm* timeinfo = localtime(&tv.tv_sec);
-      int microseconds = tv.tv_usec; // Int Version
-      return microseconds;
-    } else {
-      return 9999999;
+    // Standard TimeLib/RTC only track down to the second. 
+    // We use the hardware micros() function for the microsecond part, 
+    // which is relative to boot, not the RTC time, but is the standard solution.
+    return (int)(micros() % 1000000); 
+}
+
+// --- Time Adjustment Method (Fixes the settimeofday Error) ---
+
+bool SOAR_RTC::adjustTime(int month, int day, int year, int hour, int minute, int second) {
+    
+    // 1. Fill the TimeElements structure with the target time
+    TimeElements tm;
+    tm.Year   = year - 1970; // TimeLib uses years since 1970
+    tm.Month  = month;
+    tm.Day    = day;
+    tm.Hour   = hour;
+    tm.Minute = minute;
+    tm.Second = second;
+    
+    // 2. Convert TimeElements into a Unix epoch timestamp (time_t)
+    time_t t = makeTime(tm);
+
+    if (t > 0) {
+        // 3. Set the hardware RTC using the epoch timestamp
+        // This function replaces your settimeofday() call
+        Teensy3Clock.set(t); 
+        setTime(t); // Also update the software timekeeping
+        return true;
     }
+    
+    return false; // Failed to create a valid time_t
 }
-}
-
-// char* SOAR_RTC::getDate(char* date){
-//   while(1) {
-//   int result = gettimeofday(&tv, NULL);
-//   char* true_date = date;
-//   if (result == 0) {
-//    struct tm* timeinfo = localtime(&tv.tv_sec);
-//    // Set the date to a known value
-//    int year = timeinfo->tm_year + 1900; // Year since 1900
-//    int month = timeinfo->tm_mon + 1; // January (0-based)
-//    int day = timeinfo->tm_mday; // 1st day of the month
-//    snprintf(date, 20, "%02d/%02d/%04d", month, day, year);
-//   //  *true_date = '\0';
-//    return true_date;
-//   } 
-//   else {
-//     // Serial.println("Failure to Retrieve date");
-//   }
-//   }
-
-// }
-
- bool SOAR_RTC::adjustTime(int month, int day, int year, int hour, int minute, int second, int microsecond) {
-   struct timeval tv;
-   struct tm timeinfo = {0};
-   // Set the date to a known value
-   timeinfo.tm_year = year - 1900; // Year set year
-   timeinfo.tm_mon = month - 1; // set month
-   timeinfo.tm_mday = day; // set day of the month
-
-   timeinfo.tm_hour = hour;
-   timeinfo.tm_min = minute;
-   timeinfo.tm_sec = second;
-   tv.tv_sec = mktime(&timeinfo);
-   tv.tv_usec = microsecond;
-
-   return settimeofday(&tv, NULL) == 0;
- }

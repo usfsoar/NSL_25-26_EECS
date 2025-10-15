@@ -2,7 +2,6 @@
 #define SOAR_SD_CARD_H
 
 #include "SdFat.h"
-#include "SOAR_LED_Protocol.h"
 
 class SOAR_SD_CARD {
 public:

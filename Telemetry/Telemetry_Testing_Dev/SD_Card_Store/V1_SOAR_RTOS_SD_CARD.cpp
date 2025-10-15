@@ -1,7 +1,5 @@
 #include "V1_SOAR_RTOS_SD_CARD.h"
 
-LEDProtocol led3;
-
 SOAR_SD_CARD::SOAR_SD_CARD(uint8_t cs_pin) : _cs_pin(cs_pin) {}
 
 void SOAR_SD_CARD::begin() {
@@ -149,23 +147,23 @@ void SOAR_SD_CARD::testFileIO(const char* path) {
   // Reading test
   size_t len = file.size();
   file.seek(0); // Go to the beginning of the file
-  uint32_t start = (xTaskGetTickCount() / portTICK_PERIOD_MS);
+  uint32_t start = millis();
   while (len > 0) {
     size_t toRead = min(bufSize, len);
     file.read(buf, toRead);
     len -= toRead;
   }
-  uint32_t endRead = (xTaskGetTickCount() / portTICK_PERIOD_MS) - start;
+  uint32_t endRead = millis() - start;
   Serial.printf("%u bytes read in %u ms\n", file.size(), endRead);
 
   // Writing test
   file.seek(file.size()); // Go to the end of the file for append-like behavior
-  start = (xTaskGetTickCount() / portTICK_PERIOD_MS);
+  start = millis();
   for (size_t i = 0; i < 2048; i++) {
     file.write(buf, bufSize);
   }
   file.flush(); // Ensure all data is written to the SD card
-  uint32_t endWrite = (xTaskGetTickCount() / portTICK_PERIOD_MS) - start;
+  uint32_t endWrite = millis() - start;
   Serial.printf("%u bytes written in %u ms\n", 2048 * bufSize, endWrite);
 
   file.close();

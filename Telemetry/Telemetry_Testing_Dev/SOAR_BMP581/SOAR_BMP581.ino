@@ -1,9 +1,6 @@
-#if CONFIG_FREERTOS_UNICORE
-  static const BaseType_t app_cpu = 0;
-#else
-  static const BaseType_t app_cpu = 1;
-#endif
-
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 #include "SOAR_BMP581.h"
 #include <math.h>
 
@@ -19,14 +16,13 @@ void setup() {
     barometer.begin();
     vTaskDelay(1000 - portTICK_PERIOD_MS);
     i_altitude = barometer.get_altitude();
-    xTaskCreatePinnedToCore(
+    xTaskCreate(
         BMP581Task,
         "BMP581Task",
         10000,
         NULL,
         1,
-        NULL,
-        app_cpu
+        NULL
     );
 }
 
@@ -46,7 +42,7 @@ void BMP581Task(void *parameters) {
         Serial.println("Pressure: " + String(pressure));
         Serial.println("Temperature: " + String(temperature));
         Serial.println("--------------------------------");
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        delay(1000);
     }
 }
 
