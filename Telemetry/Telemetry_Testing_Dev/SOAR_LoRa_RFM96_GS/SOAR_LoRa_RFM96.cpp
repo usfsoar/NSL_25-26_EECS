@@ -17,7 +17,7 @@ void SOAR_LoRa_RFM96::LoRa_begin() {
   rf95.setFrequency(RF95_FREQ);
   rf95.setSpreadingFactor(12);
   rf95.setSignalBandwidth(65.5E3);
-  rf95.setTxPower(23, false);
+  rf95.setTxPower(20, false);
 }
 
 bool SOAR_LoRa_RFM96::receiveTyped(char* outData, size_t outCap, DataType* outType, unsigned long timeoutMs) {
