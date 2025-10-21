@@ -128,8 +128,8 @@ void kalmanFilterPredict(kalmanFilter *filter) {
 }
 
 void kalmanFilterUpdate(kalmanFilter *filter) {
-    matrix *vec1 = matrixCreate(filter->H_k->rows, filter->x_k->cols);
-    matrix *vec2 = matrixCreate(filter->x_k->rows, filter->x_k->cols);
+    matrix *vec1 = matrixCreate(filter->H_k->rows, 1);
+    matrix *vec2 = matrixCreate(filter->x_k->rows, 1);
     matrix *mtx_temp1 = matrixCreate(filter->P_k->rows, filter->H_k->rows);
     matrix *mtx_temp2 = matrixCreate(filter->H_k->rows, filter->H_k->rows);
     matrix *mtx_temp3 = matrixCreate(filter->H_k->cols, filter->H_k->rows);
