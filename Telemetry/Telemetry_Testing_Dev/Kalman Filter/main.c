@@ -58,24 +58,20 @@ int main(void) {
     setElement(filter->R_k, 1, 1, pow(sigma_z, 2));
 
 
-    for (t = 0; t < 50.0; t += dt) {
+    printf("time,true_pos,true_vel,est_pos,est_vel,measured_pos\n");
+    for (t = 0; t < 50.0 + dt; t += dt) {
         updateState(&rng, true_state, dt, sigma_a);
         readState(&rng, filter->z_k, true_state, sigma_z);
 
-       
-        printf("==================================\n \
-                      time = %.2f", t);
-        printf("\nreading:\n");
-        matrixPrint(filter->z_k);
-
-        printf("\ntrue:\n");
-        matrixPrint(true_state);
-      
+        printf("%.2f,%.4f,%.4f,%.4f,%.4f,%.4f\n", t,
+                                                ELEM(true_state, 1, 1),
+                                                ELEM(true_state, 2, 1),
+                                                ELEM(filter->x_k, 1, 1),
+                                                ELEM(filter->x_k, 2, 1),
+                                                ELEM(filter->z_k, 1, 1));
 
         kalmanFilterPredict(filter);
         kalmanFilterUpdate(filter);
-        printf("\nestimate:\n");
-        matrixPrint(filter->x_k);
     }
     
     matrixDestroy(true_state);
