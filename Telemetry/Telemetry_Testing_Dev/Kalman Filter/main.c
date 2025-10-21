@@ -34,7 +34,7 @@ int main(void) {
     kalmanFilter *filter = NULL;
     const int states = 2;
     const int observations = 1;
-    double sigma_a = 1;
+    double sigma_a = 10;
     double sigma_z = 1;
     matrix *true_state = matrixCreate(states, 1);
 
@@ -56,26 +56,26 @@ int main(void) {
     setElement(filter->H_k, 1, 1, 1);
     
     setElement(filter->R_k, 1, 1, pow(sigma_z, 2));
-    setElement(filter->R_k, 2, 2, pow(sigma_z, 2));
 
 
     for (t = 0; t < 50.0; t += dt) {
         updateState(&rng, true_state, dt, sigma_a);
         readState(&rng, filter->z_k, true_state, sigma_z);
 
-        /*
+       
+        printf("==================================\n \
+                      time = %.2f", t);
         printf("\nreading:\n");
         matrixPrint(filter->z_k);
 
         printf("\ntrue:\n");
         matrixPrint(true_state);
-        */
+      
 
         kalmanFilterPredict(filter);
         kalmanFilterUpdate(filter);
         printf("\nestimate:\n");
         matrixPrint(filter->x_k);
-        printf("==================================\n");
     }
     
     matrixDestroy(true_state);

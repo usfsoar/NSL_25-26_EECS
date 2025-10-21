@@ -54,11 +54,11 @@ kalmanFilter * kalmanFilterCreate(int state_size, int observation_size) {
     filter->P_k_prev = matrixCreate(state_size, state_size);
     filter->F_k = matrixCreate(state_size, state_size);
     filter->H_k = matrixCreate(observation_size, state_size);
-    filter->z_k = matrixCreate(state_size, 1);
+    filter->z_k = matrixCreate(observation_size, 1);
     filter->Q_k = matrixCreate(state_size, state_size);
-    filter->R_k = matrixCreate(state_size, state_size);
-    filter->K_k = matrixCreate(state_size, state_size);
-    filter->y_k = matrixCreate(state_size, 1);
+    filter->R_k = matrixCreate(observation_size, observation_size);
+    filter->K_k = matrixCreate(state_size, observation_size);
+    filter->y_k = matrixCreate(observation_size, 1);
     filter->S_k = matrixCreate(observation_size, observation_size);
 
     if (!filter->x_k ||
@@ -111,7 +111,7 @@ int kalmanFilterDestroy(kalmanFilter *filter) {
 
 void kalmanFilterPredict(kalmanFilter *filter) {
     matrix *F_kt = matrixCreate(filter->F_k->cols, filter->F_k->rows); /* size for transpose */
-    matrix *mtx_temp2 = matrixCreate(filter->F_k->rows, filter->F_k->cols);
+    matrix *mtx_temp = matrixCreate(filter->F_k->rows, filter->P_k->cols);
 
     /* state estimate_vec */
     product(filter->F_k, filter->x_k_prev, filter->x_k);
@@ -119,20 +119,24 @@ void kalmanFilterPredict(kalmanFilter *filter) {
     /* covar estimate_vec */
     transpose(filter->F_k, F_kt);
     product(filter->P_k_prev, F_kt, filter->P_k);
-    product(filter->F_k, filter->P_k, mtx_temp2);
-    sum(mtx_temp2, filter->Q_k, filter->P_k);
+    product(filter->F_k, filter->P_k, mtx_temp);
+    sum(mtx_temp, filter->Q_k, filter->P_k);
     
     /* cleanup */
     matrixDestroy(F_kt);
-    matrixDestroy(mtx_temp2);
+    matrixDestroy(mtx_temp);
 }
 
 void kalmanFilterUpdate(kalmanFilter *filter) {
-    matrix *vec = matrixCreate(filter->H_k->rows, filter->x_k->cols);
+    matrix *vec1 = matrixCreate(filter->H_k->rows, filter->x_k->cols);
+    matrix *vec2 = matrixCreate(filter->x_k->rows, filter->x_k->cols);
     matrix *mtx_temp1 = matrixCreate(filter->P_k->rows, filter->H_k->rows);
     matrix *mtx_temp2 = matrixCreate(filter->H_k->rows, filter->H_k->rows);
-    matrix *mtx_temp3 = matrixCreate(filter->H_k->rows, filter->H_k->cols);
+    matrix *mtx_temp3 = matrixCreate(filter->H_k->cols, filter->H_k->rows);
+    matrix *mtx_temp4 = matrixCreate(filter->P_k->rows, filter->P_k->cols);
+    matrix *mtx_temp5 = matrixCreate(filter->H_k->rows, filter->H_k->cols);
     matrix *H_kt = matrixCreate(filter->H_k->cols, filter->H_k->rows); /* size for transpose */
+    matrix *K_kt = matrixCreate(filter->K_k->cols, filter->K_k->rows); /* size for transpose */
     matrix *I = matrixCreate(filter->K_k->rows, filter->H_k->cols);
     matrix *pre_trans = matrixCreate(filter->K_k->rows, filter->H_k->cols);
     matrix *trans = matrixCreate(filter->H_k->cols, filter->K_k->rows); /* size for transpose */
@@ -140,51 +144,50 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
     transpose(filter->H_k, H_kt);
     identity(I);
 
-    printf("H_k[x_k]\n");
     /* update pre-fit residual / innovation */
-    product(filter->H_k, filter->x_k, vec);
-    difference(filter->z_k, vec, filter->y_k);
+    product(filter->H_k, filter->x_k, vec1);
+    difference(filter->z_k, vec1, filter->y_k);
 
     /* update innovation covariance */
-    printf("P_k[H_kt]\n");
     product(filter->P_k, H_kt, mtx_temp1);
-    printf("H_k[prev]\n");
     product(filter->H_k, mtx_temp1, mtx_temp2);
     sum(mtx_temp2, filter->R_k, filter->S_k);
 
     /* update kalman gain */
     inverse(filter->S_k, S_k_inv);
-    printf("H_kt[S_k_inv]\n");
     product(H_kt, S_k_inv, mtx_temp3);
-    printf("P_k[prev]\n");
     product(filter->P_k, mtx_temp3, filter->K_k);
 
     /* update state estimate_vec */
     filter->x_k_prev = matrixCopy(filter->x_k);
-    product(filter->K_k, filter->y_k, vec);
-    sum(filter->x_k_prev, vec, filter->x_k);
+    product(filter->K_k, filter->y_k, vec2);
+    sum(filter->x_k_prev, vec2, filter->x_k);
 
     /* update estimate_vec covar */
     product(filter->K_k, filter->H_k, trans); /* borrowing trans */
     difference(I, trans, pre_trans);
     transpose(pre_trans, trans);
     product(filter->P_k, trans, filter->P_k_prev); /* borrowing P_k_prev */
-    product(pre_trans, filter->P_k_prev, mtx_temp2);
-    transpose(filter->K_k, trans);
-    product(filter->R_k, trans, filter->P_k_prev); /* borrowing P_k_prev again */
-    product(filter->K_k, filter->P_k_prev, trans); /* borrowing trans */
-    sum(mtx_temp2, trans, filter->P_k);
+    product(pre_trans, filter->P_k_prev, mtx_temp4);
+    transpose(filter->K_k, K_kt);
+    product(filter->R_k, K_kt, mtx_temp5);
+    product(filter->K_k, mtx_temp5, trans); /* borrowing trans */
+    sum(mtx_temp4, trans, filter->P_k);
 
     /* set past values equal to current values */
     filter->x_k_prev = matrixCopy(filter->x_k);
     filter->P_k_prev = matrixCopy(filter->P_k);
 
     /* cleanup */
-    matrixDestroy(vec);
+    matrixDestroy(vec1);
+    matrixDestroy(vec2);
     matrixDestroy(mtx_temp1);
     matrixDestroy(mtx_temp2);
     matrixDestroy(mtx_temp3);
+    matrixDestroy(mtx_temp4);
+    matrixDestroy(mtx_temp5);
     matrixDestroy(H_kt);
+    matrixDestroy(K_kt);
     matrixDestroy(pre_trans);
     matrixDestroy(trans);
     matrixDestroy(S_k_inv);

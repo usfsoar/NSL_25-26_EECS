@@ -229,11 +229,16 @@ int difference(matrix * mtx1, matrix * mtx2, matrix * difference) {
 int product(matrix * mtx1, matrix * mtx2, matrix * prod) {
     int row, col, k;
 
-    if (!mtx1 || !mtx2 || !prod) return -1;
-    if (mtx1->cols != mtx2->rows ||
-            mtx1->rows != prod->rows ||
-            mtx2->cols != prod->cols) {
-        printf("You done messed up\n");
+    if (!mtx1 || !mtx2 || !prod) {
+        return -1;
+    } else if (mtx1->cols != mtx2->rows) {
+        printf("Error: input dimension mismatch (%d != %d)\n", mtx1->cols, mtx2->rows);
+        return -2;
+    } else if (mtx1->rows != prod->rows) {
+        printf("Error: output row mismatch (%d != %d)\n", mtx1->rows, prod->rows);
+        return -2;
+    } else if (mtx2->cols != prod->cols) {
+        printf("Error: output col mismatch (%d != %d)\n", mtx2->cols, prod->cols);
         return -2;
     }
     for (col = 1; col <= mtx2->cols; col++)
