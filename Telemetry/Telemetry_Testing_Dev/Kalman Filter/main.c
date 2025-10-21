@@ -60,15 +60,15 @@ int main(void) {
 
     printf("time,true_pos,true_vel,est_pos,est_vel,measured_pos\n");
     for (t = 0; t < 50.0 + dt; t += dt) {
+        printf("%.2f,%.4f,%.4f,%.4f,%.4f,%.4f\n", t,
+                ELEM(true_state, 1, 1),
+                ELEM(true_state, 2, 1),
+                ELEM(filter->x_k, 1, 1),
+                ELEM(filter->x_k, 2, 1),
+                ELEM(filter->z_k, 1, 1));
+
         updateState(&rng, true_state, dt, sigma_a);
         readState(&rng, filter->z_k, true_state, sigma_z);
-
-        printf("%.2f,%.4f,%.4f,%.4f,%.4f,%.4f\n", t,
-                                                ELEM(true_state, 1, 1),
-                                                ELEM(true_state, 2, 1),
-                                                ELEM(filter->x_k, 1, 1),
-                                                ELEM(filter->x_k, 2, 1),
-                                                ELEM(filter->z_k, 1, 1));
 
         kalmanFilterPredict(filter);
         kalmanFilterUpdate(filter);
