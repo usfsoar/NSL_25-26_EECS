@@ -75,7 +75,11 @@ void printDataTask(void *parameter) {
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial) delay(10);
+  // Wait up to 3 seconds for Serial, then continue
+  unsigned long startMillis = millis();
+  while (!Serial && (millis() - startMillis < 3000)) {
+    delay(10);
+  }
   Serial.println("\nSOAR BNO085 Class Test with FreeRTOS");
 
   // Initialize the IMU. This handles I2C setup and enabling reports.
