@@ -11,7 +11,7 @@
 
 #include <Adafruit_BNO08x.h>
 #include <Wire.h>
-#include <FreeRTOS.h>
+#include <FreeRTOS.h> // Ask alan if we still need to put the rtos files here. 
 #include <task.h>
 #include <queue.h>
 #include <semphr.h>
