@@ -30,6 +30,7 @@ int product(matrix * mtx1, matrix * mtx2, matrix * prod);
 int multiply(double coefficient, matrix * in, matrix * out);
 int divide(double divisor, matrix * in, matrix * out);
 int dotProduct(matrix * v1, matrix * v2, double * prod);
+int quaternionProduct(matrix * q1, matrix * q2, matrix * prod);
 int identity(matrix * mtx);
 int isSquare(matrix * mtx);
 int isDiagonal(matrix * mtx);
@@ -295,6 +296,31 @@ int dotProduct(matrix * v1, matrix * v2, double * prod) {
 
     for (i = 1; i <= v1->rows; i++)
         *prod += ELEM(v1, i, 1) * ELEM(v2, i, 1);
+    return 0;
+}
+
+int quaternionProduct(matrix * q1, matrix * q2, matrix * prod) {
+    double w1, w2, x1, x2, y1, y2, z1, z2;
+    w1 = ELEM(q1, 1, 1);
+    x1 = ELEM(q1, 2, 1);
+    y1 = ELEM(q1, 3, 1);
+    z1 = ELEM(q1, 4, 1);
+
+    w2 = ELEM(q2, 1, 1);
+    x2 = ELEM(q2, 2, 1);
+    y2 = ELEM(q2, 3, 1);
+    z2 = ELEM(q2, 4, 1);
+
+    if (!q1 || !q2 || !prod) return -1;
+    if (q1->cols != 1 || q1->rows != 4) return -2;
+    if (q2->cols != 1 || q2->rows != 4) return -3;
+    if (q2->cols != 1 || q2->rows != 4) return -4;
+
+    ELEM(prod, 1, 1) = w1*w2 - x1*x2 - y1*y2 - z1*z2;
+    ELEM(prod, 2, 1) = w1*x2 + x1*w2 + y1*z2 - z1*y2;
+    ELEM(prod, 3, 1) = w1*y2 - x1*z2 + y1*w2 + z1*x2;
+    ELEM(prod, 4, 1) = w2*z1 + x1*y2 - y1*x2 + z2*w1;
+
     return 0;
 }
 
