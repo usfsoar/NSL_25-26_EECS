@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h> /* for pow */
 
 
 typedef struct {
@@ -30,6 +31,7 @@ int product(matrix * mtx1, matrix * mtx2, matrix * prod);
 int multiply(double coefficient, matrix * in, matrix * out);
 int divide(double divisor, matrix * in, matrix * out);
 int dotProduct(matrix * v1, matrix * v2, double * prod);
+int vectorProjection(matrix * v1, matrix * v2, matrix * proj);
 int quaternionProduct(matrix * q1, matrix * q2, matrix * prod);
 int identity(matrix * mtx);
 int isSquare(matrix * mtx);
@@ -256,7 +258,7 @@ int multiply(double coefficient, matrix * in, matrix * out) {
     int row, col;
 
     if (!in || !out) { return -1; }
-    if (in->rows != out->cols || in->cols != out->rows) { return -2; }
+    if (in->rows != out->rows || in->cols != out->cols) { return -2; }
 
     for (row = 1; row <= in->rows; row++) {
         for (col = 1; col <= in->cols; col++) {
@@ -296,6 +298,28 @@ int dotProduct(matrix * v1, matrix * v2, double * prod) {
 
     for (i = 1; i <= v1->rows; i++)
         *prod += ELEM(v1, i, 1) * ELEM(v2, i, 1);
+    return 0;
+}
+
+/* projection of v1 onto v2 */
+int vectorProjection(matrix * v1, matrix * v2, matrix * proj) {
+    int i;
+    matrix *vec;
+    double mag_v2 = 0;
+    double scalar = 1;
+    
+    if (!v1 || !v2 || !proj) return -1;
+    if (v1->cols != 1 || v2->cols != 1) return -2;
+    if (v1->rows != v2->rows) return -3;
+    if (proj->rows != v1->rows || proj->cols != 1) return -4;
+
+    for (i = 1; i <= v1->rows; i++) { mag_v2 += pow(ELEM(v2, i, 1), 2); }
+
+    vec = matrixCopy(v2);
+    dotProduct(v1, v2, &scalar);
+    scalar /= mag_v2;
+
+    matrixDestroy(vec);
     return 0;
 }
 
