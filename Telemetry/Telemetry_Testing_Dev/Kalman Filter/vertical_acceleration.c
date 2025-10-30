@@ -73,6 +73,11 @@ int main(void)
     setElement(dir_vec, 1, 1, 1);
 
     fp = fopen("imu.csv", "r");
+    if (fp == NULL) {
+        printf("File could not be opened\n");
+        return -1;
+    }
+
     fgets(row, SIZE, fp); /* skip first line */
     while (feof(fp) != 1) {
         input = 0;
@@ -124,6 +129,7 @@ int main(void)
     matrixDestroy(quat);
     matrixDestroy(acc_vec);
     matrixDestroy(dir_vec);
+    fclose(fp);
 
     return 0;
 }
