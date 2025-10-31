@@ -15,21 +15,11 @@ SOAR_BNO085::SOAR_BNO085() {
 
 // Destructor
 SOAR_BNO085::~SOAR_BNO085() {
-  // Clean up the mutex
-  if (dataMutex != NULL) {
-    vSemaphoreDelete(dataMutex);
-  }
+  // No cleanup needed for non-RTOS version
 }
 
 // Initialize the BNO085 sensor
 bool SOAR_BNO085::begin() {
-  // Create the mutex for thread-safe data access
-  dataMutex = xSemaphoreCreateMutex();
-  if (dataMutex == NULL) {
-    Serial.println("Error: Failed to create mutex.");
-    return false;
-  }
-  
   // Initialize I2C communication
   Wire.begin();
   Wire.setClock(400000L); // Use 400kHz I2C speed
@@ -66,11 +56,8 @@ void SOAR_BNO085::update() {
   }
 
   if (bno08x.getSensorEvent(&sensorValue)) {
-    // Lock the mutex for a thread-safe update
-    if (xSemaphoreTake(dataMutex, (TickType_t)10) == pdTRUE) {
-      processSensorEvent();
-      xSemaphoreGive(dataMutex); // Release the mutex
-    }
+    // Update sensor data (no mutex needed in single-threaded environment)
+    processSensorEvent();
   }
 }
 
@@ -147,11 +134,6 @@ void SOAR_BNO085::updateOrientation() {
 
 // Getter function to safely retrieve all sensor data
 SOAR_BNO085::AllSensorData_t SOAR_BNO085::getAllData() {
-  AllSensorData_t dataCopy;
-  // Lock the mutex for a thread-safe copy
-  if (xSemaphoreTake(dataMutex, (TickType_t)10) == pdTRUE) {
-    memcpy(&dataCopy, (void *)&sensorData, sizeof(AllSensorData_t));
-    xSemaphoreGive(dataMutex);
-  }
-  return dataCopy;
+  // In single-threaded environment, just return a copy
+  return sensorData;
 }

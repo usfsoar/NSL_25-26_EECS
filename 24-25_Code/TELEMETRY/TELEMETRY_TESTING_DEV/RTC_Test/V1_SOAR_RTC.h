@@ -11,5 +11,5 @@ public:
     void getDate(char* date);
     bool adjustTime(int month, int day, int year, int hour, int minute, int second, int microsecond);
 };
-
+    
 #endif // SOAR_RTC_H
