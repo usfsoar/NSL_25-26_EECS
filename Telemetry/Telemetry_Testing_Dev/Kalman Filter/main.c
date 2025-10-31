@@ -20,7 +20,7 @@ int main(void) {
     double dt = 0.05;
     double sigma_j = 0.1; /* process covar: TUNED */
     double sigma_s = 0.255; /* measure covar: Calculated - BMP581 barometer typical reading ±6Pa (±0.5m) */
-    double sigma_a = 0.6; /* measure covar: BNO085 proj. of linear acc. vector onto vert. axis: NEED TO TUNE */
+    double sigma_a = 0.179; /* measure covar: Calculated - BNO085 proj. of linear acc. vector onto vert. axis */
     kalmanFilter *filter = NULL;
     const int states = 3;
     const int observations = 2;
