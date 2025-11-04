@@ -128,6 +128,9 @@ void kalmanFilterPredict(kalmanFilter *filter) {
 }
 
 void kalmanFilterUpdate(kalmanFilter *filter) {
+    double mahalanobis_distance = 0;
+    const double OUTLIER = 1e4; /* works well for test data */
+    int i;
     matrix *vec1 = matrixCreate(filter->H_k->rows, 1);
     matrix *vec2 = matrixCreate(filter->x_k->rows, 1);
     matrix *mtx_temp1 = matrixCreate(filter->P_k->rows, filter->H_k->rows);
@@ -147,6 +150,13 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
     /* update pre-fit residual / innovation */
     product(filter->H_k, filter->x_k, vec1);
     difference(filter->z_k, vec1, filter->y_k);
+
+    /* check for outlier */
+    for (i = 1; i <= filter->y_k->rows; i++) {
+        mahalanobis_distance += sqrt( pow(ELEM(filter->y_k, i, 1), 2) / ELEM(filter->S_k, i, i) );
+    }
+    /* reject outlier */
+    if (mahalanobis_distance >= OUTLIER) { return; } 
 
     /* update innovation covariance */
     product(filter->P_k, H_kt, mtx_temp1);
