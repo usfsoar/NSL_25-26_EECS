@@ -34,12 +34,24 @@ bool SOAR_BNO085::begin() {
   Wire.begin();
   Wire.setClock(400000L); // Use 400kHz I2C speed
 
-  if (!bno08x.begin_I2C()) {
-    Serial.println("Failed to find BNO08x. Check wiring.");
-    return false;
-  }
-  Serial.println("BNO08x Found!");
+ Serial.println("Attempting to initialize BNO085...");
 
+for (int attempt = 0; attempt < 5; attempt++) { // creates a retry loop. Up to 5 attempts to connect to BNO085
+    if (bno08x.begin_I2C(0x4A)) { 
+        Serial.println("BNO08x Found!"); 
+        break; // stops the retry loop once connected to the BNO
+    }
+    Serial.print("Retrying (");
+    Serial.print(attempt + 1);
+    Serial.println(")...");
+    delay(500);
+}
+
+if (!bno08x.wasReset()) {
+    Serial.println("Failed to find BNO08x after retries. Check wiring or power stability.");
+    return false;
+
+}
   // Enable all necessary sensor reports
   Serial.println("Enabling sensor reports...");
   bool success = true;

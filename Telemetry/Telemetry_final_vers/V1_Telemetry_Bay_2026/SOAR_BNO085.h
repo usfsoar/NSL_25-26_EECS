@@ -11,8 +11,6 @@
 
 #include <Adafruit_BNO08x.h>
 #include <Wire.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
 
 class SOAR_BNO085 {
 public:
@@ -49,7 +47,6 @@ private:
     Adafruit_BNO08x bno08x;
     sh2_SensorValue_t sensorValue;
     AllSensorData_t sensorData;
-    SemaphoreHandle_t dataMutex;
     unsigned long lastVelocityUpdate;
 
     // --- Private Helper Functions ---

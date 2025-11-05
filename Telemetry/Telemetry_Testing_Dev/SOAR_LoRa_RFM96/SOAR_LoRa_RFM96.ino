@@ -1,6 +1,4 @@
-#include <FreeRTOS.h>
-#include <task.h>
-#include <queue.h>
+  
 #include "_config.h"
 #include "sensor_data_types.h"
 #include "SOAR_LoRa_RFM96.h"
