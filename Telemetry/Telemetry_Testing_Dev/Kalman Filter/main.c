@@ -15,7 +15,7 @@ void readState(matrix * reading, double t, double dt) {
 int main(void) {
     double t;
     const double dt = 0.05;
-    const double sigma_j = 0.1; /* process covar: TUNED */
+    const double sigma_j = 0.2; /* process covar: TUNED */
     const double sigma_s = 0.255; /* measure covar: Calculated - BMP581 barometer typical reading ±6Pa (±0.5m) */
     const double sigma_a = 0.179; /* measure covar: Calculated - BNO085 proj. of linear acc. vector onto vert. axis */
     const int states = 3;
