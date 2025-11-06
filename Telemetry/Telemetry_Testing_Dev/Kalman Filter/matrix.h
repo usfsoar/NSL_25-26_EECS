@@ -18,6 +18,7 @@ typedef struct {
 /* prototypes */
 matrix * matrixCreate(int rows, int cols);
 int matrixDestroy(matrix * mtx);
+int matrixResize(matrix * mtx, int new_rows, int new_cols);
 matrix * matrixCopy(matrix * mtx);
 int setElement(matrix * mtx, int row, int col, double val);
 int getElement(matrix * mtx, int row, int col, double * val);
@@ -48,12 +49,11 @@ int inverse(matrix * in, matrix * out);
  * pointer to the new matrix.
  */
 matrix * matrixCreate(int rows, int cols) {
-    int i;
     matrix * m;
 
     if (rows <= 0 || cols <= 0) { return NULL; }
     /* allocate a matrix structure */
-    m = (matrix *) malloc(sizeof(matrix));
+    m = (matrix *) malloc(sizeof (matrix));
 
     if (m == NULL) {
         printf("Matrix Allocation Failed\n");
@@ -64,24 +64,36 @@ matrix * matrixCreate(int rows, int cols) {
     m->rows = rows;
     m->cols = cols;
 
-    /* allocate a double array of length rows * cols */
-    m->data = (double *) malloc(rows*cols*sizeof(double));
+    /* allocate a double array of length rows * cols with 0s */
+    m->data = (double *) calloc(rows * cols, sizeof (double));
 
     if (m->data == NULL) {
         printf("Matrix Data Allocation Failed");
-        exit(100);
+        exit(101);
     }
-
-    /* set all data to 0 */
-    for (i = 0; i < rows*cols; i++)
-        m->data[i] = 0.0;
 
     return m;
 }
 
+/* resizes matrix while purging data 
+ * TODO: implement keeping previous data
+ * i.e. ELEM(mtx, i, j) is the same so long as it still exists
+ * would need to carefully move data around to keep matrix "intact" */
+int matrixResize(matrix * mtx, int new_rows, int new_cols) {
+    if (!mtx) { return -1; }
+    if (new_rows <= 0 || new_cols <= 0) { return -2; }
+
+    free(mtx->data);
+    mtx->data = (double *) calloc(new_rows * new_cols, sizeof (double));
+    mtx->rows = new_rows;
+    mtx->cols = new_cols;
+
+    return 0;
+}
+
 /* Deletes a matrix. Returns 0 if successful and -1 if mtx is NULL. */
 int matrixDestroy(matrix * mtx) {
-    if (!mtx) return -1;
+    if (!mtx) { return -1; }
     /* free mtx's data */
     assert (mtx->data);
     free(mtx->data);
@@ -89,6 +101,7 @@ int matrixDestroy(matrix * mtx) {
     free(mtx);
     /* avoid dangling pointer */
     mtx = NULL;
+
     return 0;
 }
 
@@ -105,8 +118,7 @@ matrix * matrixCopy(matrix * mtx) {
     cp = matrixCreate(mtx->rows, mtx->cols);
 
     /* copy mtx's data to cp's data */
-    memcpy(cp->data, mtx->data, 
-                 mtx->rows * mtx->cols * sizeof(double));
+    memcpy(cp->data, mtx->data, mtx->rows * mtx->cols * sizeof(double));
 
     return cp;
 }
@@ -117,12 +129,12 @@ matrix * matrixCopy(matrix * mtx) {
  */
 int setElement(matrix * mtx, int row, int col, double val) 
 {
-    if (!mtx) return -1;
+    if (!mtx) { return -1; }
     assert (mtx->data);
     if (row <= 0 || row > mtx->rows ||
-            col <= 0 || col > mtx->cols)
+        col <= 0 || col > mtx->cols) {
         return -2;
-
+    }
     ELEM(mtx, row, col) = val;
     return 0;
 }
@@ -136,9 +148,9 @@ int getElement(matrix * mtx, int row, int col, double * val) {
     if (!mtx || !val) return -1;
     assert (mtx->data);
     if (row <= 0 || row > mtx->rows ||
-            col <= 0 || col > mtx->cols)
+        col <= 0 || col > mtx->cols) {
         return -2;
-
+    }
     *val = ELEM(mtx, row, col);
     return 0;
 }
@@ -147,7 +159,7 @@ int getElement(matrix * mtx, int row, int col, double * val) {
  * Returns 0 if successful and -1 if mtx or n is NULL.
  */
 int nRows(matrix * mtx, int * n) {
-    if (!mtx || !n) return -1;
+    if (!mtx || !n) { return -1; }
     *n = mtx->rows;
     return 0;
 }
@@ -156,7 +168,7 @@ int nRows(matrix * mtx, int * n) {
  * Returns 0 if successful and -1 if mtx is NULL.
  */
 int nCols(matrix * mtx, int * n) {
-    if (!mtx || !n) return -1;
+    if (!mtx || !n) { return -1; }
     *n = mtx->rows;
     return 0;
 }
@@ -166,7 +178,7 @@ int nCols(matrix * mtx, int * n) {
  */
 int matrixPrint(matrix * mtx) {
     int row, col;
-    if (!mtx) return -1;
+    if (!mtx) { return -1; }
     
     for (row = 1; row <= mtx->rows; row++) {
         for (col = 1; col <= mtx->cols; col++) {
@@ -189,13 +201,14 @@ int matrixPrint(matrix * mtx) {
 int transpose(matrix * in, matrix * out) {
     int row, col;
 
-    if (!in || !out) return -1;
-    if (in->rows != out->cols || in->cols != out->rows)
+    if (!in || !out) { return -1; }
+    if (in->rows != out->cols || in->cols != out->rows) {
         return -2;
-
+    }
     for (row = 1; row <= in->rows; row++)
         for (col = 1; col <= in->cols; col++)
             ELEM(out, col, row) = ELEM(in, row, col);
+
     return 0;
 }
 
@@ -207,7 +220,7 @@ int transpose(matrix * in, matrix * out) {
 int sum(matrix * mtx1, matrix * mtx2, matrix * sum) {
     int row, col;
 
-    if (!mtx1 || !mtx2 || !sum) return -1;
+    if (!mtx1 || !mtx2 || !sum) { return -1; }
     if (mtx1->rows != mtx2->rows ||
         mtx1->rows != sum->rows ||
         mtx1->cols != mtx2->cols ||
@@ -224,7 +237,7 @@ int sum(matrix * mtx1, matrix * mtx2, matrix * sum) {
 int difference(matrix * mtx1, matrix * mtx2, matrix * difference) {
     int row, col;
 
-    if (!mtx1 || !mtx2 || !difference) return -1;
+    if (!mtx1 || !mtx2 || !difference) { return -1; }
     if (mtx1->rows != mtx2->rows ||
         mtx1->rows != difference->rows ||
         mtx1->cols != mtx2->cols ||
@@ -305,9 +318,9 @@ int dotProduct(matrix * v1, matrix * v2, double * prod) {
     int i;
     *prod = 0;
 
-    if (!v1 || !v2 || !prod) return -1;
-    if (v1->cols != 1 || v2->cols != 1) return -2;
-    if (v1->rows != v2->rows) return -3;
+    if (!v1 || !v2 || !prod) { return -1; }
+    if (v1->cols != 1 || v2->cols != 1) { return -2; }
+    if (v1->rows != v2->rows) { return -3; }
 
     for (i = 1; i <= v1->rows; i++)
         *prod += ELEM(v1, i, 1) * ELEM(v2, i, 1);
@@ -321,10 +334,10 @@ int vectorProjection(matrix * v1, matrix * v2, matrix * proj) {
     double mag_v2 = 0;
     double scalar = 1;
     
-    if (!v1 || !v2 || !proj) return -1;
-    if (v1->cols != 1 || v2->cols != 1) return -2;
-    if (v1->rows != v2->rows) return -3;
-    if (proj->rows != v1->rows || proj->cols != 1) return -4;
+    if (!v1 || !v2 || !proj) { return -1; }
+    if (v1->cols != 1 || v2->cols != 1) { return -2; }
+    if (v1->rows != v2->rows) { return -3; }
+    if (proj->rows != v1->rows || proj->cols != 1) { return -4; }
 
     for (i = 1; i <= v1->rows; i++) { mag_v2 += pow(ELEM(v2, i, 1), 2); }
 
@@ -348,10 +361,10 @@ int quaternionProduct(matrix * q1, matrix * q2, matrix * prod) {
     y2 = ELEM(q2, 3, 1);
     z2 = ELEM(q2, 4, 1);
 
-    if (!q1 || !q2 || !prod) return -1;
-    if (q1->cols != 1 || q1->rows != 4) return -2;
-    if (q2->cols != 1 || q2->rows != 4) return -3;
-    if (q2->cols != 1 || q2->rows != 4) return -4;
+    if (!q1 || !q2 || !prod) { return -1; }
+    if (q1->cols != 1 || q1->rows != 4) { return -2; }
+    if (q2->cols != 1 || q2->rows != 4) { return -3; }
+    if (q2->cols != 1 || q2->rows != 4) { return -4; }
 
     ELEM(prod, 1, 1) = w1*w2 - x1*x2 - y1*y2 - z1*z2;
     ELEM(prod, 2, 1) = w1*x2 + x1*w2 + y1*z2 - z1*y2;
@@ -363,13 +376,15 @@ int quaternionProduct(matrix * q1, matrix * q2, matrix * prod) {
 
 int identity(matrix * mtx) {
     int row, col;
-    if (!mtx || mtx->rows != mtx->cols) return -1;
+    if (!mtx || mtx->rows != mtx->cols) { return -1; }
     for (col = 1; col <= mtx->cols; col++)
         for (row = 1; row <= mtx->rows; row++)
-            if (row == col) 
+            if (row == col) {
                 ELEM(mtx, row, col) = 1.0;
-            else 
+            } else {
                 ELEM(mtx, row, col) = 0.0;
+            }
+
     return 0;
 }
 
@@ -421,10 +436,10 @@ int cofactor(matrix * in, matrix * out) {
 int adjoint(matrix * in, matrix * out) {
     matrix * cofactor_mtx;
 
-    if (!in || !out) return -1;
-    if (in->rows != out->cols || in->cols != out->rows)
+    if (!in || !out) { return -1; }
+    if (in->rows != out->cols || in->cols != out->rows) {
         return -2;
-
+    }
     cofactor_mtx = matrixCreate(in->rows, in->cols);
     if (cofactor(in, cofactor_mtx) == -3) {
         return -3;
@@ -522,7 +537,7 @@ int inverse(matrix * in, matrix * out) {
     matrix * adjoint_mtx;
     double det;
 
-    if (!in || !out) return -1;
+    if (!in || !out) { return -1; }
     if (in->rows != out->cols || in->cols != out->rows) {
         return -2;
     }
@@ -547,24 +562,28 @@ int isSquare(matrix * mtx) {
 
 int isDiagonal(matrix * mtx) {
     int row, col;
-    if (!isSquare(mtx)) return 0;
+    if (!isSquare(mtx)) { return 0; }
     for (col = 1; col <= mtx->cols; col++)
         for (row = 1; row <= mtx->rows; row++)
             /* if the element is not on the diagonal and not 0 */
-            if (row != col && ELEM(mtx, row, col) != 0.0)
+            if (row != col && ELEM(mtx, row, col) != 0.0) {
                 /* then the matrix is not diagonal */
                 return 0;
+            }
+
     return 1;
 }
 
 int isUpperTriangular(matrix * mtx) {
     int row, col;
-    if (!isSquare(mtx)) return 0;
+    if (!isSquare(mtx)) { return 0; }
     /* looks at positions below the diagonal */
     for (col = 1; col <= mtx->cols; col++)
         for (row = col+1; row <= mtx->rows; row++) 
-            if (ELEM(mtx, row, col) != 0.0)
+            if (ELEM(mtx, row, col) != 0.0) {
                 return 0;
+            }
+
     return 1;
 }
 
@@ -577,10 +596,12 @@ int diagonal(matrix * v, matrix * mtx) {
     }
     for (col = 1; col <= mtx->cols; col++)
         for (row = 1; row <= mtx->rows; row++)
-            if (row == col) 
+            if (row == col) {
                 ELEM(mtx, row, col) = ELEM(v, col, 1);
-            else
+            } else {
                 ELEM(mtx, row, col) = 0.0;
+            }
+
     return 0;
 }
 
