@@ -55,12 +55,23 @@ matrix * matrixCreate(int rows, int cols) {
     /* allocate a matrix structure */
     m = (matrix *) malloc(sizeof(matrix));
 
+    if (m == NULL) {
+        printf("Matrix Allocation Failed\n");
+        exit(100);
+    }
+
     /* set dimensions */
     m->rows = rows;
     m->cols = cols;
 
     /* allocate a double array of length rows * cols */
     m->data = (double *) malloc(rows*cols*sizeof(double));
+
+    if (m->data == NULL) {
+        printf("Matrix Data Allocation Failed");
+        exit(100);
+    }
+
     /* set all data to 0 */
     for (i = 0; i < rows*cols; i++)
         m->data[i] = 0.0;
@@ -76,6 +87,8 @@ int matrixDestroy(matrix * mtx) {
     free(mtx->data);
     /* free mtx itself */
     free(mtx);
+    /* avoid dangling pointer */
+    mtx = NULL;
     return 0;
 }
 
