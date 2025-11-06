@@ -149,6 +149,7 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
 
     /* check for outlier */
     for (i = 1; i <= filter->y_k->rows; i++) {
+        if (ELEM(filter->S_k, i, i) == 0) { continue; }
         mahalanobis_distance += sqrt( pow(ELEM(filter->y_k, i, 1), 2) / ELEM(filter->S_k, i, i) );
     }
     /* reject outlier */
