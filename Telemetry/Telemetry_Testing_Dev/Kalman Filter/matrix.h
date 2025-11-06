@@ -50,8 +50,8 @@ int inverse(matrix * in, matrix * out);
  */
 matrix * matrixCreate(int rows, int cols) {
     matrix * m;
-
     if (rows <= 0 || cols <= 0) { return NULL; }
+
     /* allocate a matrix structure */
     m = (matrix *) malloc(sizeof (matrix));
 
@@ -85,6 +85,12 @@ int matrixResize(matrix * mtx, int new_rows, int new_cols) {
 
     free(mtx->data);
     mtx->data = (double *) calloc(new_rows * new_cols, sizeof (double));
+
+    if (mtx->data == NULL) {
+        printf("Matrix Data Allocation Failed");
+        exit(101);
+    }
+
     mtx->rows = new_rows;
     mtx->cols = new_cols;
 
@@ -118,7 +124,7 @@ matrix * matrixCopy(matrix * mtx) {
     cp = matrixCreate(mtx->rows, mtx->cols);
 
     /* copy mtx's data to cp's data */
-    memcpy(cp->data, mtx->data, mtx->rows * mtx->cols * sizeof(double));
+    memcpy(cp->data, mtx->data, mtx->rows * mtx->cols * sizeof (double));
 
     return cp;
 }
