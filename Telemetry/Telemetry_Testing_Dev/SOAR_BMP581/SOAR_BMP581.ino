@@ -13,8 +13,17 @@ float i_altitude;
 
 void setup() {
     Serial.begin(115200);
+    while(!Serial) { delay(10); }
+
+    /* check for CrashReport stored from previous run */
+    if (CrashReport) {
+    /* print info (hope Serial Monitor windows is open) */
+        Serial.print(CrashReport);
+    }
+
     barometer.begin();
-    vTaskDelay(1000 - portTICK_PERIOD_MS);
+    delay(1000);
+    // vTaskDelay(1000 - portTICK_PERIOD_MS);
     i_altitude = barometer.get_altitude();
     // xTaskCreate(
     //     BMP581Task,
@@ -45,12 +54,6 @@ void setup() {
 //         delay(1000);
 //     }
 // }
-
-
-
-
-
-
 
 
 void loop() {
