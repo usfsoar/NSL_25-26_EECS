@@ -27,8 +27,9 @@
 SOAR_RTC timer;
 SOAR_BNO085 imu_sensor;
 BMP581Sensor barometer;
-SOAR_RTOS_GPS gps;
+SOAR_RTOS_GPS gps2;
 SOAR_SD_CARD sd(BUILTIN_SDCARD);
+Adafruit_GPS GPS(&Wire);
 
 // Timing variables
 unsigned long lastSensorRead = 0;
