@@ -31,21 +31,24 @@ void readState(pcg32_random_t *rng, matrix * reading, matrix * true_state, doubl
     noisy_acc += noise_a;
 
     setElement(reading, 1, 1, noisy_pos);
-    setElement(reading, 3, 1, noisy_acc);
+    setElement(reading, 2, 1, noisy_acc);
 }
 
 int main(void) {
     pcg32_random_t rng;
     double t;
-    double dt = 0.1;
-    kalmanFilter *filter = NULL;
+    const double dt = 0.05;
     const int states = 3;
     const int observations = 2;
-    /* works badly when sigma_j > sigma a */
-    double sigma_j = 3;
-    double sigma_s = 3;
-    double sigma_a = 6;
+
+    /* works badly when sigma_j > sigma a
+     * the higher sigma_j, the worse our physical
+     * model will give a decent prediction */
+    const double sigma_j = 0.2;
+    const double sigma_s = 0.255;
+    const double sigma_a = 0.179;
     matrix *true_state = matrixCreate(states, 1);
+    kalmanFilter *filter = NULL;
 
     rng.state = 0xDEADBEEF; /*(uint64_t)time(0) ^ (uintptr_t)&rng ^ (uint64_t)clock();*/
     rng.inc = 0xCAFEBABE - 1; /*((uint64_t)time(0) << 32 | (uint64_t)rand()) | 1; /* Make sure inc is odd */
@@ -77,6 +80,10 @@ int main(void) {
     /* reading covar */
     setElement(filter->R_k, 1, 1, sigma_s * sigma_s);
     setElement(filter->R_k, 2, 2, sigma_a * sigma_a);
+
+    /* uncertainty of initial velocity and acceleration */
+    setElement(filter->P_k_prev, 2, 2, 100);
+    setElement(filter->P_k_prev, 3, 3, 100);
 
     printf("time,true_pos,true_vel,true_acc,est_pos,est_vel,measured_pos\n");
     for (t = 0; t < 50.0 + dt; t += dt) {
