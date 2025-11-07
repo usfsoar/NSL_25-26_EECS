@@ -29,7 +29,6 @@ SOAR_BNO085 imu_sensor;
 BMP581Sensor barometer;
 SOAR_RTOS_GPS gps2;
 SOAR_SD_CARD sd(BUILTIN_SDCARD);
-Adafruit_GPS GPS(&Wire);
 
 // Timing variables
 unsigned long lastSensorRead = 0;
@@ -97,7 +96,7 @@ void readAndLogGPS() {
   // Create CSV string
   String data_str_GPS = String(current_hours) + "," + String(current_minutes) + "," + 
                         String(current_seconds) + "," + String(current_microseconds) + "," +
-                        String(gps_data) + "\n";
+                        String(nmea_sentence) + "\n";
 
   // Write to SD card
   sd.appendFile(LORA_FILEPATH, data_str_GPS.c_str());
@@ -110,7 +109,7 @@ void setup() {
   
   // Initialize I2C
   Wire.begin();
-  Wire.setClock(400000); // 400kHz I2C
+  Wire.setClock(100000); // 100kHz I2C
   
   // Initialize time
   setTime(0, 0, 0, 1, 1, 2026); // Set initial time: HH:MM:SS DD MM YYYY
@@ -145,7 +144,7 @@ void setup() {
   
   // Initialize GPS
   Serial.print("Initializing GPS...");
-  gps.setup();
+  gps2.setup();
   Serial.println(" done!");
   
   Serial.println("=== Initialization Complete ===");
