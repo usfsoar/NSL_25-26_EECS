@@ -105,8 +105,6 @@ int matrixDestroy(matrix * mtx) {
     free(mtx->data);
     /* free mtx itself */
     free(mtx);
-    /* avoid dangling pointer */
-    mtx = NULL;
 
     return 0;
 }
