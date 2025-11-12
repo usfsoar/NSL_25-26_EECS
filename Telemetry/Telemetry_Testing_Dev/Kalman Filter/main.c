@@ -1,3 +1,12 @@
+/* Kalman Filter for BMP581 and BNO085 sensors
+ *
+ * BMP581 barometer typical reading, 3 sigma values, ±6Pa (±0.5m) 
+ * Has a range of 700-1100 hPa or up to 9882 ft for this error range
+ *
+ * BNO085 0.35 m/s^2 error for linear acceleration, assume 95% CI 
+ * BNO085 has a max range of ±8g or ±78.4532 m/s^2
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -15,9 +24,9 @@ void readState(matrix * reading, double t, double dt) {
 int main(void) {
     double t;
     const double dt = 0.05;
-    const double sigma_j = 0.2; /* process covar: TUNED */
-    const double sigma_s = 0.1666667; /* measure covar: BMP581 barometer typical reading, 3 sigma values, ±6Pa (±0.5m) */
-    const double sigma_a = 0.179; /* measure covar: Calculated - BNO085 proj. of linear acc. vector onto vert. axis */
+    const double sigma_j = 0.2; /* process StdDev: TUNED */
+    const double sigma_s = 0.1666667; /* altitude reading StdDev */
+    const double sigma_a = 0.179; /* acceleration reading StdDev */
     const int states = 3;
     const int observations = 2;
     kalmanFilter *filter = NULL;
