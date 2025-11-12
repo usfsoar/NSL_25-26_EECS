@@ -153,7 +153,12 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
         mahalanobis_distance += sqrt( pow(ELEM(filter->y_k, i, 1), 2) / ELEM(filter->S_k, i, i) );
     }
     /* reject outlier */
-    if (mahalanobis_distance >= OUTLIER) { return; } 
+    if (mahalanobis_distance >= OUTLIER) { 
+        /* set past values equal to current values */
+        filter->x_k_prev = matrixCopy(filter->x_k);
+        filter->P_k_prev = matrixCopy(filter->P_k);
+        return;
+    } 
 
     /* update innovation covariance */
     product(filter->P_k, H_kt, temp1);
