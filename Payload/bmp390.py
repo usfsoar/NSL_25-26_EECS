@@ -1,0 +1,89 @@
+# Wrapper class for the BMP390 Barometer
+# API Reference: https://docs.circuitpython.org/projects/bmp3xx/en/latest/api.html
+
+import adafruit_bmp3xx
+import board
+import busio
+import time
+
+# todo: Class getters should probably have exceptions and bad data handled
+
+class BMP():
+    """
+    Wrapper class for interating with the BMP390 Barometer
+    """
+
+    def __init__(self):
+        pass
+    
+    
+    def initialize(self, sea_level: float = 1013.25):
+        """
+        Input: Pressure at sea levelin hPa\n
+        Output: None\n
+        Note: Will throw an exception if the BMP sensor cannot be initialized
+        """
+        for i in range(10):
+            try:
+                self.i2c = busio.I2C(board.SCL, board.SDA)
+                break
+            except Exception as e:
+                if i == 9:
+                    raise Exception(f"Error initializing I2C for BMP: {e}")
+                continue
+        
+        for i in range(10):
+            try:
+                self.sensor = adafruit_bmp3xx.BMP3XX_I2C(self.i2c)
+                self.set_sea_level_pressure(sea_level)
+                break
+            except Exception as e:
+                if i == 9:
+                    raise Exception(f"Error initializing BMP: {e}")
+                continue
+
+    
+    def set_sea_level_pressure(self, sea_level: float):
+        """
+        Input: Pressure at sea levelin hPa\n
+        Output: None
+        """
+        self.bmp.sea_level_pressure = sea_level
+
+
+    def get_altitude(self):
+        """
+        Input: None
+        Output: Returns altitude in meters
+        """
+        return self.sensor.altitude
+    
+
+    def get_pressure(self):
+        """
+        Input: None
+        Output: Returns pressure in hPa
+        """
+        return self.sensor.pressure
+
+
+    def get_temperature(self):
+        """
+        Input: None
+        Output: Returns temperature in Celsius
+        """
+        return self.sensor.temperature
+
+
+if __name__ == '__main__':
+    bmp = BMP();
+    try:
+        bmp.initialize()
+    except Exception as e:
+        print(e)
+
+    while True:
+        print(f"Altitude: {bmp.get_altitude()}")
+        print(f"Pressure: {bmp.get_pressure()}")
+        print(f"Temperature: {bmp.get_temperature()}")
+        time.sleep(1)
