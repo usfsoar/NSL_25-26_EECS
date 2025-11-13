@@ -63,38 +63,38 @@ void SOAR_BNO085::update() {
 
 // Private helper to process a sensor event
 void SOAR_BNO085::processSensorEvent() {
-  switch (sensorValue.sensorId) {
-    case SH2_ACCELEROMETER:
+  // switch (sensorValue.sensorId) {
+    // case SH2_ACCELEROMETER:
       sensorData.acceleration.x = sensorValue.un.accelerometer.x;
       sensorData.acceleration.y = sensorValue.un.accelerometer.y;
       sensorData.acceleration.z = sensorValue.un.accelerometer.z;
-      break;
-    case SH2_GRAVITY:
+      // break;
+    // case SH2_GRAVITY:
       sensorData.gravity.x = sensorValue.un.gravity.x;
       sensorData.gravity.y = sensorValue.un.gravity.y;
       sensorData.gravity.z = sensorValue.un.gravity.z;
-      break;
-    case SH2_GYROSCOPE_CALIBRATED:
+      // break;
+    // case SH2_GYROSCOPE_CALIBRATED:
       sensorData.gyroscope.x = sensorValue.un.gyroscope.x;
       sensorData.gyroscope.y = sensorValue.un.gyroscope.y;
       sensorData.gyroscope.z = sensorValue.un.gyroscope.z;
-      break;
-    case SH2_LINEAR_ACCELERATION:
+      // break;
+    // case SH2_LINEAR_ACCELERATION:
       sensorData.linearAcceleration.x = sensorValue.un.linearAcceleration.x;
       sensorData.linearAcceleration.y = sensorValue.un.linearAcceleration.y;
       sensorData.linearAcceleration.z = sensorValue.un.linearAcceleration.z;
       updateVelocity();
-      break;
-    case SH2_MAGNETIC_FIELD_CALIBRATED:
+      // break;
+    // case SH2_MAGNETIC_FIELD_CALIBRATED:
       sensorData.magneticField.x = sensorValue.un.magneticField.x;
       sensorData.magneticField.y = sensorValue.un.magneticField.y;
       sensorData.magneticField.z = sensorValue.un.magneticField.z;
-      break;
-    case SH2_GAME_ROTATION_VECTOR:
+      // break;
+    // case SH2_GAME_ROTATION_VECTOR:
       updateOrientation();
-      break;
+      // break;
   }
-}
+// }
 
 // Private helper to calculate velocity
 void SOAR_BNO085::updateVelocity() {
