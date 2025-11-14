@@ -59,6 +59,21 @@ class BMP():
         return self.sensor.altitude
     
 
+    def get_vertical_velocity(self):
+        """
+        Input: None
+        Output: Returns vertical velocity in m/s
+        """
+        # This velocity will be very noise dependent. Should implement filtering here or on the user's end
+        start_t = time.time() # Possibly switch this to time.perf_counter()
+        start_alt  = self.get_altitude() # Should these just get straight from sensor and avoid function overhead?
+        time.sleep(0.2) # Max Sampling Rate of the BMP is 200 Hz (ie 200 ms)
+        end_alt = self.get_altitude()
+        delta_t = time.time() - start_t
+
+        return (end_alt - start_alt) / delta_t
+
+
     def get_pressure(self):
         """
         Input: None
@@ -76,7 +91,7 @@ class BMP():
 
 
 if __name__ == '__main__':
-    bmp = BMP();
+    bmp = BMP()
     try:
         bmp.initialize()
     except Exception as e:
