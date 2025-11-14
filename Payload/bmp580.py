@@ -1,4 +1,4 @@
-# Wrapper class for the BMP390 Barometer
+# Wrapper class for the BMP580 Barometer
 # API Reference: https://docs.circuitpython.org/projects/bmp5xx/en/latest/api.html#
 
 import adafruit_bmp5xx
@@ -10,14 +10,14 @@ import time
 
 class BMP():
     """
-    Wrapper class for interating with the BMP390 Barometer
+    Wrapper class for interating with the BMP580 Barometer
     """
 
     def __init__(self):
         pass
     
     
-    def initialize(self, address: int = 0x77, sea_level: float = 1013.25):
+    def initialize(self, address: int = 0x47, sea_level: float = 1013.25):
         """
         Input: I2C Address; Pressure at sea levelin hPa\n
         Output: None\n
@@ -34,7 +34,7 @@ class BMP():
         
         for i in range(10):
             try:
-                self.sensor = adafruit_bmp5xx.BMP5XX(self.i2c, address=address)
+                self.sensor = adafruit_bmp5xx.BMP5XX_I2C(self.i2c, address=address)
                 self.set_sea_level_pressure(sea_level)
                 break
             except Exception as e:

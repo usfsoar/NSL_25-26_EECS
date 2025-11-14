@@ -17,7 +17,7 @@ class BNO():
         pass
     
 
-    def initialize(self, address: int = 28):
+    def initialize(self, address: int = 0x28):
         """
         Input: I2C Address\n
         Output: None\n
