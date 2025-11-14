@@ -105,8 +105,6 @@ int matrixDestroy(matrix * mtx) {
     free(mtx->data);
     /* free mtx itself */
     free(mtx);
-    /* avoid dangling pointer */
-    mtx = NULL;
 
     return 0;
 }
@@ -544,22 +542,16 @@ int inverse(matrix * in, matrix * out) {
     double det;
 
     if (!in || !out) { return -1; }
-    if (in->rows != out->cols || in->cols != out->rows) {
-        return -2;
-    }
+    if (in->rows != out->cols || in->cols != out->rows) { return -2; }
 
     adjoint_mtx = matrixCreate(in->rows, in->cols);
-    switch (adjoint(in, adjoint_mtx)) {
-        case -3:
-            return -3;
-            break;
-    }
+    if (adjoint(in, adjoint_mtx) == -3) { return -3; }
     
     determinant(in, &det);
     divide(det, adjoint_mtx, out);
 
     matrixDestroy(adjoint_mtx);
-    return -1;
+    return 0;
 }
 
 int isSquare(matrix * mtx) {

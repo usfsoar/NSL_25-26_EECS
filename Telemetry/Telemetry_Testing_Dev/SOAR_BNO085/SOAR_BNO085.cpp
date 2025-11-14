@@ -15,43 +15,21 @@ SOAR_BNO085::SOAR_BNO085() {
 
 // Destructor
 SOAR_BNO085::~SOAR_BNO085() {
-  // Clean up the mutex
-  if (dataMutex != NULL) {
-    vSemaphoreDelete(dataMutex);
-  }
+  // No cleanup needed after removing the mutex
 }
 
 // Initialize the BNO085 sensor
 bool SOAR_BNO085::begin() {
-  // Create the mutex for thread-safe data access
-  dataMutex = xSemaphoreCreateMutex();
-  if (dataMutex == NULL) {
-    Serial.println("Error: Failed to create mutex.");
-    return false;
-  }
-  
   // Initialize I2C communication
   Wire.begin();
   Wire.setClock(400000L); // Use 400kHz I2C speed
 
- Serial.println("Attempting to initialize BNO085...");
-
-for (int attempt = 0; attempt < 5; attempt++) { // creates a retry loop. Up to 5 attempts to connect to BNO085
-    if (bno08x.begin_I2C(0x4A)) { 
-        Serial.println("BNO08x Found!"); 
-        break; // stops the retry loop once connected to the BNO
-    }
-    Serial.print("Retrying (");
-    Serial.print(attempt + 1);
-    Serial.println(")...");
-    delay(500);
-}
-
-if (!bno08x.wasReset()) {
-    Serial.println("Failed to find BNO08x after retries. Check wiring or power stability.");
+  if (!bno08x.begin_I2C()) {
+    Serial.println("Failed to find BNO08x. Check wiring.");
     return false;
+  }
+  Serial.println("BNO08x Found!");
 
-}
   // Enable all necessary sensor reports
   Serial.println("Enabling sensor reports...");
   bool success = true;
@@ -78,58 +56,55 @@ void SOAR_BNO085::update() {
   }
 
   if (bno08x.getSensorEvent(&sensorValue)) {
-    // Lock the mutex for a thread-safe update
-    if (xSemaphoreTake(dataMutex, (TickType_t)10) == pdTRUE) {
-      processSensorEvent();
-      xSemaphoreGive(dataMutex); // Release the mutex
-    }
+    // Process sensor event directly as there is no mutex to lock/unlock
+    processSensorEvent();
   }
 }
 
 // Private helper to process a sensor event
 void SOAR_BNO085::processSensorEvent() {
-  switch (sensorValue.sensorId) {
-    case SH2_ACCELEROMETER:
+  // switch (sensorValue.sensorId) {
+    // case SH2_ACCELEROMETER:
       sensorData.acceleration.x = sensorValue.un.accelerometer.x;
       sensorData.acceleration.y = sensorValue.un.accelerometer.y;
       sensorData.acceleration.z = sensorValue.un.accelerometer.z;
-      break;
-    case SH2_GRAVITY:
+      // break;
+    // case SH2_GRAVITY:
       sensorData.gravity.x = sensorValue.un.gravity.x;
       sensorData.gravity.y = sensorValue.un.gravity.y;
       sensorData.gravity.z = sensorValue.un.gravity.z;
-      break;
-    case SH2_GYROSCOPE_CALIBRATED:
+      // break;
+    // case SH2_GYROSCOPE_CALIBRATED:
       sensorData.gyroscope.x = sensorValue.un.gyroscope.x;
       sensorData.gyroscope.y = sensorValue.un.gyroscope.y;
       sensorData.gyroscope.z = sensorValue.un.gyroscope.z;
-      break;
-    case SH2_LINEAR_ACCELERATION:
+      // break;
+    // case SH2_LINEAR_ACCELERATION:
       sensorData.linearAcceleration.x = sensorValue.un.linearAcceleration.x;
       sensorData.linearAcceleration.y = sensorValue.un.linearAcceleration.y;
       sensorData.linearAcceleration.z = sensorValue.un.linearAcceleration.z;
       updateVelocity();
-      break;
-    case SH2_MAGNETIC_FIELD_CALIBRATED:
+      // break;
+    // case SH2_MAGNETIC_FIELD_CALIBRATED:
       sensorData.magneticField.x = sensorValue.un.magneticField.x;
       sensorData.magneticField.y = sensorValue.un.magneticField.y;
       sensorData.magneticField.z = sensorValue.un.magneticField.z;
-      break;
-    case SH2_GAME_ROTATION_VECTOR:
+      // break;
+    // case SH2_GAME_ROTATION_VECTOR:
       updateOrientation();
-      break;
+      // break;
   }
-}
+// }
 
 // Private helper to calculate velocity
 void SOAR_BNO085::updateVelocity() {
   const float VELOCITY_DECAY = 0.98;
-  // const float ACCEL_THRESHOLD = 0.1;
+  const float ACCEL_THRESHOLD = 0.1;
 
-  float accelX = (sensorData.linearAcceleration.x);
-  float accelY = (sensorData.linearAcceleration.y);
-  float accelZ = (sensorData.linearAcceleration.z);
-  
+  float accelX = (abs(sensorData.linearAcceleration.x) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.x : 0.0;
+  float accelY = (abs(sensorData.linearAcceleration.y) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.y : 0.0;
+  float accelZ = (abs(sensorData.linearAcceleration.z) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.z : 0.0;
+
   unsigned long currentTime = millis();
   if (lastVelocityUpdate != 0) {
     float dt = (currentTime - lastVelocityUpdate) / 1000.0;
@@ -157,13 +132,10 @@ void SOAR_BNO085::updateOrientation() {
   sensorData.orientation.accuracy = sensorValue.status;
 }
 
-// Getter function to safely retrieve all sensor data
+// Getter function to retrieve all sensor data
 SOAR_BNO085::AllSensorData_t SOAR_BNO085::getAllData() {
+  // Directly copy the data as it's assumed to be single-threaded now
   AllSensorData_t dataCopy;
-  // Lock the mutex for a thread-safe copy
-  if (xSemaphoreTake(dataMutex, (TickType_t)10) == pdTRUE) {
-    memcpy(&dataCopy, (void *)&sensorData, sizeof(AllSensorData_t));
-    xSemaphoreGive(dataMutex);
-  }
+  memcpy(&dataCopy, (void *)&sensorData, sizeof(AllSensorData_t));
   return dataCopy;
 }

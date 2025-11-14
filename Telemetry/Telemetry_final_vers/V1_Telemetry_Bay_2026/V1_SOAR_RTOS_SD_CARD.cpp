@@ -153,7 +153,7 @@ void SOAR_SD_CARD::testFileIO(const char* path) {
     file.read(buf, toRead);
     len -= toRead;
   }
-  uint32_t endRead = (xTaskGetTickCount() / portTICK_PERIOD_MS) - start;
+  uint32_t endRead = millis() - start;
   Serial.printf("%u bytes read in %u ms\n", file.size(), endRead);
 
   // Writing test
