@@ -17,9 +17,9 @@ class BNO():
         pass
     
 
-    def initialize(self):
+    def initialize(self, address: int = 28):
         """
-        Input: None\n
+        Input: I2C Address\n
         Output: None\n
         Note: Attempts to initialize and configure the BNO sensor. 
         Will throw an exception if there is an error initializing. 
@@ -35,7 +35,7 @@ class BNO():
         
         for i in range(10):
             try:
-                self.sensor = adafruit_bno055.BNO055_I2C(self.i2c)
+                self.sensor = adafruit_bno055.BNO055_I2C(self.i2c, address=address)
 
                 # Set mode to configuration
                 self.sensor.mode = adafruit_bno055.CONFIG_MODE
@@ -71,7 +71,17 @@ class BNO():
 
     def get_velocity(self):
         # todo
-        return
+        prev_time = time.time()
+        velocity = [0, 0, 0] # Will this even work or do we need starting velocity?
+        for i in range(0, 10): # Max value is number of readings we want to sum over
+            measurement = self.get_acceleration()
+            cur_time = time.time()
+            delta_t = cur_time - prev_time
+            prev_time = cur_time
+            velocity[0] += measurement[0] * delta_t
+            velocity[1] += measurement[1] * delta_t
+            velocity[2] += measurement[2] * delta_t
+        return velocity
 
 
     def get_gravity(self):
@@ -118,6 +128,7 @@ if __name__ == '__main__':
     while True:
         print(f"Accel: {bno.get_acceleration()}")
         print(f"Accel w/o gravity: {bno.get_linear_acceleration()}")
+        print(f"Velocity: {bno.get_velocity()}")
         print(f"Gravity: {bno.get_gravity()}")
         print(f"Orientation: {bno.get_orientation()}")
         print(f"Temperature: {bno.get_temperature()}")

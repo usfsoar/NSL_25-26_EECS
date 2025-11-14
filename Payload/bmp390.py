@@ -17,9 +17,9 @@ class BMP():
         pass
     
     
-    def initialize(self, sea_level: float = 1013.25):
+    def initialize(self, address: int = 0x77, sea_level: float = 1013.25):
         """
-        Input: Pressure at sea levelin hPa\n
+        Input: I2C Address; Pressure at sea levelin hPa\n
         Output: None\n
         Note: Will throw an exception if the BMP sensor cannot be initialized
         """
@@ -34,7 +34,7 @@ class BMP():
         
         for i in range(10):
             try:
-                self.sensor = adafruit_bmp3xx.BMP3XX_I2C(self.i2c)
+                self.sensor = adafruit_bmp3xx.BMP3XX_I2C(self.i2c, address=address)
                 self.set_sea_level_pressure(sea_level)
                 break
             except Exception as e:
@@ -99,6 +99,7 @@ if __name__ == '__main__':
 
     while True:
         print(f"Altitude: {bmp.get_altitude()}")
+        print(f"Vertical Velocity: {bmp.get_vertical_velocity()}")
         print(f"Pressure: {bmp.get_pressure()}")
         print(f"Temperature: {bmp.get_temperature()}")
         time.sleep(1)
