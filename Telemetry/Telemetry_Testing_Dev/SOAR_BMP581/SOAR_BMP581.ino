@@ -15,11 +15,8 @@ void setup() {
     Serial.begin(115200);
     while(!Serial) { delay(10); }
 
-    /* check for CrashReport stored from previous run */
-    if (CrashReport) {
-    /* print info (hope Serial Monitor windows is open) */
-        Serial.print(CrashReport);
-    }
+    /* show any previous crashes */
+    if (CrashReport) { Serial.print(CrashReport); }
 
     barometer.begin();
     delay(1000);
