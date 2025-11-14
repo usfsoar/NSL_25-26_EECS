@@ -1,7 +1,7 @@
 # Wrapper class for the BMP390 Barometer
-# API Reference: https://docs.circuitpython.org/projects/bmp3xx/en/latest/api.html
+# API Reference: https://docs.circuitpython.org/projects/bmp5xx/en/latest/api.html#
 
-import adafruit_bmp3xx
+import adafruit_bmp5xx
 import board
 import busio
 import time
@@ -34,7 +34,7 @@ class BMP():
         
         for i in range(10):
             try:
-                self.sensor = adafruit_bmp3xx.BMP3XX_I2C(self.i2c, address=address)
+                self.sensor = adafruit_bmp5xx.BMP5XX(self.i2c, address=address)
                 self.set_sea_level_pressure(sea_level)
                 break
             except Exception as e:
