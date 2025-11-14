@@ -81,7 +81,8 @@ class BNO():
             velocity[0] += measurement[0] * delta_t
             velocity[1] += measurement[1] * delta_t
             velocity[2] += measurement[2] * delta_t
-        return velocity
+            time.sleep(0.1) # 100 Hz delay
+        return (velocity[0], velocity[1], velocity[2])
 
 
     def get_gravity(self):
