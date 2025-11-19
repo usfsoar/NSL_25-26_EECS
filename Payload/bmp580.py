@@ -48,7 +48,7 @@ class BMP():
         Input: Pressure at sea levelin hPa\n
         Output: None
         """
-        self.bmp.sea_level_pressure = sea_level
+        self.sea_level_pressure = sea_level
 
 
     def get_altitude(self):
