@@ -1,5 +1,7 @@
 import csv
 import matplotlib
+import pandas as pd
+import numpy as np
 from typing import List, Dict, Union
 
 Numeric = Union[int, float]
@@ -15,13 +17,26 @@ class RocketData():
     
     # Create the csv file and write headers
     def createFile(self):
-        pass
+        data = {
+            'Time' : [],
+            'Altitude' : [],
+            'Velocity' : [],
+            'Acceleration X': [],
+            'Acceleration Y': [],
+            'Acceleration Z': [],
+            'State' : [],
+            'Servo Angle' : [],
+            'Predicted Apogee' : []
+        }
+        df = pd.DataFrame(data)
+        df.to_csv(self.filename, mode = "w", header = True, index = False)
     
     # write to the csv file
     # Keys of input dict should be the names of the file headers
     def writeFile(self, data: Dict[str, Numeric]):
-        pass
-    
+        df = pd.DataFrame(data)
+        df.to_csv(self.filename, mode = "a", header = False, index = False)
+           
     # will return an array of all data points in a row
     def readRow(self):
         pass
