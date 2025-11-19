@@ -24,7 +24,7 @@ bool BMP581Sensor::begin() { // Communicate with sensor, used bool to check if s
     return true;
 }
 
-float BMP581Sensor ::get_last_altitude_reading(){ //retries initialization if the barometer is unresponsive. Need for launch?
+float BMP581Sensor::get_last_altitude_reading(){ //retries initialization if the barometer is unresponsive. Need for launch?
   if (!this->bmp.performReading() && (millis() - fail_checkpoint > 10000)) 
   {
     bmp_fail++;

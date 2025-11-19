@@ -41,7 +41,6 @@ void SOAR_BNO085::setReports(void) {
 void SOAR_BNO085::update() {
   if (bno08x.wasReset()) {
     Serial.println("Sensor reset detected, re-enabling reports.");
-    // while (1) { delay(10); }
     setReports();
   }
 
