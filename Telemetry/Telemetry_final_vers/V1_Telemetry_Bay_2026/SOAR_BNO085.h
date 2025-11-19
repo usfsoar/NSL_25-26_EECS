@@ -1,58 +1,47 @@
-/*
- * SOAR_BNO085.h
- *
- * Header file for the SOAR_BNO085 class. This class encapsulates all functionality
- * for the BNO085 IMU, providing a clean interface for initialization,
- * data polling, and retrieval within a FreeRTOS environment.
- */
-
 #ifndef SOAR_BNO085_H
 #define SOAR_BNO085_H
 
+// For SPI mode, we also need a RESET
+//#define BNO08X_RESET 5
+// but not for I2C or UART
+#define BNO08X_RESET -1
+
 #include <Adafruit_BNO08x.h>
+#include <Adafruit_Sensor.h>
 #include <Wire.h>
 
 class SOAR_BNO085 {
-public:
-    // --- Public Data Structures ---
-    typedef struct {
-        float x, y, z;
-    } Vector3D_t;
+    public:
+        typedef struct {
+            float x, y, z;
+        } Vector3D_t;
 
-    typedef struct {
-        float x, y, z; // X: Roll, Y: Pitch, Z: Yaw
-        float accuracy;
-    } Orientation_t;
+        // quat with respect to gravity and north
+        typedef struct {
+            float w, x, y, z;
+            float accuracy;
+        } Orientation_t;
 
-    typedef struct {
-        Vector3D_t acceleration;
-        Vector3D_t linearAcceleration;
-        Vector3D_t gravity;
-        Vector3D_t gyroscope;
-        Vector3D_t magneticField;
-        Vector3D_t velocity;
-        Orientation_t orientation;
-    } AllSensorData_t;
+        typedef struct {
+            Vector3D_t acceleration;
+            Vector3D_t linearAcceleration;
+            Vector3D_t gravity;
+            Vector3D_t gyroscope;
+            Vector3D_t magneticField;
+            Orientation_t orientation;
+        } AllSensorData_t;
 
-    // --- Public Member Functions ---
-    SOAR_BNO085();  // Constructor
-    ~SOAR_BNO085(); // Destructor
-    bool begin();   // Initializes the sensor
-    void update();  // Polls sensor for new data, should be called in a loop
-    
-    AllSensorData_t getAllData(); // Thread-safe method to get a copy of all data
+        AllSensorData_t sensorData;
 
-private:
-    // --- Private Member Variables ---
-    Adafruit_BNO08x bno08x;
-    sh2_SensorValue_t sensorValue;
-    AllSensorData_t sensorData;
-    unsigned long lastVelocityUpdate;
+        SOAR_BNO085();  // Constructor
+        void update();  // Polls sensor for new data, should be called in a loop
+        void showState();  // Polls sensor for new data, should be called in a loop
 
-    // --- Private Helper Functions ---
-    void processSensorEvent();
-    void updateVelocity();
-    void updateOrientation();
+        Adafruit_BNO08x bno08x;
+        sh2_SensorValue_t sensorValue;
+
+        void setReports();
+        void processSensorEvent();
 };
 
 #endif // SOAR_BNO085_H

@@ -6,64 +6,50 @@
 // Global variable is not needed with TimeLib. The library handles the time tracking.
 // struct timeval tv; 
 
-SOAR_RTC::SOAR_RTC() {
+SOAR_RTC::SOAR_RTC() {}
 
-    // Start the hardware RTC (this is the key initialization step)
-    Teensy3Clock.get();
-    // Check if the RTC is running and set a default if not (optional)
-    if (timeStatus() == timeNotSet) {
-        // Serial.println("RTC time is not set. Please call adjustTime() once.");
-    }
+unsigned long SOAR_RTC::getElapsedMillis() {
+    return millis();
 }
 
-// NOTE: The 'while(1)' loops in the original getters are wrong for a class method.
-// They would prevent the task from ever returning. They have been removed.
+unsigned long SOAR_RTC::getElapsedMicros() {
+    return micros();
+}
 
-// --- Time Retrieval Methods ---
+unsigned long SOAR_RTC::getTimeMilliseconds() {
+    return millis();
+}
+
+unsigned long SOAR_RTC::getTimeMicroseconds() {
+    return micros();
+}
 
 int SOAR_RTC::getTimeHours() {
-    // TimeLib's hour() function returns the hour based on the last sync
-    return hour();
+    return (millis() / 3600000) % 24;
 }
 
 int SOAR_RTC::getTimeMinutes() {
-    return minute();
+    return (millis() / 60000) % 60;
 }
 
 int SOAR_RTC::getTimeSeconds() {
-    return second();
+    return (millis() / 1000) % 60;
 }
 
-int SOAR_RTC::getTimeMicroseconds() {
-    // Standard TimeLib/RTC only track down to the second. 
-    // We use the hardware micros() function for the microsecond part, 
-    // which is relative to boot, not the RTC time, but is the standard solution.
-    return (int)(micros() % 1000000); 
-}
-
-// --- Time Adjustment Method (Fixes the settimeofday Error) ---
-
-bool SOAR_RTC::adjustTime(int month, int day, int year, int hour, int minute, int second) {
+String SOAR_RTC::getTimestamp(bool includeMillis) {
+    unsigned long totalMillis = millis();
     
-    // 1. Fill the TimeElements structure with the target time
-    TimeElements tm;
-    tm.Year   = year - 1970; // TimeLib uses years since 1970
-    tm.Month  = month;
-    tm.Day    = day;
-    tm.Hour   = hour;
-    tm.Minute = minute;
-    tm.Second = second;
+    int hours = (totalMillis / 3600000) % 24;
+    int minutes = (totalMillis / 60000) % 60;
+    int seconds = (totalMillis / 1000) % 60;
+    int milliseconds = totalMillis % 1000;
     
-    // 2. Convert TimeElements into a Unix epoch timestamp (time_t)
-    time_t t = makeTime(tm);
-
-    if (t > 0) {
-        // 3. Set the hardware RTC using the epoch timestamp
-        // This function replaces your settimeofday() call
-        Teensy3Clock.set(t); 
-        setTime(t); // Also update the software timekeeping
-        return true;
+    char buffer[16];
+    if (includeMillis) {
+        sprintf(buffer, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
+    } else {
+        sprintf(buffer, "%02d:%02d:%02d", hours, minutes, seconds);
     }
     
-    return false; // Failed to create a valid time_t
+    return String(buffer);
 }
