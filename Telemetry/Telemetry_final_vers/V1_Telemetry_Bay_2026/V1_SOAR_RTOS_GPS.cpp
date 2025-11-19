@@ -10,7 +10,7 @@ void SOAR_RTOS_GPS::setup() {
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
   GPS.sendCommand(PGCMD_ANTENNA);
-  delay(1000); // Use Arduino delay instead of vTaskDelay
+  delay(1000);
   GPS.println(PMTK_Q_RELEASE); // Request firmware version
 }
 

@@ -1,15 +1,13 @@
 #include "SOAR_BMP581.h"
 
 // Constructor: sets starting values for variables when the sensor object is created
-BMP581Sensor::BMP581Sensor() {}
-    // : bmp_fail(0),            // start with 0 failed attempts
+BMP581Sensor::BMP581Sensor() : bmp_fail(0) {}
     //   fail_checkpoint(0)      // no failure timestamp yet
-
 
 
 bool BMP581Sensor::begin() { // Communicate with sensor, used bool to check if successfull.  
     Serial.println("Initializing BMP581 sensor..."); //combine bool with print to have both debug messages and return value.
-    if (!this->bmp.begin(BMP5XX_ALTERNATIVE_ADDRESS, &Wire)) {
+    if (!this->bmp.begin(BMP5XX_ALTERNATIVE_ADDRESS, &Wire2)) {
         bmp_fail++; //keep track of how many failures happened since boot.(Check Serial Monitor)
         fail_checkpoint = millis(); // records the time (ms) when the last failure happened. (Check Serial Monitor)
         Serial.println("ERROR: Could not find a valid BMP581 sensor, check wiring!");
@@ -26,7 +24,7 @@ bool BMP581Sensor::begin() { // Communicate with sensor, used bool to check if s
     return true;
 }
 
-float BMP581Sensor ::get_last_altitude_reading(){ //retries initialization if the barometer is unresponsive. Need for launch?
+float BMP581Sensor::get_last_altitude_reading(){ //retries initialization if the barometer is unresponsive. Need for launch?
   if (!this->bmp.performReading() && (millis() - fail_checkpoint > 10000)) 
   {
     bmp_fail++;
@@ -75,6 +73,4 @@ float BMP581Sensor::get_temperature() {
     return bmp.temperature; // direct property after performReading()
 }
 
-bool BMP581Sensor::descent_check() {
-    
-    return false; } // Always returns false --Placeholder: Add logic later if needed
+bool BMP581Sensor::descent_check() { return false; } // Always returns false --Placeholder: Add logic later if needed

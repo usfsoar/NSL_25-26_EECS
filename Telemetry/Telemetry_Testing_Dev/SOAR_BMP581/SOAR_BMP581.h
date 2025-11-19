@@ -30,5 +30,3 @@ class BMP581Sensor {
 };
 
 #endif
-
-//Need this for arduino to compile 
