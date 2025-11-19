@@ -1,5 +1,5 @@
-#ifndef VERT_ACC
-#define VERT_ACC
+#ifndef EXTRAS
+#define EXTRAS
 
 #include <stdio.h>
 #include <stdint.h>
@@ -55,6 +55,24 @@ int vectorComponent(matrix *vec, matrix *quat, matrix *unit_dir_vec, double *mag
     matrixDestroy(unit_dir_quat);
     matrixDestroy(unit_dir_vec_prime);
 
+    return 0;
+}
+
+int matrixPrintArduino(matrix * mtx) {
+    int row, col;
+    if (!mtx) { return -1; }
+    
+    for (row = 1; row <= mtx->rows; row++) {
+        for (col = 1; col <= mtx->cols; col++) {
+            /* Print the floating-point element with */
+            /*    - either a - if negative or a space if positive */
+            /*    - at least 3 spaces before the . */
+            /*    - precision to the hundredths place */
+            Serial.printf("% 6.2f ", ELEM(mtx, row, col));
+        }
+        /* separate rows by newlines */
+        Serial.printf("\n");
+    }
     return 0;
 }
 
