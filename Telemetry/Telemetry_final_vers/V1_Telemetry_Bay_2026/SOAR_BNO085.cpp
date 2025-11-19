@@ -1,62 +1,50 @@
-/*
- * SOAR_BNO085.cpp
- *
- * Implementation file for the SOAR_BNO085 class. This file contains the logic
- * for initializing, calibrating, and reading data from the BNO085 sensor.
- */
-
 #include "SOAR_BNO085.h"
 
 // Constructor
-SOAR_BNO085::SOAR_BNO085() {
-  // Initialize last update time for velocity calculation
-  lastVelocityUpdate = 0;
-}
-
-// Destructor
-SOAR_BNO085::~SOAR_BNO085() {
-  // No cleanup needed for non-RTOS version
-}
-
-// Initialize the BNO085 sensor
-bool SOAR_BNO085::begin() {
+SOAR_BNO085::SOAR_BNO085() : bno08x(-1) {
   // Initialize I2C communication
   Wire.begin();
   Wire.setClock(400000L); // Use 400kHz I2C speed
 
   if (!bno08x.begin_I2C()) {
     Serial.println("Failed to find BNO08x. Check wiring.");
-    return false;
+    while (1) { delay(10); }
   }
   Serial.println("BNO08x Found!");
+  setReports();
+}
 
-  // Enable all necessary sensor reports
-  Serial.println("Enabling sensor reports...");
-  bool success = true;
-  success &= bno08x.enableReport(SH2_ACCELEROMETER, 50000);
-  success &= bno08x.enableReport(SH2_GRAVITY, 50000);
-  success &= bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 50000);
-  success &= bno08x.enableReport(SH2_LINEAR_ACCELERATION, 50000);
-  success &= bno08x.enableReport(SH2_MAGNETIC_FIELD_CALIBRATED, 50000);
-  success &= bno08x.enableReport(SH2_GAME_ROTATION_VECTOR, 50000);
-
-  if (!success) {
-    Serial.println("Failed to enable all sensor reports.");
-  } else {
-    Serial.println("All reports enabled successfully.");
+// choose sensor outputs
+void SOAR_BNO085::setReports(void) {
+  Serial.println("Setting desired reports");
+  if (!bno08x.enableReport(SH2_ACCELEROMETER)) {
+    Serial.println("Could not enable accelerometer");
   }
-  return success;
+  if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED)) {
+    Serial.println("Could not enable gyroscope");
+  }
+  if (!bno08x.enableReport(SH2_MAGNETIC_FIELD_CALIBRATED)) {
+    Serial.println("Could not enable magnetic field calibrated");
+  }
+  if (!bno08x.enableReport(SH2_LINEAR_ACCELERATION)) {
+    Serial.println("Could not enable linear acceleration");
+  }
+  if (!bno08x.enableReport(SH2_GRAVITY)) {
+    Serial.println("Could not enable gravity vector");
+  }
+  if (!bno08x.enableReport(SH2_ROTATION_VECTOR)) {
+    Serial.println("Could not enable rotation vector");
+  }
 }
 
 // Poll the sensor and update internal data structures
 void SOAR_BNO085::update() {
   if (bno08x.wasReset()) {
     Serial.println("Sensor reset detected, re-enabling reports.");
-    begin(); // Re-initialize everything
+    setReports();
   }
 
   if (bno08x.getSensorEvent(&sensorValue)) {
-    // Update sensor data (no mutex needed in single-threaded environment)
     processSensorEvent();
   }
 }
@@ -65,75 +53,63 @@ void SOAR_BNO085::update() {
 void SOAR_BNO085::processSensorEvent() {
   switch (sensorValue.sensorId) {
     case SH2_ACCELEROMETER:
-      sensorData.acceleration.x = sensorValue.un.accelerometer.x;
-      sensorData.acceleration.y = sensorValue.un.accelerometer.y;
-      sensorData.acceleration.z = sensorValue.un.accelerometer.z;
-      break;
+        sensorData.acceleration.x = sensorValue.un.accelerometer.x;
+        sensorData.acceleration.y = sensorValue.un.accelerometer.y;
+        sensorData.acceleration.z = sensorValue.un.accelerometer.z;
+        break;
     case SH2_GRAVITY:
-      sensorData.gravity.x = sensorValue.un.gravity.x;
-      sensorData.gravity.y = sensorValue.un.gravity.y;
-      sensorData.gravity.z = sensorValue.un.gravity.z;
-      break;
+        sensorData.gravity.x = sensorValue.un.gravity.x;
+        sensorData.gravity.y = sensorValue.un.gravity.y;
+        sensorData.gravity.z = sensorValue.un.gravity.z;
+        break;
     case SH2_GYROSCOPE_CALIBRATED:
-      sensorData.gyroscope.x = sensorValue.un.gyroscope.x;
-      sensorData.gyroscope.y = sensorValue.un.gyroscope.y;
-      sensorData.gyroscope.z = sensorValue.un.gyroscope.z;
-      break;
+        sensorData.gyroscope.x = sensorValue.un.gyroscope.x;
+        sensorData.gyroscope.y = sensorValue.un.gyroscope.y;
+        sensorData.gyroscope.z = sensorValue.un.gyroscope.z;
+        break;
     case SH2_LINEAR_ACCELERATION:
-      sensorData.linearAcceleration.x = sensorValue.un.linearAcceleration.x;
-      sensorData.linearAcceleration.y = sensorValue.un.linearAcceleration.y;
-      sensorData.linearAcceleration.z = sensorValue.un.linearAcceleration.z;
-      updateVelocity();
-      break;
+        sensorData.linearAcceleration.x = sensorValue.un.linearAcceleration.x;
+        sensorData.linearAcceleration.y = sensorValue.un.linearAcceleration.y;
+        sensorData.linearAcceleration.z = sensorValue.un.linearAcceleration.z;
+        break;
     case SH2_MAGNETIC_FIELD_CALIBRATED:
-      sensorData.magneticField.x = sensorValue.un.magneticField.x;
-      sensorData.magneticField.y = sensorValue.un.magneticField.y;
-      sensorData.magneticField.z = sensorValue.un.magneticField.z;
-      break;
-    case SH2_GAME_ROTATION_VECTOR:
-      updateOrientation();
-      break;
+        sensorData.magneticField.x = sensorValue.un.magneticField.x;
+        sensorData.magneticField.y = sensorValue.un.magneticField.y;
+        sensorData.magneticField.z = sensorValue.un.magneticField.z;
+        break;
+    case SH2_ROTATION_VECTOR:
+        sensorData.orientation.w = sensorValue.un.rotationVector.real;
+        sensorData.orientation.x = sensorValue.un.rotationVector.i;
+        sensorData.orientation.y = sensorValue.un.rotationVector.j;
+        sensorData.orientation.z = sensorValue.un.rotationVector.k;
+        sensorData.orientation.accuracy = sensorValue.status;
+        break;
   }
 }
 
-// Private helper to calculate velocity
-void SOAR_BNO085::updateVelocity() {
-  const float VELOCITY_DECAY = 0.98;
-  const float ACCEL_THRESHOLD = 0.1;
+void SOAR_BNO085::showState() {
+    printf("Orientation: (%.2f, %.2f, %.2f, %.2f)\n", sensorData.orientation.w, 
+                                                      sensorData.orientation.x, 
+                                                      sensorData.orientation.y, 
+                                                      sensorData.orientation.z);
 
-  float accelX = (abs(sensorData.linearAcceleration.x) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.x : 0.0;
-  float accelY = (abs(sensorData.linearAcceleration.y) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.y : 0.0;
-  float accelZ = (abs(sensorData.linearAcceleration.z) > ACCEL_THRESHOLD) ? sensorData.linearAcceleration.z : 0.0;
-  
-  unsigned long currentTime = millis();
-  if (lastVelocityUpdate != 0) {
-    float dt = (currentTime - lastVelocityUpdate) / 1000.0;
-    sensorData.velocity.x += accelX * dt;
-    sensorData.velocity.y += accelY * dt;
-    sensorData.velocity.z += accelZ * dt;
+    printf("Accelerometer: (%.2f, %.2f, %.2f)\n", sensorData.acceleration.x,
+                                                  sensorData.acceleration.y,
+                                                  sensorData.acceleration.z);
 
-    sensorData.velocity.x *= VELOCITY_DECAY;
-    sensorData.velocity.y *= VELOCITY_DECAY;
-    sensorData.velocity.z *= VELOCITY_DECAY;
-  }
-  lastVelocityUpdate = currentTime;
-}
+    printf("Linear: (%.2f, %.2f, %.2f)\n", sensorData.linearAcceleration.x,
+                                           sensorData.linearAcceleration.y,
+                                           sensorData.linearAcceleration.z);                           
 
-// Private helper to calculate orientation
-void SOAR_BNO085::updateOrientation() {
-  float real = sensorValue.un.gameRotationVector.real;
-  float i = sensorValue.un.gameRotationVector.i;
-  float j = sensorValue.un.gameRotationVector.j;
-  float k = sensorValue.un.gameRotationVector.k;
+    printf("Gravity: (%.2f, %.2f, %.2f)\n", sensorData.gravity.x,
+                                            sensorData.gravity.y,
+                                            sensorData.gravity.z);
 
-  sensorData.orientation.x = atan2(2 * (real * i + j * k), 1 - 2 * (i * i + j * j)) * RAD_TO_DEG;
-  sensorData.orientation.y = asin(2 * (real * j - k * i)) * RAD_TO_DEG;
-  sensorData.orientation.z = atan2(2 * (real * k + i * j), 1 - 2 * (j * j + k * k)) * RAD_TO_DEG;
-  sensorData.orientation.accuracy = sensorValue.status;
-}
+    printf("Magnetic Field: (%.2f, %.2f, %.2f)\n", sensorData.magneticField.x,
+                                                   sensorData.magneticField.y,
+                                                   sensorData.magneticField.z);
 
-// Getter function to safely retrieve all sensor data
-SOAR_BNO085::AllSensorData_t SOAR_BNO085::getAllData() {
-  // In single-threaded environment, just return a copy
-  return sensorData;
+    printf("Gyro: (%.2f, %.2f, %.2f)\n", sensorData.gyroscope.x,
+                                         sensorData.gyroscope.y,
+                                         sensorData.gyroscope.z); 
 }

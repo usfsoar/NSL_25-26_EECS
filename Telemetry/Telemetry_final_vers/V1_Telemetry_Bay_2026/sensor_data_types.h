@@ -1,65 +1,29 @@
 struct imu_packet
 {
-  int hours;
-  int minutes;
-  int seconds;
-  int microseconds;
-  float accel[3];
-  float linear[3];
-  float gravity[3];
-  float quat[4];
-  float gyro[3];
+	float accel[3];
+	float linear[3];
+	float gravity[3];
+	float quat[4];
+	float gyro[3];
 };
 
 struct altimeter_packet
 {
-  int hours;
-  int minutes;
-  int seconds;
-  int microseconds;
-  float altitude;
-  float temp;
-  float pressure;
+	float altitude;
+	float temp;
+	float pressure;
 };
 
-// struct battery_gauge
-// {
-//   int hours;
-//   int minutes;
-//   int seconds;
-//   int microseconds;
-
-// };
-
-struct pi_packet
+struct gps_packet
 {
-  // int hours;
-  // int minutes;
-  // int seconds;
-  // int microseconds;j
-  char pidata[300];
-};
-
-struct gps_packet 
-{
-  int hours;
-  int minutes;
-  int seconds;
-  int microseconds;
-  char* status;
-  char* lat; 
-  char* N_S;
-  char* longitude; 
-  char* E_W;
+	char* nmea;
 };
 
 enum SensorType
 {
 	IMU = 0,
 	ALTIMETER,
-	GPS,
-	PI_R
-	// BAT
+	GPS
 };
 
 // unified sensor data structure
@@ -68,11 +32,9 @@ struct SensorData
 	SensorType type;
 	union
 	{
-		// battery_gauge bat;
 		imu_packet imu;
 		altimeter_packet alt;
 		gps_packet gps;
-		pi_packet pi_r;
 	} data;
-	// uint8_t timestamp;
+	String timestamp;
 };

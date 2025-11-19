@@ -8,175 +8,194 @@
  * No RTOS - uses simple sequential polling in loop()
  */
 
-#ifndef BUILTIN_SDCARD
-#define BUILTIN_SDCARD 254
-#endif
-
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include <TimeLib.h>
-#include "RTC_Test.h"
-#include "SOAR_BNO085.h"
-#include "SOAR_BMP581.h"
-#include "V1_SOAR_RTOS_GPS.h"
 #include "V1_SOAR_RTOS_SD_CARD.h"
-#include "_config.h"
+#include "V1_SOAR_RTOS_GPS.h"
 #include "sensor_data_types.h"
+#include "_config.h"
+#include "RTC_Test.h"
+#include "SOAR_BMP581.h"
+#include "SOAR_BNO085.h"
+#include <math.h>
 
-// Create sensor objects
-SOAR_RTC timer;
-SOAR_BNO085 imu_sensor;
-BMP581Sensor barometer;
+SOAR_SD_CARD sd_card(254, true);  // Built-in, use SDIO
+SOAR_SD_CARD sd_card2(10, false);            // External, use SPI
+SOAR_RTC rtc;
 SOAR_RTOS_GPS gps2;
-SOAR_SD_CARD sd(BUILTIN_SDCARD);
+Adafruit_GPS gps_hw(&Wire1);
+BMP581Sensor barometer;
+SOAR_BNO085 imu;
 
-// Timing variables
-unsigned long lastSensorRead = 0;
-const unsigned long SENSOR_INTERVAL = 100; // Read sensors every 100ms (10Hz)
+float altitude;
+float pressure;
+float temperature;
+float i_altitude;
 
-// Function to read and log IMU data
-void readAndLogIMU() {
-  // Get current time
-  int current_hours = timer.getTimeHours();
-  int current_minutes = timer.getTimeMinutes();
-  int current_seconds = timer.getTimeSeconds();
-  int current_microseconds = timer.getTimeMicroseconds();
+char dataBuffer[512];
 
-  // Update and get IMU data
-  imu_sensor.update();
-  SOAR_BNO085::AllSensorData_t imu_data = imu_sensor.getAllData();
+void write_sd_file_headers(SOAR_SD_CARD& sd) {
+  Serial.println("Writing SD file headers");
+  sd.deleteFile(IMU_FILEPATH);
+  sd.deleteFile(ALTIMETER_FILEPATH);
+  sd.deleteFile(GPS_FILEPATH);
 
-  // Create CSV string with timestamp and IMU data
-  String data_str_IMU = String(current_hours) + "," + String(current_minutes) + "," + 
-                        String(current_seconds) + "," + String(current_microseconds) + "," +
-                        String(imu_data.acceleration.x) + "," + String(imu_data.acceleration.y) + "," + String(imu_data.acceleration.z) + "," +
-                        String(imu_data.linearAcceleration.x) + "," + String(imu_data.linearAcceleration.y) + "," + String(imu_data.linearAcceleration.z) + "," +
-                        String(imu_data.gravity.x) + "," + String(imu_data.gravity.y) + "," + String(imu_data.gravity.z) + "," +
-                        String(imu_data.orientation.x) + "," + String(imu_data.orientation.y) + "," + String(imu_data.orientation.z) + "," +
-                        String(imu_data.gyroscope.x) + "," + String(imu_data.gyroscope.y) + "," + String(imu_data.gyroscope.z) + "\n";
-
-  // Write to SD card
-  sd.appendFile(IMU_FILEPATH, data_str_IMU.c_str());
+  sd.writeFile(IMU_FILEPATH, "time_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
+  sd.writeFile(ALTIMETER_FILEPATH, "time_stamp,altitude,temperature,pressure\n");
+  sd.writeFile(GPS_FILEPATH, "time_stamp,gps_data\n");
 }
 
-// Function to read and log Barometer data
-void readAndLogAltimeter() {
-  // Get current time
-  int current_hours = timer.getTimeHours();
-  int current_minutes = timer.getTimeMinutes();
-  int current_seconds = timer.getTimeSeconds();
-  int current_microseconds = timer.getTimeMicroseconds();
-
-  // Get barometer data
-  float altitude = barometer.get_altitude();
-  float temp = barometer.get_temperature();
-  float pressure = barometer.get_pressure();
-
-  // Create CSV string
-  String data_str_ALTIMETER = String(current_hours) + "," + String(current_minutes) + "," + 
-                              String(current_seconds) + "," + String(current_microseconds) + "," +
-                              String(altitude) + "," + String(temp) + "," + String(pressure) + "\n";
-
-  // Write to SD card
-  sd.appendFile(ALTIMETER_FILEPATH, data_str_ALTIMETER.c_str());
+void writeToBothCards(const char* filename, const char* data) {
+  sd_card.appendFile(filename, data);
+  delay(50);
+  sd_card2.appendFile(filename, data);
 }
 
-// Function to read and log GPS data (stub for now - GPS implementation may vary)
-void readAndLogGPS() {
-  // Get current time
-  int current_hours = timer.getTimeHours();
-  int current_minutes = timer.getTimeMinutes();
-  int current_seconds = timer.getTimeSeconds();
-  int current_microseconds = timer.getTimeMicroseconds();
-
-  // Get GPS NMEA sentence
-  char nmea_sentence[100];
-  char* gps_data = gps.GET_NMEA(nmea_sentence);
-
-  // Create CSV string
-  String data_str_GPS = String(current_hours) + "," + String(current_minutes) + "," + 
-                        String(current_seconds) + "," + String(current_microseconds) + "," +
-                        String(nmea_sentence) + "\n";
-
-  // Write to SD card
-  sd.appendFile(LORA_FILEPATH, data_str_GPS.c_str());
+void writeSensorDataToSD(SensorData& sensor_data) {
+  const char* filename;
+  int len = 0;
+  
+  switch (sensor_data.type) {
+    case IMU:
+      filename = IMU_FILEPATH;
+      len = snprintf(dataBuffer, sizeof(dataBuffer),
+        "%lu,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
+        sensor_data.timestamp,
+        sensor_data.data.imu.accel[0], sensor_data.data.imu.accel[1], sensor_data.data.imu.accel[2],
+        sensor_data.data.imu.linear[0], sensor_data.data.imu.linear[1], sensor_data.data.imu.linear[2],
+        sensor_data.data.imu.gravity[0], sensor_data.data.imu.gravity[1], sensor_data.data.imu.gravity[2],
+        sensor_data.data.imu.quat[0], sensor_data.data.imu.quat[1], sensor_data.data.imu.quat[2], sensor_data.data.imu.quat[3],
+        sensor_data.data.imu.gyro[0], sensor_data.data.imu.gyro[1], sensor_data.data.imu.gyro[2]);
+      break;
+      
+    case ALTIMETER:
+      filename = ALTIMETER_FILEPATH;
+      len = snprintf(dataBuffer, sizeof(dataBuffer), "%lu,%.6f,%.6f,%.6f\n",
+        sensor_data.timestamp,
+        sensor_data.data.alt.altitude,
+        sensor_data.data.alt.temp,
+        sensor_data.data.alt.pressure);
+      break;
+      
+    case GPS:
+      filename = GPS_FILEPATH;
+      len = snprintf(dataBuffer, sizeof(dataBuffer), "%lu,%s\n",
+        sensor_data.timestamp,
+        sensor_data.data.gps.nmea);
+      break;
+  }
+  
+  if (len > 0 && len < sizeof(dataBuffer)) {
+    writeToBothCards(filename, dataBuffer);
+    Serial.print("Data written: ");
+    Serial.println(filename);
+  }
 }
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial && millis() < 3000);
   delay(1000);
-  Serial.println("=== V1 Telemetry Bay 2026 Initializing ===");
+  // Initialize both SD cards
+  Serial.println("Initializing SD card 1 (pin 254)...");
+  sd_card.begin();
   
-  // Initialize I2C
-  Wire.begin();
-  Wire.setClock(100000); // 100kHz I2C
+  Serial.println("Initializing SD card 2 (pin 10)...");
+  sd_card2.begin();
+
+  // Write headers to both cards
+  Serial.println("Writing headers to SD card 1...");
+  write_sd_file_headers(sd_card);
   
-  // Initialize time
-  setTime(0, 0, 0, 1, 1, 2026); // Set initial time: HH:MM:SS DD MM YYYY
-  Serial.println("Time initialized");
-  
-  // Initialize SD card
-  Serial.print("Initializing SD card...");
-  sd.begin();
-  Serial.println(" done!");
-  
-  // Create CSV header files
-  sd.writeFile(IMU_FILEPATH, "Hours,Minutes,Seconds,Microseconds,AccelX,AccelY,AccelZ,LinearX,LinearY,LinearZ,GravX,GravY,GravZ,Roll,Pitch,Yaw,GyroX,GyroY,GyroZ\n");
-  sd.writeFile(ALTIMETER_FILEPATH, "Hours,Minutes,Seconds,Microseconds,Altitude,Temperature,Pressure\n");
-  sd.writeFile(LORA_FILEPATH, "Hours,Minutes,Seconds,Microseconds,GPS_Data\n");
-  Serial.println("CSV files created with headers");
-  
-  // Initialize IMU
-  Serial.print("Initializing BNO085 IMU...");
-  if (imu_sensor.begin()) {
-    Serial.println(" success!");
-  } else {
-    Serial.println(" FAILED!");
-  }
-  
-  // Initialize Barometer
-  Serial.print("Initializing BMP581 Barometer...");
-  if (barometer.begin()) {
-    Serial.println(" success!");
-  } else {
-    Serial.println(" FAILED!");
-  }
-  
-  // Initialize GPS
-  Serial.print("Initializing GPS...");
+  Serial.println("Writing headers to SD card 2...");
+  write_sd_file_headers(sd_card2);
+
+  Wire1.begin();
+  Wire1.setClock(100000);
   gps2.setup();
-  Serial.println(" done!");
+
+  Wire2.begin();
+  Wire2.setClock(400000);
+  barometer.begin();
+
+  delay(1000);
+  i_altitude = barometer.get_altitude();
   
-  Serial.println("=== Initialization Complete ===");
-  Serial.println("Starting data logging...");
-  Serial.println();
+  Serial.println("Setup complete!");
 }
 
 void loop() {
-  unsigned long currentMillis = millis();
-  
-  // Check if it's time to read sensors
-  if (currentMillis - lastSensorRead >= SENSOR_INTERVAL) {
-    lastSensorRead = currentMillis;
-    
-    // Read and log all sensors
-    readAndLogIMU();
-    readAndLogAltimeter();
-    readAndLogGPS();
-    
-    // Optional: Print status to serial every second
-    static unsigned long lastPrint = 0;
-    if (currentMillis - lastPrint >= 1000) {
-      lastPrint = currentMillis;
-      Serial.print("Logging... Time: ");
-      Serial.print(timer.getTimeHours());
-      Serial.print(":");
-      Serial.print(timer.getTimeMinutes());
-      Serial.print(":");
-      Serial.print(timer.getTimeSeconds());
-      Serial.print(" Altitude: ");
-      Serial.print(barometer.get_altitude());
-      Serial.println(" m");
-    }
+  // Get timestamp
+  String timestamp = rtc.getTimestamp(true);
+
+  // Read GPS data
+  char nmea[100];
+  gps2.GET_NMEA(nmea);
+  SensorData gps_data;
+  gps_data.type = GPS;
+  gps_data.timestamp = timestamp;
+  gps_data.data.gps.nmea = nmea;
+
+  Serial.println("Writing gps data...");
+  writeSensorDataToSD(gps_data);
+  delay(100);
+
+  // Read altimeter data
+  altitude = barometer.get_altitude() - i_altitude;
+  pressure = barometer.get_pressure();
+  temperature = barometer.get_temperature();
+  if (altitude == 0) {
+      Serial.println("Altitude is 0, retrying...");
+      barometer.begin();
   }
+  
+  SensorData altimeter_data;
+  altimeter_data.type = ALTIMETER;
+  altimeter_data.timestamp = timestamp;
+  altimeter_data.data.alt.altitude = altitude;
+  altimeter_data.data.alt.temp = temperature;
+  altimeter_data.data.alt.pressure = pressure;
+  
+  Serial.println("Writing altimeter data...");
+  writeSensorDataToSD(altimeter_data);
+  delay(100);
+
+  // Read IMU data
+  imu.update();
+  SensorData imu_data;
+  imu_data.type = IMU;
+  imu_data.timestamp = timestamp;
+  imu_data.data.imu.accel[0] = imu.sensorData.acceleration.x;
+  imu_data.data.imu.accel[1] = imu.sensorData.acceleration.y;
+  imu_data.data.imu.accel[2] = imu.sensorData.acceleration.z;
+  imu_data.data.imu.linear[0] = imu.sensorData.linearAcceleration.x;
+  imu_data.data.imu.linear[1] = imu.sensorData.linearAcceleration.y;
+  imu_data.data.imu.linear[2] = imu.sensorData.linearAcceleration.z;
+  imu_data.data.imu.gravity[0] = imu.sensorData.gravity.x;
+  imu_data.data.imu.gravity[1] = imu.sensorData.gravity.y;
+  imu_data.data.imu.gravity[2] = imu.sensorData.gravity.z;
+  imu_data.data.imu.quat[0] = imu.sensorData.orientation.w;
+  imu_data.data.imu.quat[1] = imu.sensorData.orientation.x;
+  imu_data.data.imu.quat[2] = imu.sensorData.orientation.y;
+  imu_data.data.imu.quat[3] = imu.sensorData.orientation.z;
+  imu_data.data.imu.gyro[0] = imu.sensorData.gyroscope.x;
+  imu_data.data.imu.gyro[1] = imu.sensorData.gyroscope.y;
+  imu_data.data.imu.gyro[2] = imu.sensorData.gyroscope.z;
+
+  Serial.println("Writing IMU data...");
+  writeSensorDataToSD(imu_data);
+  delay(50);
+
+  Serial.println("GPS: " + String(nmea));
+  Serial.println("Altitude: " + String(altitude));
+  Serial.println("Pressure: " + String(pressure));
+  Serial.println("Temperature: " + String(temperature));
+  snprintf(dataBuffer, sizeof(dataBuffer),
+      "IMU: %.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+      imu_data.data.imu.accel[0], imu_data.data.imu.accel[1], imu_data.data.imu.accel[2],
+      imu_data.data.imu.linear[0], imu_data.data.imu.linear[1], imu_data.data.imu.linear[2],
+      imu_data.data.imu.gravity[0], imu_data.data.imu.gravity[1], imu_data.data.imu.gravity[2],
+      imu_data.data.imu.quat[0], imu_data.data.imu.quat[1], imu_data.data.imu.quat[2], imu_data.data.imu.quat[3],
+      imu_data.data.imu.gyro[0], imu_data.data.imu.gyro[1], imu_data.data.imu.gyro[2]);
+  Serial.println(dataBuffer);
+  
+  delay(1000);
 }
