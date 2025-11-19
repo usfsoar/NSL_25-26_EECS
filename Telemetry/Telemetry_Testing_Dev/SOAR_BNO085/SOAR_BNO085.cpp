@@ -5,7 +5,9 @@ SOAR_BNO085::SOAR_BNO085() : bno08x(-1) {
   // Initialize I2C communication
   Wire.begin();
   Wire.setClock(400000L); // Use 400kHz I2C speed
+}
 
+void SOAR_BNO085::begin(void) {
   if (!bno08x.begin_I2C()) {
     Serial.println("Failed to find BNO08x. Check wiring.");
     while (1) { delay(10); }

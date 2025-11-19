@@ -36,6 +36,7 @@ class SOAR_BNO085 {
         SOAR_BNO085();  // Constructor
         void update();  // Polls sensor for new data, should be called in a loop
         void showState();  // Polls sensor for new data, should be called in a loop
+        void begin();
 
         Adafruit_BNO08x bno08x;
         sh2_SensorValue_t sensorValue;
