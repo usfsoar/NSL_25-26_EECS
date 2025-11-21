@@ -1,3 +1,5 @@
+import time
+
 # Class containing the state machine
 class StateMachine:
     def __init__(self):
