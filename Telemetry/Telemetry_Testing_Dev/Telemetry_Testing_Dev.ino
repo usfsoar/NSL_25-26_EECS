@@ -7,7 +7,6 @@
 #include "Kalman_Filter/matrix.h"
 #include "Kalman_Filter/extras.h"
 
-
 SOAR_BNO085 imu;
 BMP581Sensor barometer;
 
@@ -21,7 +20,6 @@ float temperature;
 float i_altitude;
 int i;
 
-double t;
 const double dt = 0.05; /* must be accurate to data rate */
 const double sigma_j = 0.2; /* process StdDev: TUNED */
 const double sigma_s = 0.1666667; /* altitude reading StdDev */
