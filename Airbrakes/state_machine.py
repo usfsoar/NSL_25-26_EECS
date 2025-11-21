@@ -1,5 +1,5 @@
 # Class containing the state machine
-class StateMachine:
+class StateMachine():
     pass
 
 if __name__ == '__main__':

@@ -5,11 +5,11 @@ from adafruit_bmp5xx import BMP5XX
 
 class BMP():
     SEALEVELPRESSURE_HPA = 1013.25
-    # I2C setup
-    i2c = board.I2C()  # uses board.SCL and board.SDA
-    # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
-
-    bmp = BMP5XX.over_i2c(i2c)
+    def __init__(self):
+        # I2C setup
+        self.i2c = board.I2C()  # uses board.SCL and board.SDA
+        # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
+        self.bmp = BMP5XX.over_i2c(self.i2c)
     def temperature():
         return bmp.temperature
     
