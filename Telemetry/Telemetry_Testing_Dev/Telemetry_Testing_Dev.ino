@@ -7,7 +7,6 @@
 #include "Kalman_Filter/matrix.h"
 #include "Kalman_Filter/extras.h"
 
-
 SOAR_BNO085 imu;
 BMP581Sensor barometer;
 
