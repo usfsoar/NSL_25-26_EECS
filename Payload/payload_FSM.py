@@ -45,9 +45,9 @@ DT = 1.0 / HZ
 
 # Thresholds (from your C++ comments / constants)
 LAUNCH_ACCEL_THRESHOLD      = 1.5   # EMA G-force > 1.5 G
-LAUNCH_ALTITUDE_THRESHOLD   = 2.0  # m AGL
-DESCENT_ALTITUDE_THRESHOLD  = .25  # m below apogee to call descent
-DESCENT_APOGEE_THRESHOLD    = 2.5   # m minimum apogee to care
+LAUNCH_ALTITUDE_THRESHOLD   = 1.0  # m AGL
+DESCENT_ALTITUDE_THRESHOLD  = 0.5  # m below apogee to call descent
+DESCENT_APOGEE_THRESHOLD    = 2.0   # m minimum apogee to care
 LANDING_ACCEL_THRESHOLD     = 0.2   # |EMA G - 1| < 0.2
 LANDING_VEL_THRESHOLD       = 0.8   # m/s
 LANDING_ALTITUDE_THRESHOLD  = 3.0   # m
