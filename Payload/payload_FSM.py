@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3bno
 """
 States:
   0 = Ready / Pre-launch
@@ -93,7 +93,7 @@ def main():
 
     landing_velocity = 0.0
     landing_gforce   = 0.0
-
+    initialize()    
     try:
         while True:
             # --- sensor read ---
