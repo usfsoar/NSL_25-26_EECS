@@ -47,7 +47,7 @@ DT = 1.0 / HZ
 LAUNCH_ACCEL_THRESHOLD      = 1.5   # EMA G-force > 1.5 G
 LAUNCH_ALTITUDE_THRESHOLD   = 5.0  # m AGL
 DESCENT_ALTITUDE_THRESHOLD  = 10.0  # m below apogee to call descent
-DESCENT_APOGEE_THRESHOLD    = 5.0   # m minimum apogee to care
+DESCENT_APOGEE_THRESHOLD    = 6.0   # m minimum apogee to care
 LANDING_ACCEL_THRESHOLD     = 0.2   # |EMA G - 1| < 0.2
 LANDING_VEL_THRESHOLD       = 0.8   # m/s
 LANDING_ALTITUDE_THRESHOLD  = 3.0   # m
@@ -93,7 +93,15 @@ def main():
 
     landing_velocity = 0.0
     landing_gforce   = 0.0
-    initialize()    
+    initialize()
+
+    for i in range(5):
+        bmp.get_pressure()
+        time.sleep(1)
+    
+    bmp.set_sea_level_pressure(bmp.get_pressure())
+    #print(f"Set sea level pressure to {sea_Stuff:.2f} hPa")
+
     try:
         while True:
             # --- sensor read ---
@@ -106,9 +114,7 @@ def main():
             ema_alt = ALPHA_ALTITUDE * alt         + (1 - ALPHA_ALTITUDE) * ema_alt
             ema_vel = ALPHA_VELOCITY * abs(vel_z)  + (1 - ALPHA_VELOCITY) * ema_vel
 
-            # update apogee
-            if ema_alt > apogee:
-                apogee = ema_alt
+
 
             now = time.time()
 
@@ -133,6 +139,9 @@ def main():
                     stable_descent = stable_land = stable_land_vg = 0
 
             elif state == STATE_LAUNCHED:
+                # update apogee
+                if ema_alt > apogee:
+                    apogee = ema_alt
                 # 1 -> 2: apogee reached + we are DESCENT_ALTITUDE_THRESHOLD below it (EMA)
                 cond_apogee_min = apogee > DESCENT_APOGEE_THRESHOLD
                 cond_below = ema_alt < (apogee - DESCENT_ALTITUDE_THRESHOLD)
