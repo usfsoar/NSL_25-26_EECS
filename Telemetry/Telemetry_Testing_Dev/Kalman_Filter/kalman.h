@@ -141,60 +141,62 @@ kalmanFilter * kalmanFilterCreate(int state_size, int observation_size) {
 }
 
 int kalmanFilterDestroy(kalmanFilter *filter) {
+    int failed = 0;
     if (filter == NULL) { return 0; }
     if (filter->x_k)
-        if (matrixDestroy(filter->x_k)) { return -1; }
+        if (matrixDestroy(filter->x_k)) { failed = -1; }
     if (filter->x_k_prev)
-        if (matrixDestroy(filter->x_k_prev)) { return -2; }
+        if (matrixDestroy(filter->x_k_prev)) { failed = -2; }
     if (filter->P_k)
-        if (matrixDestroy(filter->P_k)) { return -3; }
+        if (matrixDestroy(filter->P_k)) { failed = -3; }
     if (filter->P_k_prev)
-        if (matrixDestroy(filter->P_k_prev)) { return -4; }
+        if (matrixDestroy(filter->P_k_prev)) { failed = -4; }
     if (filter->F_k)
-        if (matrixDestroy(filter->F_k)) { return -5; }
+        if (matrixDestroy(filter->F_k)) { failed = -5; }
     if (filter->H_k)
-        if (matrixDestroy(filter->H_k)) { return -6; }
+        if (matrixDestroy(filter->H_k)) { failed = -6; }
     if (filter->z_k)
-        if (matrixDestroy(filter->z_k)) { return -7; }
+        if (matrixDestroy(filter->z_k)) { failed = -7; }
     if (filter->Q_k)
-        if (matrixDestroy(filter->Q_k)) { return -8; }
+        if (matrixDestroy(filter->Q_k)) { failed = -8; }
     if (filter->R_k)
-        if (matrixDestroy(filter->R_k)) { return -9; }
+        if (matrixDestroy(filter->R_k)) { failed = -9; }
     if (filter->K_k)
-        if (matrixDestroy(filter->K_k)) { return -10; }
+        if (matrixDestroy(filter->K_k)) { failed = -10; }
     if (filter->y_k)
-        if (matrixDestroy(filter->y_k)) { return -11; }
+        if (matrixDestroy(filter->y_k)) { failed = -11; }
     if (filter->S_k)
-        if (matrixDestroy(filter->S_k)) { return -12; }
+        if (matrixDestroy(filter->S_k)) { failed = -12; }
     if (filter->F_kt)
-        if (matrixDestroy(filter->F_kt)) { return -13; }
+        if (matrixDestroy(filter->F_kt)) { failed = -13; }
     if (filter->H_kt)
-        if (matrixDestroy(filter->H_kt)) { return -14; }
+        if (matrixDestroy(filter->H_kt)) { failed = -14; }
     if (filter->K_kt)
-        if (matrixDestroy(filter->K_kt)) { return -15; }
+        if (matrixDestroy(filter->K_kt)) { failed = -15; }
     if (filter->I)
-        if (matrixDestroy(filter->I)) { return -16; }
+        if (matrixDestroy(filter->I)) { failed = -16; }
     if (filter->vec_N)
-        if (matrixDestroy(filter->vec_N)) { return -17; }
+        if (matrixDestroy(filter->vec_N)) { failed = -17; }
     if (filter->vec_M)
-        if (matrixDestroy(filter->vec_M)) { return -18; }
+        if (matrixDestroy(filter->vec_M)) { failed = -18; }
     if (filter->temp_N_N_1)
-        if (matrixDestroy(filter->temp_N_N_1)) { return -19; }
+        if (matrixDestroy(filter->temp_N_N_1)) { failed = -19; }
     if (filter->temp_N_N_2)
-        if (matrixDestroy(filter->temp_N_N_2)) { return -20; }
+        if (matrixDestroy(filter->temp_N_N_2)) { failed = -20; }
     if (filter->temp_N_M_1)
-        if (matrixDestroy(filter->temp_N_M_1)) { return -21; }
+        if (matrixDestroy(filter->temp_N_M_1)) { failed = -21; }
     if (filter->temp_M_N_1)
-        if (matrixDestroy(filter->temp_M_N_1)) { return -22; }
+        if (matrixDestroy(filter->temp_M_N_1)) { failed = -22; }
     if (filter->temp_M_M_1)
-        if (matrixDestroy(filter->temp_M_M_1)) { return -23; }
+        if (matrixDestroy(filter->temp_M_M_1)) { failed = -23; }
     if (filter->pre_trans)
-        if (matrixDestroy(filter->pre_trans)) { return -24; }
+        if (matrixDestroy(filter->pre_trans)) { failed = -24; }
     if (filter->trans)
-        if (matrixDestroy(filter->trans)) { return -25; }
+        if (matrixDestroy(filter->trans)) { failed = -25; }
 
     free(filter);
-    return 0;
+    /* show one of the failed attempts if any */
+    return failed; 
 }
 
 void kalmanFilterPredict(kalmanFilter *filter) {
