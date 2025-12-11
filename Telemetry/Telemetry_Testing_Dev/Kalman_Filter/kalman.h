@@ -50,7 +50,7 @@ kalmanFilter * kalmanFilterCreate(int state_size, int observation_size) {
     if (observation_size > state_size) { return NULL; }
 
     filter = (kalmanFilter *)malloc(sizeof(kalmanFilter));
-    if (filter == NULL) { return NULL; }
+    if (!filter) { return NULL; }
 
     filter->x_k = NULL;
     filter->x_k_prev = NULL;
@@ -132,6 +132,7 @@ kalmanFilter * kalmanFilterCreate(int state_size, int observation_size) {
         !filter->temp_M_M_1 ||
         !filter->pre_trans ||
         !filter->trans) {
+        kalmanFilterDestroy(filter);
         return NULL;
     }
 
@@ -192,6 +193,7 @@ int kalmanFilterDestroy(kalmanFilter *filter) {
     if (filter->trans)
         if (matrixDestroy(filter->trans)) { return -25; }
 
+    free(filter);
     return 0;
 }
 
@@ -256,8 +258,8 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
     sum(filter->temp_N_N_1, filter->temp_N_N_2, filter->P_k);
 
     /* set past values equal to current values */
-    filter->x_k_prev = matrixCopy(filter->x_k);
-    filter->P_k_prev = matrixCopy(filter->P_k);
+    matrixCopyData(filter->x_k, filter->x_k_prev);
+    matrixCopyData(filter->P_k, filter->P_k_prev);
 }
 
 #endif

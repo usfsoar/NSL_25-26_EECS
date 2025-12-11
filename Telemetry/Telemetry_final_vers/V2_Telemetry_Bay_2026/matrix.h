@@ -20,6 +20,7 @@ matrix * matrixCreate(int rows, int cols);
 int matrixDestroy(matrix * mtx);
 int matrixResize(matrix * mtx, int new_rows, int new_cols);
 matrix * matrixCopy(matrix * mtx);
+int matrixCopyData(matrix * in, matrix * out);
 int setElement(matrix * mtx, int row, int col, double val);
 int getElement(matrix * mtx, int row, int col, double * val);
 int nRows(matrix * mtx, int * n);
@@ -125,6 +126,22 @@ matrix * matrixCopy(matrix * mtx) {
     memcpy(cp->data, mtx->data, mtx->rows * mtx->cols * sizeof (double));
 
     return cp;
+}
+
+int matrixCopyData(matrix * in, matrix * out) {
+    int row, col; 
+    if (!in || !out) { return -1; }
+    if (in->rows != out->rows ||
+        in->cols != out->cols) {
+        return -2;
+    }
+
+    for (row = 1; row <= in->rows; row++) {
+        for (col = 1; col <= in->cols; col++) {
+            ELEM(out, row, col) = ELEM(in, row, col);
+        }
+    }
+    return 0;
 }
 
 /* Sets the (row, col) element of mtx to val. Returns 0 if
