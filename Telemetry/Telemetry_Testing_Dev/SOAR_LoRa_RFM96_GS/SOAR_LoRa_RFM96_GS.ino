@@ -1,6 +1,9 @@
-#include <FreeRTOS.h>
-#include <task.h>
-#include <queue.h>
+#if CONFIG_FREERTOS_UNICORE
+static const BaseType_t app_cpu = 0;
+#else
+static const BaseType_t app_cpu = 1;
+#endif
+
 #include "_config.h"
 #include "sensor_data_types.h"
 #include "SOAR_LoRa_RFM96.h"
@@ -68,7 +71,7 @@ void setup() {
   sd.appendFile(ifileGPS.c_str(), initialGPS.c_str());
 
   // Create the Read Sensor Task
-  xTaskCreate(
+  xTaskCreatePinnedToCore (
     ReceiveSensorTask,
     "Read Sensor Task",
     byteMax,
