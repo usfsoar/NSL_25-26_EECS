@@ -42,12 +42,21 @@ void setup() {
 }
 
 void loop() {
-  const char* msg = "Hello!";
+  const char* msg = "0DATA";
+  const char* msg2 = "1DATA";
   Serial.print("Sending: ");
   Serial.println(msg);
 
   rfm96w.send((uint8_t*)msg, strlen(msg));
   rfm96w.waitPacketSent();
 
-  delay(1000);
+  delay(100); // sending speed
+
+  Serial.print("Sending: ");
+  Serial.println(msg2);
+
+  rfm96w.send((uint8_t*)msg2, strlen(msg2));
+  rfm96w.waitPacketSent();
+
+  delay(100); // sending speed
 }
