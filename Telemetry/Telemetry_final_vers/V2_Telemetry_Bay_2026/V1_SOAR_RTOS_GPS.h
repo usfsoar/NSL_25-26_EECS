@@ -7,7 +7,7 @@ class SOAR_RTOS_GPS {
   public:
     SOAR_RTOS_GPS(); // Constructor
     void setup();
-    char* GET_NMEA(char* nmea);
+    bool GET_NMEA(char* out, size_t outSize);
 
     private:
       Adafruit_GPS GPS;  // GPS

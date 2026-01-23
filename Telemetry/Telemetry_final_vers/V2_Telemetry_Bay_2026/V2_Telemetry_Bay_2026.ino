@@ -24,10 +24,10 @@
 SOAR_SD_CARD sd_card(254, true);  // Built-in, use SDIO
 SOAR_SD_CARD sd_card2(10, false);            // External, use SPI
 SOAR_RTC rtc;
-SOAR_RTOS_GPS gps2;
+SOAR_RTOS_GPS gps2;               // Wire 1
 Adafruit_GPS gps_hw(&Wire1);
-BMP581Sensor barometer;
-SOAR_BNO085 imu;
+BMP581Sensor barometer;           // Wire 2
+SOAR_BNO085 imu;                  // Wire
 
 matrix * quat;
 matrix * dir;
@@ -76,14 +76,14 @@ void writeToBothCards(const char* filename, const char* data) {
 }
 
 void writeSensorDataToSD(SensorData& sensor_data) {
-  const char* filename;
+  const char* filename = nullptr;
   int len = 0;
   
   switch (sensor_data.type) {
     case IMU:
       filename = IMU_FILEPATH;
       len = snprintf(dataBuffer, sizeof(dataBuffer),
-        "%lu,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
+        "%s,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
         sensor_data.timestamp,
         sensor_data.data.imu.accel[0], sensor_data.data.imu.accel[1], sensor_data.data.imu.accel[2],
         sensor_data.data.imu.linear[0], sensor_data.data.imu.linear[1], sensor_data.data.imu.linear[2],
@@ -94,7 +94,7 @@ void writeSensorDataToSD(SensorData& sensor_data) {
       
     case ALTIMETER:
       filename = ALTIMETER_FILEPATH;
-      len = snprintf(dataBuffer, sizeof(dataBuffer), "%lu,%.6f,%.6f,%.6f\n",
+      len = snprintf(dataBuffer, sizeof(dataBuffer), "%s,%.6f,%.6f,%.6f\n",
         sensor_data.timestamp,
         sensor_data.data.alt.altitude,
         sensor_data.data.alt.temp,
@@ -103,14 +103,14 @@ void writeSensorDataToSD(SensorData& sensor_data) {
       
     case GPS:
       filename = GPS_FILEPATH;
-      len = snprintf(dataBuffer, sizeof(dataBuffer), "%lu,%s\n",
+      len = snprintf(dataBuffer, sizeof(dataBuffer), "%s,%s\n",
         sensor_data.timestamp,
         sensor_data.data.gps.nmea);
       break;
     
     case KALMAN:
       filename = KALMAN_FILEPATH;
-      len = snprintf(dataBuffer, sizeof(dataBuffer), "%lu,%.6f,%.6f,%.6f\n",
+      len = snprintf(dataBuffer, sizeof(dataBuffer), "%s,%.6f,%.6f,%.6f\n",
         sensor_data.timestamp,
         sensor_data.data.kalman.kalman_altitude,
         sensor_data.data.kalman.kalman_velocity,
@@ -118,7 +118,7 @@ void writeSensorDataToSD(SensorData& sensor_data) {
       break;
   }
   
-  if (len > 0 && len < sizeof(dataBuffer)) {
+  if (filename && len > 0 && (size_t)len < sizeof(dataBuffer)) {
     writeToBothCards(filename, dataBuffer);
     Serial.print("Data written: ");
     Serial.println(filename);
@@ -200,15 +200,17 @@ void setup() {
 
 void loop() {
   // Get timestamp
-  String timestamp = rtc.getTimestamp(true);
+  String ts = rtc.getTimestamp(true);
 
   // Read GPS data
-  char nmea[100];
-  gps2.GET_NMEA(nmea);
+  char nmea_tmp[100];
+  gps2.GET_NMEA(nmea_tmp, sizeof(nmea_tmp));
   SensorData gps_data;
   gps_data.type = GPS;
-  gps_data.timestamp = timestamp;
-  gps_data.data.gps.nmea = nmea;
+  strncpy(gps_data.timestamp, ts.c_str(), sizeof(gps_data.timestamp) - 1);
+  gps_data.timestamp[sizeof(gps_data.timestamp) - 1] = '\0';
+  strncpy(gps_data.data.gps.nmea, nmea_tmp, sizeof(gps_data.data.gps.nmea) - 1);
+  gps_data.data.gps.nmea[sizeof(gps_data.data.gps.nmea) - 1] = '\0';
 
   Serial.println("Writing gps data...");
   writeSensorDataToSD(gps_data);
@@ -225,7 +227,8 @@ void loop() {
 
   SensorData altimeter_data;
   altimeter_data.type = ALTIMETER;
-  altimeter_data.timestamp = timestamp;
+  strncpy(altimeter_data.timestamp, ts.c_str(), sizeof(altimeter_data.timestamp) - 1);
+  altimeter_data.timestamp[sizeof(altimeter_data.timestamp) - 1] = '\0';
   altimeter_data.data.alt.altitude = altitude;
   altimeter_data.data.alt.temp = temperature;
   altimeter_data.data.alt.pressure = pressure;
@@ -238,7 +241,8 @@ void loop() {
   imu.update();
   SensorData imu_data;
   imu_data.type = IMU;
-  imu_data.timestamp = timestamp;
+  strncpy(imu_data.timestamp, ts.c_str(), sizeof(imu_data.timestamp) - 1);
+  imu_data.timestamp[sizeof(imu_data.timestamp) - 1] = '\0';
   imu_data.data.imu.accel[0] = imu.sensorData.acceleration.x;
   imu_data.data.imu.accel[1] = imu.sensorData.acceleration.y;
   imu_data.data.imu.accel[2] = imu.sensorData.acceleration.z;
@@ -288,7 +292,8 @@ void loop() {
 
   SensorData kalman_data;
   kalman_data.type = KALMAN;
-  kalman_data.timestamp = timestamp;
+  strncpy(kalman_data.timestamp, ts.c_str(), sizeof(kalman_data.timestamp) - 1);
+  kalman_data.timestamp[sizeof(kalman_data.timestamp) - 1] = '\0';
   kalman_data.data.kalman.kalman_altitude = kalman_altitude;
   kalman_data.data.kalman.kalman_velocity = kalman_velocity;
   kalman_data.data.kalman.kalman_acceleration = kalman_acceleration;
@@ -328,7 +333,7 @@ void loop() {
         break;
   }
 
-  Serial.println("GPS: " + String(nmea));
+  Serial.println("GPS: " + String(nmea_tmp));
   Serial.println("Altitude: " + String(altitude));
   Serial.println("Pressure: " + String(pressure));
   Serial.println("Temperature: " + String(temperature));

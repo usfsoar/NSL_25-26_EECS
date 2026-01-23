@@ -16,7 +16,7 @@ struct altimeter_packet
 
 struct gps_packet
 {
-	char* nmea;
+	char nmea[100];
 };
 
 struct kalman_packet
@@ -45,5 +45,6 @@ struct SensorData
 		gps_packet gps;
 		kalman_packet kalman;
 	} data;
-	String timestamp;
+
+	char timestamp[16];
 };
