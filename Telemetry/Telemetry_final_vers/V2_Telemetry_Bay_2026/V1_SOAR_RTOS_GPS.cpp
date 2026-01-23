@@ -14,63 +14,32 @@ void SOAR_RTOS_GPS::setup() {
   GPS.println(PMTK_Q_RELEASE); // Request firmware version
 }
 
-char* SOAR_RTOS_GPS::GET_NMEA(char* nmea) {
-  while(1) {
-  char read = GPS.read();
+bool SOAR_RTOS_GPS::GET_NMEA(char* out, size_t outSize) {
+  if (!out || outSize == 0) return false;
+
+  // Pump the GPS parser a bit
+  GPS.read();
+
   char* gps_data = GPS.lastNMEA();
-  char* p;
-  int comas = 0;
-  char* start = nmea;
+  if (!gps_data || gps_data[0] == '\0') {
+    out[0] = '\0';
+    return false;
+  }
 
+  // Your comma-filter copy (fields 1..7-ish)
+  int commas = 0;
+  size_t i = 0;
 
-   for (p = gps_data; *p != '\0'; p++) {
-          if (*p == ',') {
-            comas++;
-            if (comas > 7) {
-              break;
-            }
-          }
-          // if (comas == 0) { // Extract the second field
-          //   p++;
-          //   char* start = p;
-          //   while (*p != ',' && *p != '\0') {
-          //     p++;
-          //   }
-          //   strncpy(nmea, start, p - start);
-          //   nmea[p - start] = '\0'; // Null-terminate the string
-          //   break;
-          // }
-          if (comas > 0 && comas <= 7) {
-            *start++ = *p;
-          //   char* start = p;
-          // while (*p != ',' && *p != '\0') {
-          //     p++;
-          //   }
-          //   strncpy(*nmea, p, p - start);
-          //   nmea[p - start] = '\0';
-          }
-        }
-        *start = '\0';
-        return nmea;
-        }
-  // *nmea = '\0'; // Null-terminate the string
-  // strcpy(nmea, gps_data);
-
-  // if (GPSECHO)
-  //   if (read) Serial.println(read);
-  // if (GPS.newNMEAreceived()) {
-  //   // *nmea = '\0'; // Null-terminate the string
-  //   // strcpy(nmea, gps_data);
-  //   // Serial.print("NMEA data: ");
-  //   // Serial.println(nmea);
-  //   Serial.println(GPS.lastNMEA());
-  //   if (!GPS.newNMEAreceived()) {
-  //     Serial.println("No new NMEA sentence received.");
-  // } else if (!GPS.parse(GPS.lastNMEA())) {
-  //     Serial.println("Failed to parse NMEA sentence.");
-  // }
-  // }
-  // vTaskDelay(1000);
-  // }
-  // }
+  for (char* p = gps_data; *p != '\0'; p++) {
+    if (*p == ',') {
+      commas++;
+      if (commas > 7) break;
+    }
+    if (commas > 0 && commas <= 7) {
+      if (i + 1 < outSize) out[i++] = *p;
+      else break;
+    }
+  }
+  out[i] = '\0';
+  return true;
 }
