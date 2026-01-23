@@ -7,7 +7,7 @@
 #define RFM96W_RST 9
 #define RFM96W_INT 2
 
-#define RFM96W_FREQ 433.0
+float RFM96W_FREQ 433.0
 
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 
@@ -60,3 +60,10 @@ void loop() {
 
   delay(100); // sending speed
 }
+/* Restart function */
+void restartMCU() {
+SCB_AIRCR = 0x05FA0004; 
+while (1) {
+    }
+}
+*/
