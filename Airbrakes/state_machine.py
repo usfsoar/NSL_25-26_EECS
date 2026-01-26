@@ -23,10 +23,11 @@ class StateMachine:
         self.state2_time = 0
         self.state2_timeout = 30
         self.state3_started = False
-        
+        self.descent_threshold = 5
 
 
     def transition(self, altitude, velocity, acceleration, apogee):
+        self.elapsed_time = time.time()
         match self.current_state:
             case 0:
                 if altitude > 10 or acceleration > 20:
@@ -46,11 +47,15 @@ class StateMachine:
                     self.state2_time = time.time()
                 else:
                     if self.elapsed_time - self.state2_time > self.state2_timeout:
+                        self.current_state = 3
+                    elif (altitude > self.target_height) and (velocity > 0):
                         self.state3_counter += 1
+                        self.state4_counter = 0
                         if self.state3_counter >= self.state3_threshold:
                             self.current_state = 3
-                    elif velocity < 0:
+                    elif (velocity < 0) and (altitude < apogee - self.descent_threshold):
                         self.state4_counter += 1
+                        self.state3_counter = 0
                         if self.state4_counter >= self.state4_threshold:
                             self.current_state = 4
             case 3:
@@ -69,7 +74,7 @@ class StateMachine:
                 if not self.state4_started:
                     self.state4_started = True
                 else:
-                    if  -10 < velocity > 10:
+                    if  -10 < velocity < 10:
                         self.state5_counter += 1
                         if self.state5_counter >= self.state5_threshold:
                             self.current_state = 5
