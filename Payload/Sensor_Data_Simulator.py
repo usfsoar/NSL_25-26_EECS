@@ -1,20 +1,10 @@
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 import math
-
-#TO DO:  
-# [DONE] take drag calculations from last year's rk4 and pid code (see github)
-# [DONE] make class called Sensor_Data_Simulator, and there should be callable functions get_velocity()
-# data output: 
-    # acceleration will be (x,y,z)
-    #for height, xyz array (x and y can be constant 0)
-    #research datatypes that the sensors output
-    # return only acceleration?
 
 #NOTES:
 # calculations from last year predicted apogee at 4,444 feet (1,354.53 m).  Calculations from this program (neglecting flap length 
 # in the drag calculations) result in apogee at 1407.2577990273785 m
-
 
 GRAVITY = 9.81 #m s^-2
 
@@ -24,8 +14,16 @@ burnRate=0.5591     #burn rate:  kg s^-1 (extrapolated from fuel mass and burn t
 burnTime=3.6        #burn time:  s (CDR pg 94)
 
 class Sensor_Data_Simulator:
+    #initial values
+    currentAccel = 0
+    currentVelocity = 0
+    currentHeight = 0
+    currentTime = 0
+    dt=0.05         #time step increments
+    tRange=np.arange(0, 40, dt) #test start, stop, and step times
+    currentCounter = 0
 
-    def getAccel(time, velocity):
+    def calcAccel(time, velocity):
         #calculate the acceleration using the thrust, drag, and mass
         #not a function of height because we are ignoring the variation of gravity due to height
         F=Sensor_Data_Simulator.getThrust(time)
@@ -61,58 +59,81 @@ class Sensor_Data_Simulator:
             mass=rocketMass-fuelMass
         return mass
 
-    def runSim():
-        #INITIAL PARAMETERS
-        v=0             #initial velocity
-        h=0             #initial height
-        dt=0.05         #time step increments
-        k=0             #increment/step counter
-        tRange=np.arange(0, 40, dt) #test start, stop, and step times
+    def updateValues():
+        Sensor_Data_Simulator.currentAccel = Sensor_Data_Simulator.calcAccel(Sensor_Data_Simulator.currentTime, Sensor_Data_Simulator.currentVelocity)
+        Sensor_Data_Simulator.currentHeight = Sensor_Data_Simulator.currentHeight + Sensor_Data_Simulator.currentVelocity*Sensor_Data_Simulator.dt
+        Sensor_Data_Simulator.currentVelocity = Sensor_Data_Simulator.currentVelocity + Sensor_Data_Simulator.currentAccel*Sensor_Data_Simulator.dt
+        Sensor_Data_Simulator.currentCounter += 1
+        Sensor_Data_Simulator.currentTime = Sensor_Data_Simulator.tRange[Sensor_Data_Simulator.currentCounter]
 
-        A=[]            #list for acceleration values
-        V=[]            #list for velocity values
-        H=[]            #list for height values
-        T=[]            #list for time values
-        
-        for t in tRange:        #loop to execute in increments of dt for given runtime 
-            a=Sensor_Data_Simulator.getAccel(t, v)    #obtain acceleration
-            #record values for acceleration, velocity, height, and time
-            A.insert(k, a)
-            V.insert(k, v)
-            H.insert(k, h)
-            T.insert(k, t)
-
-            #update values for height and velocity
-            h=h+v*dt
-            v=v+a*dt
-            k+=1
-            if h<0:
-                break
-        
-        # Comment/Uncomment to toggle plot for results
-        # Sensor_Data_Simulator.plotSim(H, V, A, T)
+    def getAccel():
+        #print(Sensor_Data_Simulator.currentAccel)
+        return Sensor_Data_Simulator.currentAccel
     
-    def plotSim(height, velocity, acceleration, time):            
-        # print(str(max(H))) #to get apogee
-        figure, axis=plt.subplots(2,2)
+    def getVelocity():
+        #print(Sensor_Data_Simulator.currentVelocity)
+        return Sensor_Data_Simulator.currentVelocity
+        
+    
+    def getAlt():
+        #print(Sensor_Data_Simulator.currentHeight)
+        return Sensor_Data_Simulator.currentHeight
+        
 
-        axis[0,0].plot(time, acceleration)
-        axis[0,0].set_title('Acceleration vs time')
-        axis[0,0].set_xlabel('time (s)')
-        axis[0,0].set_ylabel('Acceleration (m/s^2)')
+    # def runSim(A, V, H, T, v, h, dt, k, tRange, t):
+    #     # #INITIAL PARAMETERS
+    #     # v=0             #initial velocity
+    #     # h=0             #initial height
+    #     # dt=0.05         #time step increments
+    #     # k=0             #increment/step counter
+    #     # tRange=np.arange(0, 40, dt) #test start, stop, and step times
 
-        axis[0,1].plot(time, velocity)
-        axis[0,1].set_title('Velocity vs time')
-        axis[0,1].set_xlabel('time (s)')
-        axis[0,1].set_ylabel('Velocity (m/s)')
+    #     # A=[]            #list for acceleration values
+    #     # V=[]            #list for velocity values
+    #     # H=[]            #list for height values
+    #     # T=[]            #list for time values
+        
+    #     #for t in tRange:        #loop to execute in increments of dt for given runtime 
+    #     a=Sensor_Data_Simulator.getAccel(t, v)    #obtain acceleration
+    #     #record values for acceleration, velocity, height, and time
+    #     A.insert(k, a)
+    #     V.insert(k, v)
+    #     H.insert(k, h)
+    #     T.insert(k, t)
 
-        axis[1,0].plot(time, height)
-        axis[1,0].set_title('Height vs time')
-        axis[1,0].set_xlabel('time (s)')
-        axis[1,0].set_ylabel('Height (m)')
-        axis[0,0].grid(True)
-        axis[0,1].grid(True)
-        axis[1,0].grid(True)
+    #     #update values for height and velocity
+    #     h=h+v*dt
+    #     v=v+a*dt
+    #     k+=1
+    #     # if h<0:
+    #     #     break
+    #     print(h)
+    #     return(h) 
+        
+    #     # Comment/Uncomment to toggle plot for results
+    #     # Sensor_Data_Simulator.plotSim(H, V, A, T)
+    
+    # def plotSim(height, velocity, acceleration, time):            
+    #     # print(str(max(H))) #to get apogee
+    #     figure, axis=plt.subplots(2,2)
 
-        plt.show()
-        print('Apogee: ', max(height))
+    #     axis[0,0].plot(time, acceleration)
+    #     axis[0,0].set_title('Acceleration vs time')
+    #     axis[0,0].set_xlabel('time (s)')
+    #     axis[0,0].set_ylabel('Acceleration (m/s^2)')
+
+    #     axis[0,1].plot(time, velocity)
+    #     axis[0,1].set_title('Velocity vs time')
+    #     axis[0,1].set_xlabel('time (s)')
+    #     axis[0,1].set_ylabel('Velocity (m/s)')
+
+    #     axis[1,0].plot(time, height)
+    #     axis[1,0].set_title('Height vs time')
+    #     axis[1,0].set_xlabel('time (s)')
+    #     axis[1,0].set_ylabel('Height (m)')
+    #     axis[0,0].grid(True)
+    #     axis[0,1].grid(True)
+    #     axis[1,0].grid(True)
+
+    #     plt.show()
+    #     print('Apogee: ', max(height))

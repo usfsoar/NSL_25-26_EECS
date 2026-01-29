@@ -1,4 +1,7 @@
 #!/usr/bin/env python3bno
+
+from Sensor_Data_Simulator import *
+
 """
 States:
   0 = Ready / Pre-launch
