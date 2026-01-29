@@ -1,6 +1,6 @@
 #!/usr/bin/env python3bno
 
-from Sensor_Data_Simulator import *
+from sim import *
 
 """
 States:
