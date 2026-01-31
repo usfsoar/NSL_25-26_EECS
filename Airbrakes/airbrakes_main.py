@@ -82,6 +82,6 @@ while True:
     previous_altitude = altitude
     
     # Delay before next iteration
-    pass
+    
 
 # Create graphs and save to SD card
