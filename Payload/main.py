@@ -25,7 +25,6 @@ from payload_sensor.bmp580 import BMP
 from payload_sensor.bno055 import BNO
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
     
-
 #----CONSTANTS----
 #mode: launch, hand, sim
 MODE = "sim"
