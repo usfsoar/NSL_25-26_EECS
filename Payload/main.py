@@ -27,11 +27,11 @@ from payload_sensor.sensor_simulation import Sensor_Data_Simulator
     
 
 #----CONSTANTS----
-#mode: launch, hand_test, sim
+#mode: launch, hand, sim
 MODE = "sim"
 
-#three type of thresholds: hand test, sim, and launch
-#hand test thresholds
+#three type of thresholds: hand, sim, and launch
+#hand thresholds
 if MODE == "sim":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G  gs needed to launch
     LAUNCH_ALTITUDE_THRESHOLD   = 1.0   #m  height needed to launch
@@ -40,7 +40,7 @@ if MODE == "sim":
     LANDING_GFORCE_THRESHOLD    = 0.2   #G  gs needed to call landing
     LANDING_VEL_THRESHOLD       = 0.8   #m/s velocity needed to call landing
     LANDING_ALTITUDE_THRESHOLD  = 3.0   #m height needed to call landing
-elif MODE == "hand_test":
+elif MODE == "hand":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
     LAUNCH_ALTITUDE_THRESHOLD   = 1.0   #m
     DESCENT_ALTITUDE_THRESHOLD  = 0.5   #m
