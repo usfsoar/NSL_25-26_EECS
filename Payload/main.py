@@ -10,6 +10,8 @@ TO DO:
 -need to evaluate transition validity
 -rover stuff after landing
 -decide on velocity- vertical or magnitude
+
+--classes to create: data_saving_and_logger, filter, power_loss
 """
 
 #----IMPORTS----    
