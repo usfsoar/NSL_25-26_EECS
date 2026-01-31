@@ -116,8 +116,6 @@ def main():
             ema_alt = ALPHA_ALTITUDE * alt         + (1 - ALPHA_ALTITUDE) * ema_alt
             ema_vel = ALPHA_VELOCITY * abs(vel_z)  + (1 - ALPHA_VELOCITY) * ema_vel
 
-
-
             now = time.time()
 
             # global timeout for launched/descending

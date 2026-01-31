@@ -1,13 +1,16 @@
+#----IMPORTS----
 #import libraries
 import time
 
 #import classes
 from payload_sensor.bmp580 import BMP
 from payload_sensor.bno055 import BNO
+from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 
 #----INITIALIZE CLASSES----
 bno = BNO()
 bmp = BMP()
+sim = Sensor_Data_Simulator()
 
 #----CONSTANTS----
 #simulation
@@ -58,6 +61,8 @@ def initialize_sensors():
             print(error)
 
 def validate_data():
+    #need to figure out what to do if data is None
+    #probably where kalman filter goes
     if current_g_force is None:
         current_g_force = 0
     if current_altitude is None:
@@ -85,6 +90,7 @@ def main():
     while True:
         get_sensor_data()
         validate_data()
+        
 
 
 
