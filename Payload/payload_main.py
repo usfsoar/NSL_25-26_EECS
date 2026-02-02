@@ -7,7 +7,9 @@ TO DO:
 -implement power loss
 -implement actual rocket thresolds
 -filter data: ema or kalman filter. maybe ema until kalman is done
+----ema=value*alpha + prev_ema*(1-alpha)
 -need to evaluate transition validity
+----stick to stable_readings method
 -rover stuff after landing
 -decide on velocity- vertical or magnitude
 
@@ -58,6 +60,8 @@ elif MODE == "launch":
 else:
     exit("Invalid MODE selected")
 
+#----GLOBAL VARIABLES----
+#if ema, set to 1.0
 current_state = 0
 current_g_force = 0
 current_altitude = 0
