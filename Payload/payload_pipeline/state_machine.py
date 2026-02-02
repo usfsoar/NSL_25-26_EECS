@@ -23,7 +23,7 @@ class StateMachine:
     def get_state(self):
         match self.current_state:
             case 0:
-                if (self.g_force > self.launch_gforce_threshold) or (self.launch_altitude_threshold):
+                if (self.g_force > self.launch_gforce_threshold) or (self.altitude > self.launch_altitude_threshold):
                     self.current_state = 1
                 else:
                     self.current_state = 0

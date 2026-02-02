@@ -62,11 +62,18 @@ else:
 
 #----GLOBAL VARIABLES----
 #if ema, set to 1.0
-current_state = 0
-current_g_force = 0
-current_altitude = 0
-current_velocity = 0
-current_apogee = -1
+data = {
+    "time": 0,
+    "g_force": 0,
+    "altitude": 0,
+    "velocity": 0,
+    "apogee": 0
+    }
+# current_state = 0
+# current_g_force = 0
+# current_altitude = 0
+# current_velocity = 0
+# current_apogee = -1
 #decide between vertical velocity or velocity magnitude
 
 
@@ -108,21 +115,21 @@ def initialize_sensors():
 def validate_data():
     #need to figure out what to do if data is None
     #probably where kalman filter goes
-    if current_g_force is None:
-        current_g_force = 0
-    if current_altitude is None:
-        current_altitude = 0
-    if current_velocity is None:
-        current_velocity = 0
+    if data["g_force"] is None:
+        data["g_force"] = 0
+    if data["altitude"] is None:
+        data["altitude"] = 0
+    if data["velocity"] is None:
+        data["velocity"] = 0
 
 def get_sensor_data():
     if MODE == "sim":
         pass
     else:
-        current_g_force = bno.get_acceleration()[2] / 9.81
-        current_altitude = bmp.get_altitude()
-        current_velocity = bno.get_vertical_velocity()
-        current_apogee = max(current_apogee, current_altitude)
+        data["g_force"] = bno.get_acceleration()[2] / 9.81
+        data["altitude"] = bmp.get_altitude()
+        data["velocity"] = bno.get_vertical_velocity()
+        data["apogee"] = max(data["apogee"], data["altitude"])
 
 def set_zero_altitude():
     for i in range(5):
@@ -133,17 +140,17 @@ def main():
     initialize_sensors()
     set_zero_altitude()
 
-    while current_state != 3:
+    while data["current_state"] != 3:
         get_sensor_data()
         validate_data()
-        current_state = sm.update(
-            current_state,
-            current_g_force,
-            current_altitude,
-            current_velocity,
-            current_apogee
+        data["current_state"] = sm.update(
+            data["current_state"],
+            data["g_force"],
+            data["altitude"],
+            data["velocity"],
+            data["apogee"]
         )
-        print(f"Current State: {current_state}, G-Force: {current_g_force:.2f} g, Altitude: {current_altitude:.2f} m, Velocity: {current_velocity:.2f} m/s, Apogee: {current_apogee:.2f} m")
+        print(f"Current State: {data['current_state']}, G-Force: {data['g_force']:.2f} g, Altitude: {data['altitude']:.2f} m, Velocity: {data['velocity']:.2f} m/s, Apogee: {data['apogee']:.2f} m")
         #save data to file here
         #save log statements to log file here
         time.sleep(0.1)
@@ -152,8 +159,5 @@ def main():
     #run rover stuff here
 
         
-
-
-
 if __name__ == '__main__':
     main()
