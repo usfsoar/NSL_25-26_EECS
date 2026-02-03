@@ -132,12 +132,12 @@ def validate_data():
 def get_sensor_data():
     if MODE == "sim":
         sim.updateValues()
-        data["g_force"] = sim.getAccel() / 9.81
+        data["g_force"] = abs(sim.getAccel()) / 9.81
         data["altitude"] = sim.getAlt()
         data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
     else:
-        data["g_force"] = bno.get_acceleration()[2] / 9.81
+        data["g_force"] = bno.get_g_force()
         data["altitude"] = bmp.get_altitude()
         data["velocity"] = bno.get_vertical_velocity()
         data["apogee"] = max(data["apogee"], data["altitude"])

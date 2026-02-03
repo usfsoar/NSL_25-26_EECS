@@ -33,7 +33,7 @@ class StateMachine:
                 else:
                     self.current_state = 1
             case 2:
-                if (self.velocity < self.landing_vel_threshold) and (abs(self.g_force - 1.0) < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
+                if (self.velocity < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
                     self.current_state = 3
                 else:
                     self.current_state = 2

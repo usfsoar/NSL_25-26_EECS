@@ -61,9 +61,17 @@ class Sensor_Data_Simulator:
         return mass
 
     def updateValues(self):
-        self.currentAccel = self.calcAccel(self.currentTime, self.currentVelocity)
-        self.currentHeight = self.currentHeight + self.currentVelocity*self.dt
-        self.currentVelocity = self.currentVelocity + self.currentAccel*self.dt
+        if self.currentCounter >= 790: # Reached the end of the simulation
+            return
+
+        if self.currentHeight < 0: # Landed
+            self.currentAccel = -9.81
+            self.currentVelocity = 0
+        else:
+            self.currentAccel = self.calcAccel(self.currentTime, self.currentVelocity)
+            self.currentHeight = self.currentHeight + self.currentVelocity*self.dt
+            self.currentVelocity = self.currentVelocity + self.currentAccel*self.dt
+
         self.currentCounter += 1
         self.currentTime = self.tRange[self.currentCounter]
 
