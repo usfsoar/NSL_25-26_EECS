@@ -124,7 +124,10 @@ def validate_data():
 
 def get_sensor_data():
     if MODE == "sim":
-        pass
+        data["g_force"] = sim.getAccel()[2] / 9.81
+        data["altitude"] = sim.getAlt()
+        data["velocity"] = sim.getVelocity()
+        data["apogee"] = max(data["apogee"], data["altitude"])
     else:
         data["g_force"] = bno.get_acceleration()[2] / 9.81
         data["altitude"] = bmp.get_altitude()
@@ -138,7 +141,10 @@ def set_zero_altitude():
 
 def main():
     initialize_sensors()
-    set_zero_altitude()
+    if MODE == "sim":
+        pass
+    else:
+        set_zero_altitude()
 
     while data["current_state"] != 3:
         get_sensor_data()
