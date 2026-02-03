@@ -64,6 +64,7 @@ else:
 #if ema, set to 1.0
 data = {
     "time": 0,
+    "state": 0,
     "g_force": 0,
     "altitude": 0,
     "velocity": 0,
@@ -84,9 +85,15 @@ data = {
 # STABLE_READINGS_FOR_LANDING_VG = 3
 
 #----INITIALIZE CLASSES----
-bno = BNO()
-bmp = BMP()
-sim = Sensor_Data_Simulator()
+if MODE == "sim":
+    bno = None
+    bmp = None
+    sim = Sensor_Data_Simulator()
+else:
+    bno = BNO()
+    bmp = BMP()
+    sim = None
+    
 sm = StateMachine(
     LAUNCH_GFORCE_THRESHOLD,
     LAUNCH_ALTITUDE_THRESHOLD,
@@ -124,7 +131,8 @@ def validate_data():
 
 def get_sensor_data():
     if MODE == "sim":
-        data["g_force"] = sim.getAccel()[2] / 9.81
+        sim.updateValues()
+        data["g_force"] = sim.getAccel() / 9.81
         data["altitude"] = sim.getAlt()
         data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
@@ -146,17 +154,17 @@ def main():
     else:
         set_zero_altitude()
 
-    while data["current_state"] != 3:
+    while data["state"] != 3:
         get_sensor_data()
         validate_data()
-        data["current_state"] = sm.update(
-            data["current_state"],
+        data["state"] = sm.update(
+            data["state"],
             data["g_force"],
             data["altitude"],
             data["velocity"],
             data["apogee"]
         )
-        print(f"Current State: {data['current_state']}, G-Force: {data['g_force']:.2f} g, Altitude: {data['altitude']:.2f} m, Velocity: {data['velocity']:.2f} m/s, Apogee: {data['apogee']:.2f} m")
+        print(f"Current State: {data['state']}, G-Force: {data['g_force']:.2f} g, Altitude: {data['altitude']:.2f} m, Velocity: {data['velocity']:.2f} m/s, Apogee: {data['apogee']:.2f} m")
         #save data to file here
         #save log statements to log file here
         time.sleep(0.1)
