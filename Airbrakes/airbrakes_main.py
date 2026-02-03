@@ -30,9 +30,22 @@ elapsed_time = time.time() - start_time
 
 while True:
     # Update dt
-
+    dt = time.time() - start_time - elapsed_time
+    elapsed_time = time.time() - start_time
     # Get sensor data
 
+
+    data = {
+        'Time' : [elapsed_time],
+        'Altitude' : [],
+        'Velocity' : [],
+        'Acceleration X' : [],
+        'Acceleration Y' : [],
+        'Acceleration Z' : [],
+        'State' : [],
+        'Motor Steps' : [],
+        'Predicted Apogee' : []
+    }
     # Update State Machine
 
     # If in state 1
