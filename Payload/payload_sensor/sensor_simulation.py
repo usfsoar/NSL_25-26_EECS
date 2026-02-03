@@ -2,6 +2,10 @@
 import numpy as np
 import math
 
+# Rebekah to do:
+# - update rocket parameters
+# - update drag equation when we have that
+
 #NOTES:
 # calculations from last year predicted apogee at 4,444 feet (1,354.53 m).  Calculations from this program (neglecting flap length 
 # in the drag calculations) result in apogee at 1407.2577990273785 m
