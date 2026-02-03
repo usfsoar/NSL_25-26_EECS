@@ -27,6 +27,8 @@ from payload_sensor.bmp580 import BMP
 from payload_sensor.bno055 import BNO
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
     
+from payload_pipeline.telemetry_logger import TelemetryLogger
+
 #----CONSTANTS----
 #mode: launch, hand, sim
 MODE = "sim"
@@ -104,6 +106,8 @@ sm = StateMachine(
     LANDING_ALTITUDE_THRESHOLD
 )
 
+# Initialize Logger
+log = TelemetryLogger()
 
 def initialize_sensors():
     if MODE == "sim":
@@ -164,7 +168,16 @@ def main():
             data["velocity"],
             data["apogee"]
         )
-        print(f"Current State: {data['state']}, G-Force: {data['g_force']:.2f} g, Altitude: {data['altitude']:.2f} m, Velocity: {data['velocity']:.2f} m/s, Apogee: {data['apogee']:.2f} m")
+        
+        # Log (Time, Current State, G-Force, Altitute, Velocity, Apogee)
+        # TODO: More human readable timestamp? Right now is Unix time
+        log.log_sensor(data={"time": time.time(), "state": data["state"], 
+                             "g_force": data["g_force"], "altitude": data["altitude"], 
+                             "velocity": data["velocity"], "apogee": data["apogee"]})
+        
+        # print(f"Current State: {data['state']}, G-Force: {data['g_force']:.2f} g, Altitude: {data['altitude']:.2f} m, Velocity: {data['velocity']:.2f} m/s, Apogee: {data['apogee']:.2f} m")
+        
+
         #save data to file here
         #save log statements to log file here
         time.sleep(0.1)
