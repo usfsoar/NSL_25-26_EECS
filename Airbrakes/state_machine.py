@@ -18,7 +18,7 @@ class StateMachine:
         self.state1_timeout = 6.5
         self.state1_started = False
         self.elapsed_time = time.time()
-        self.target_height = 1219
+        self.target_height = 3048
         self.state2_started = False
         self.state2_time = 0
         self.state2_timeout = 30
