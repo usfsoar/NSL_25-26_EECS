@@ -1,7 +1,7 @@
 #include "SOAR_BNO085.h"
 
 // Constructor
-SOAR_BNO085::SOAR_BNO085() : bno08x(-1) {
+SOAR_BNO085::SOAR_BNO085() : bno08x(BNO08X_RESET) {
   // Initialize I2C communication
   Wire.begin();
   Wire.setClock(400000L); // Use 400kHz I2C speed
@@ -44,7 +44,7 @@ void SOAR_BNO085::update() {
   if (bno08x.wasReset()) {
     Serial.println("Sensor reset detected, re-enabling reports.");
     setReports();
-  }
+  :}
 
   if (bno08x.getSensorEvent(&sensorValue)) {
     processSensorEvent();

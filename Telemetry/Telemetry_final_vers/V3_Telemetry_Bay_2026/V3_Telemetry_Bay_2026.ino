@@ -40,10 +40,7 @@ float altitude;
 float pressure;
 float temperature;
 float i_altitude;
-const float max_altitude = 1;
-const float max_alt_tol = 0.5;
 int stage = 0;
-float alt_diff;
 
 const double dt = 0.05; /* must be accurate to data rate */
 const double sigma_j = 0.2; /* process StdDev: TUNED */
@@ -304,7 +301,6 @@ void loop() {
   delay(100);
 
   // Stage update
-  alt_diff = abs(kalman_altitude - max_altitude);
   switch (stage) {
     case 0: // On Ground
         if((kalman_acceleration > 0) && (kalman_velocity > 0) && (kalman_altitude > MIN_ALT)) {
