@@ -32,7 +32,6 @@ BMP581Sensor barometer;           // Wire 2
 SOAR_BNO085 imu;                  // Wire
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 
-int id;
 char* msg = (char*)malloc(MAX_DATA);
 float RFM96W_FREQ = 433.0;
 const int FILE_WRITE_DELAY = 100;
