@@ -9,6 +9,8 @@
  * No RTOS - uses simple sequential polling in loop()
  */
 
+#include <SPI.h>
+#include <RH_RF95.h>
 #include "V1_SOAR_RTOS_SD_CARD.h"
 #include "V1_SOAR_RTOS_GPS.h"
 #include "sensor_data_types.h"
@@ -28,6 +30,12 @@ SOAR_RTOS_GPS gps2;               // Wire 1
 Adafruit_GPS gps_hw(&Wire1);
 BMP581Sensor barometer;           // Wire 2
 SOAR_BNO085 imu;                  // Wire
+RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
+
+int id;
+char* msg = (char*)malloc(MAX_DATA);
+float RFM96W_FREQ = 433.0;
+const int FILE_WRITE_DELAY = 100;
 
 matrix * quat;
 matrix * dir;
@@ -48,7 +56,7 @@ const double sigma_s = 0.1666667; /* altitude reading StdDev */
 const double sigma_a = 0.179; /* acceleration reading StdDev */
 const int states = 3;
 const int observations = 2;
-const double MIN_ALT = 1; /* trust sensors below this altitude [m]: allows filter to adapt quickly */
+const double MIN_ALT = 3; /* trust sensors below this altitude [m]: allows filter to adapt quickly */
 const double APOGEE = 3048; // [m] 10k ft
 kalmanFilter *filter = NULL;
 
@@ -141,6 +149,31 @@ void setup() {
   Serial.println("Writing headers to SD card 2...");
   write_sd_file_headers(sd_card2);
 
+  // Initialize Radio
+  pinMode(RFM96W_RST, OUTPUT);
+  digitalWrite(RFM96W_RST, HIGH);
+
+  digitalWrite(RFM96W_RST, LOW);
+  delay(10);
+  digitalWrite(RFM96W_RST, HIGH);
+  delay(10);
+
+  if (!rfm96w.init()) {
+    Serial.println("RFM96W initialization failed");
+    while (1) delay(100);
+  }
+  Serial.println("RFM96W initialization succeeded");
+
+  if (!rfm96w.setFrequency(RFM96W_FREQ)) {
+    Serial.println("setFrequency failed");
+    while (1) delay(100);
+  }
+  rfm96w.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+
+  rfm96w.setTxPower(20, false); // 20 dBm
+
+  Serial.printf("Transmit frequency set to %f.0 Mhz\n", RFM96W_FREQ);
+
   Wire1.begin();
   Wire1.setClock(100000);
   gps2.setup();
@@ -212,7 +245,12 @@ void loop() {
 
   Serial.println("Writing gps data...");
   writeSensorDataToSD(gps_data);
-  delay(100);
+  delay(FILE_WRITE_DELAY);
+
+  dataToString(gps_data, msg);
+  Serial.printf("Sending gps: %s\n", msg); 
+  rfm96w.send((uint8_t*)msg, strlen(msg));
+  rfm96w.waitPacketSent();
 
   // Read altimeter data
   altitude = barometer.get_altitude() - i_altitude;
@@ -233,7 +271,12 @@ void loop() {
   
   Serial.println("Writing altimeter data...");
   writeSensorDataToSD(altimeter_data);
-  delay(100);
+  delay(FILE_WRITE_DELAY);
+
+  dataToString(altimeter_data, msg);
+  Serial.printf("Sending alt: %s\n", msg); 
+  rfm96w.send((uint8_t*)msg, strlen(msg));
+  rfm96w.waitPacketSent();
 
   // Read IMU data
   imu.update();
@@ -260,7 +303,12 @@ void loop() {
 
   Serial.println("Writing IMU data...");
   writeSensorDataToSD(imu_data);
-  delay(100);
+  delay(FILE_WRITE_DELAY);
+
+  dataToString(imu_data, msg);
+  Serial.printf("Sending imu: %s\n", msg); 
+  rfm96w.send((uint8_t*)msg, strlen(msg));
+  rfm96w.waitPacketSent();
 
   // Kalman filter
   if (altitude < MIN_ALT) { // fully trust sensors
@@ -298,7 +346,12 @@ void loop() {
   
   Serial.println("Writing kalman data...");
   writeSensorDataToSD(kalman_data);
-  delay(100);
+  delay(FILE_WRITE_DELAY);
+
+  dataToString(kalman_data, msg);
+  Serial.printf("Sending kalman: %s\n", msg); 
+  rfm96w.send((uint8_t*)msg, strlen(msg));
+  rfm96w.waitPacketSent();
 
   // Stage update
   switch (stage) {
@@ -322,7 +375,7 @@ void loop() {
             stage = 4;
         }
         break;
-    case 4: // Falling Downwards
+    case 4: // Falling Below Apogee
         if(kalman_altitude < MIN_ALT) {
             stage = 0;
         }

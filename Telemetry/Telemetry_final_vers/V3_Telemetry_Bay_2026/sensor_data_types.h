@@ -1,3 +1,7 @@
+enum {
+    MAX_DATA = 10 * 1024 /* 10 KB */
+};
+
 struct imu_packet
 {
 	float accel[3];
@@ -48,3 +52,30 @@ struct SensorData
 
 	char timestamp[16];
 };
+
+void dataToString(SensorData sdata, char* msg) {
+	switch (sdata.type) {
+		case IMU:
+			snprintf(msg, MAX_DATA, "%d %s %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f", sdata.type, sdata.timestamp, 
+                    sdata.data.imu.accel[0], sdata.data.imu.accel[1], sdata.data.imu.accel[2], 
+                    sdata.data.imu.linear[0], sdata.data.imu.linear[1], sdata.data.imu.linear[2], 
+                    sdata.data.imu.gravity[0], sdata.data.imu.gravity[1], sdata.data.imu.gravity[2], 
+                    sdata.data.imu.quat[0], sdata.data.imu.quat[1], sdata.data.imu.quat[2], sdata.data.imu.quat[3],
+                    sdata.data.imu.gyro[0], sdata.data.imu.gyro[1], sdata.data.imu.gyro[2]);
+			break;
+		case ALTIMETER:
+			snprintf(msg, MAX_DATA, "%d %s %f %f %f", sdata.type, sdata.timestamp,
+                    sdata.data.alt.altitude, sdata.data.alt.temp, sdata.data.alt.pressure);
+			break;
+		case GPS:
+			snprintf(msg, MAX_DATA, "%d %s %s", sdata.type, sdata.timestamp, sdata.data.gps.nmea);
+			break;
+		case KALMAN:
+			snprintf(msg, MAX_DATA, "%d %s %f %f %f", sdata.type, sdata.timestamp,
+                    sdata.data.kalman.kalman_altitude, sdata.data.kalman.kalman_velocity, sdata.data.kalman.kalman_acceleration);
+			break;
+        default:
+            snprintf(msg, MAX_DATA, "");
+            break;
+	}
+}

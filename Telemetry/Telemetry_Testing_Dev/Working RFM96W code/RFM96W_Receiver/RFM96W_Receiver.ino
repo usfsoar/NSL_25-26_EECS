@@ -18,7 +18,7 @@
 
 RH_RF95 rf96w(RFM96W_CS, RFM96W_INT);
 SOAR_SD_CARD sd(D1, false);
-
+int messages = 0;
 
 void setup() {
   pinMode(RFM96W_RST, OUTPUT);
@@ -64,7 +64,8 @@ void loop() {
 
     if (rf96w.recv(buf, &len)) {
       buf[len] = 0;
-      Serial.print("Received: ");
+      messages++;
+      Serial.printf("Received (%d): ", messages);
       Serial.println((char*)buf);
       if (buf[0] == '0') {
         sd.appendFile(TEST_FILEPATH, (char*)buf);

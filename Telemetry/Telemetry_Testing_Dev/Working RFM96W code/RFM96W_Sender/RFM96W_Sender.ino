@@ -7,16 +7,18 @@
 #define RFM96W_RST 9
 #define RFM96W_INT 2
 
-float RFM96W_FREQ 433.0
+float RFM96W_FREQ = 433.0;
+char* msg = (char*)malloc(sizeof (int) + 5 * sizeof (char));
+int id = 1;
 
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 
 void setup() {
-  pinMode(RFM96W_RST, OUTPUT);
-  digitalWrite(RFM96W_RST, HIGH);
-  
   Serial.begin(115200);
   while (!Serial && millis() < 2000) {}
+
+  pinMode(RFM96W_RST, OUTPUT);
+  digitalWrite(RFM96W_RST, HIGH);
 
   digitalWrite(RFM96W_RST, LOW);
   delay(10);
@@ -42,28 +44,21 @@ void setup() {
 }
 
 void loop() {
-  const char* msg = "0DATA";
-  const char* msg2 = "1DATA";
+  sprintf(msg, "%dData", id);
   Serial.print("Sending: ");
   Serial.println(msg);
+  Serial.println(strlen(msg));
 
   rfm96w.send((uint8_t*)msg, strlen(msg));
   rfm96w.waitPacketSent();
 
-  delay(100); // sending speed
-
-  Serial.print("Sending: ");
-  Serial.println(msg2);
-
-  rfm96w.send((uint8_t*)msg2, strlen(msg2));
-  rfm96w.waitPacketSent();
-
+  id++;
   delay(100); // sending speed
 }
 /* Restart function */
+/*
 void restartMCU() {
-SCB_AIRCR = 0x05FA0004; 
-while (1) {
-    }
+    SCB_AIRCR = 0x05FA0004; 
+    while (1) {}
 }
 */
