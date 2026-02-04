@@ -51,7 +51,8 @@ const double sigma_s = 0.1666667; /* altitude reading StdDev */
 const double sigma_a = 0.179; /* acceleration reading StdDev */
 const int states = 3;
 const int observations = 2;
-const double MIN_ALT = 1; /* trust sensors below this altitude */
+const double MIN_ALT = 1; /* trust sensors below this altitude [m]: allows filter to adapt quickly */
+const double APOGEE = 3048; // [m] 10k ft
 kalmanFilter *filter = NULL;
 
 char dataBuffer[512];
@@ -305,29 +306,28 @@ void loop() {
   // Stage update
   alt_diff = abs(kalman_altitude - max_altitude);
   switch (stage) {
-    case 0:
-        if((kalman_acceleration > 0) && (kalman_velocity > 0) && (kalman_altitude >= 0) && (alt_diff > max_alt_tol)) {
+    case 0: // On Ground
+        if((kalman_acceleration > 0) && (kalman_velocity > 0) && (kalman_altitude > MIN_ALT)) {
             stage = 1;
         }
         break;
-    case 1:
-        if((kalman_acceleration <= 0) && (kalman_velocity > 0) && (kalman_altitude > 0) && (alt_diff > max_alt_tol)) {
+    case 1: // Thrust Phase
+        if((kalman_acceleration < 0) && (kalman_velocity > 0) && (kalman_altitude > MIN_ALT)) {
             stage = 2;
-
         }
         break;
-    case 2:
-        if((kalman_acceleration < 0) && (kalman_altitude > 0) && (alt_diff <= max_alt_tol)) {
+    case 2: // Falling Upwards
+        if((kalman_acceleration < 0) && (kalman_velocity > 0) && (kalman_altitude > APOGEE)) {
             stage = 3;
         }
         break;
-    case 3:
-        if((kalman_acceleration < 0) && (kalman_velocity < 0) && (kalman_altitude > 0) && (alt_diff > max_alt_tol)) {
+    case 3: // Passing Apogee
+        if((kalman_velocity < 0) && (kalman_altitude < APOGEE)) {
             stage = 4;
         }
         break;
-    case 4:
-        if((kalman_acceleration <= 0) && (kalman_velocity <= 0) && (kalman_altitude <= 0) && (alt_diff > max_alt_tol)) {
+    case 4: // Falling Downwards
+        if(kalman_altitude < MIN_ALT) {
             stage = 0;
         }
         break;
