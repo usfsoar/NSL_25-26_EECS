@@ -63,6 +63,9 @@ else:
     exit("Invalid MODE selected")
 
 #----GLOBAL VARIABLES----
+ALPHA_GFORCE   = 0.8
+ALPHA_ALTITUDE = 0.5
+ALPHA_VELOCITY = 0.8
 #if ema, set to 1.0
 data = {
     "time": 0,
@@ -141,14 +144,15 @@ def get_sensor_data():
         data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
     else:
-        data["g_force"] = bno.get_g_force()
-        data["altitude"] = bmp.get_altitude()
-        data["velocity"] = bno.get_vertical_velocity()
+        g_force = bno.get_g_force()
+        alt= bmp.get_altitude()
+        vel_z = bno.get_vertical_velocity()
+
+        data["g_force"]   = ALPHA_GFORCE   * g_force     + (1 - ALPHA_GFORCE)   * data["g_force"]
+        data["altitude"] = ALPHA_ALTITUDE * alt         + (1 - ALPHA_ALTITUDE) * data["altitude"]
+        data["velocity"]  = ALPHA_VELOCITY * abs(vel_z)  + (1 - ALPHA_VELOCITY) * data["velocity"]
         data["apogee"] = max(data["apogee"], data["altitude"])
 
-        # ema_g   = ALPHA_GFORCE   * g_force     + (1 - ALPHA_GFORCE)   * ema_g
-        # ema_alt = ALPHA_ALTITUDE * alt         + (1 - ALPHA_ALTITUDE) * ema_alt
-        # ema_vel = ALPHA_VELOCITY * abs(vel_z)  + (1 - ALPHA_VELOCITY) * ema_vel
 
 def set_zero_altitude():
     for i in range(5):
