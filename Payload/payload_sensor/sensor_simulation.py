@@ -2,6 +2,10 @@
 import numpy as np
 import math
 
+# Rebekah to do:
+# - update rocket parameters
+# - update drag equation when we have that
+
 #NOTES:
 # calculations from last year predicted apogee at 4,444 feet (1,354.53 m).  Calculations from this program (neglecting flap length 
 # in the drag calculations) result in apogee at 1407.2577990273785 m
@@ -14,27 +18,28 @@ burnRate=0.5591     #burn rate:  kg s^-1 (extrapolated from fuel mass and burn t
 burnTime=3.6        #burn time:  s (CDR pg 94)
 
 class Sensor_Data_Simulator:
-    #initial values
-    currentAccel = 0
-    currentVelocity = 0
-    currentHeight = 0
-    currentTime = 0
-    dt=0.05         #time step increments
-    tRange=np.arange(0, 40, dt) #test start, stop, and step times
-    currentCounter = 0
+    def __init__(self):
+        #initial values
+        self.currentAccel = 0
+        self.currentVelocity = 0
+        self.currentHeight = 0
+        self.currentTime = 0
+        self.dt=0.05         #time step increments
+        self.tRange=np.arange(0, 40, self.dt) #test start, stop, and step times
+        self.currentCounter = 0
 
-    def calcAccel(time, velocity):
+    def calcAccel(self, time, velocity):
         #calculate the acceleration using the thrust, drag, and mass
         #not a function of height because we are ignoring the variation of gravity due to height
-        F=Sensor_Data_Simulator.getThrust(time)
-        D=Sensor_Data_Simulator.getDrag(velocity)
+        F=self.getThrust(time)
+        D=self.getDrag(velocity)
         #D=0
-        M=Sensor_Data_Simulator.getMass(time)
+        M=self.getMass(time)
 
         acceleration=(F-(M*GRAVITY)-D)/M
         return acceleration
     
-    def getThrust(time):
+    def getThrust(self, time):
         #Assume thrust is constant and defined by the rocket motor parameters.  
         #Thrust will be some constant value for the duration of the burn time (using 100 for now)
         if time <= burnTime:
@@ -43,7 +48,7 @@ class Sensor_Data_Simulator:
             thrust=0
         return thrust
     
-    def getDrag(velocity):
+    def getDrag(self, velocity):
         #New drag calculation from last year's rk4.py
         flaps_length=0 #ignoring flap length
         drag = -0.7207 + 0.05836*velocity + 0.2469*flaps_length + 0.00494*(velocity**2) + -0.3308*velocity*flaps_length + 17.65*(flaps_length**2) + -9.656e-07*(velocity**3) + 0.002397*(velocity**2)*flaps_length + 0.373*velocity*(flaps_length**2) + -22.71*(flaps_length**3)
@@ -51,7 +56,7 @@ class Sensor_Data_Simulator:
             drag=0
         return drag
     
-    def getMass(time):
+    def getMass(self, time):
         #Mass changes wrt time due to fuel burn and loss
         if time<=burnTime:
             mass=rocketMass-(fuelMass*burnRate*time) #actual mass is the total inital mass minus the amount of fuel burned
@@ -59,25 +64,33 @@ class Sensor_Data_Simulator:
             mass=rocketMass-fuelMass
         return mass
 
-    def updateValues():
-        Sensor_Data_Simulator.currentAccel = Sensor_Data_Simulator.calcAccel(Sensor_Data_Simulator.currentTime, Sensor_Data_Simulator.currentVelocity)
-        Sensor_Data_Simulator.currentHeight = Sensor_Data_Simulator.currentHeight + Sensor_Data_Simulator.currentVelocity*Sensor_Data_Simulator.dt
-        Sensor_Data_Simulator.currentVelocity = Sensor_Data_Simulator.currentVelocity + Sensor_Data_Simulator.currentAccel*Sensor_Data_Simulator.dt
-        Sensor_Data_Simulator.currentCounter += 1
-        Sensor_Data_Simulator.currentTime = Sensor_Data_Simulator.tRange[Sensor_Data_Simulator.currentCounter]
+    def updateValues(self):
+        if self.currentCounter >= 790: # Reached the end of the simulation
+            return
 
-    def getAccel():
-        #print(Sensor_Data_Simulator.currentAccel)
-        return Sensor_Data_Simulator.currentAccel
+        if self.currentHeight < 0: # Landed
+            self.currentAccel = -9.81
+            self.currentVelocity = 0
+        else:
+            self.currentAccel = self.calcAccel(self.currentTime, self.currentVelocity)
+            self.currentHeight = self.currentHeight + self.currentVelocity*self.dt
+            self.currentVelocity = self.currentVelocity + self.currentAccel*self.dt
+
+        self.currentCounter += 1
+        self.currentTime = self.tRange[self.currentCounter]
+
+    def getAccel(self):
+        # print(self.currentAccel)
+        return self.currentAccel
     
-    def getVelocity():
-        #print(Sensor_Data_Simulator.currentVelocity)
-        return Sensor_Data_Simulator.currentVelocity
+    def getVelocity(self):
+        # print(self.currentVelocity)
+        return self.currentVelocity
         
     
-    def getAlt():
-        #print(Sensor_Data_Simulator.currentHeight)
-        return Sensor_Data_Simulator.currentHeight
+    def getAlt(self):
+        # print(self.currentHeight)
+        return self.currentHeight
         
 
     # def runSim(A, V, H, T, v, h, dt, k, tRange, t):

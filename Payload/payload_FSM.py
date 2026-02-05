@@ -1,6 +1,6 @@
 #!/usr/bin/env python3bno
 
-from Sensor_Data_Simulator import *
+from Payload.payload_sensor.sensor_simulation import *
 
 """
 States:
@@ -115,8 +115,6 @@ def main():
             ema_g   = ALPHA_GFORCE   * g_force     + (1 - ALPHA_GFORCE)   * ema_g
             ema_alt = ALPHA_ALTITUDE * alt         + (1 - ALPHA_ALTITUDE) * ema_alt
             ema_vel = ALPHA_VELOCITY * abs(vel_z)  + (1 - ALPHA_VELOCITY) * ema_vel
-
-
 
             now = time.time()
 

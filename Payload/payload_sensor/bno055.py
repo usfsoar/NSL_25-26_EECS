@@ -5,6 +5,7 @@ import adafruit_bno055
 import board
 import busio
 import time
+import math
 
 # todo: Class getters should probably have exceptions and bad data handled
 
@@ -67,6 +68,13 @@ class BNO():
         Note: If linear acceleration has been disabled, retuns empty 3-tuple
         """
         return self.sensor.linear_acceleration
+
+    def get_g_force(self):
+        """
+        Returns magnitude of the g-force (using Euclidian distance)
+        """
+        accel = self.get_acceleration()
+        return math.sqrt(accel[0]*accel[0] + accel[1]*accel[1] + accel[2]*accel[2]) / 9.81
 
 
     def get_velocity(self):
