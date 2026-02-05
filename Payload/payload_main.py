@@ -167,6 +167,7 @@ def main():
         set_zero_altitude()
 
     while data["state"] != 3:
+        # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
         data["state"] = sm.update(
@@ -177,14 +178,14 @@ def main():
             data["apogee"]
         )
         
-        # Log (Time, Current State, G-Force, Altitute, Velocity, Apogee)
+        # Log data to file: (Time, Current State, G-Force, Altitute, Velocity, Apogee)
         log.log_sensor(data={"time": TelemetryLogger.get_timestamp(), "state": data["state"], 
                              "g_force": data["g_force"], "altitude": data["altitude"], 
                              "velocity": data["velocity"], "apogee": data["apogee"]})
         
 
-        #save data to file here
-        #save log statements to log file here
+        # loop_time = time.perf_counter() - start_loop
+
         time.sleep(0.1)
     
     #plot data here
