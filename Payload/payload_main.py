@@ -178,12 +178,9 @@ def main():
         )
         
         # Log (Time, Current State, G-Force, Altitute, Velocity, Apogee)
-        # TODO: More human readable timestamp? Right now is Unix time
-        log.log_sensor(data={"time": time.time(), "state": data["state"], 
+        log.log_sensor(data={"time": TelemetryLogger.get_timestamp(), "state": data["state"], 
                              "g_force": data["g_force"], "altitude": data["altitude"], 
                              "velocity": data["velocity"], "apogee": data["apogee"]})
-        
-        # print(f"Current State: {data['state']}, G-Force: {data['g_force']:.2f} g, Altitude: {data['altitude']:.2f} m, Velocity: {data['velocity']:.2f} m/s, Apogee: {data['apogee']:.2f} m")
         
 
         #save data to file here

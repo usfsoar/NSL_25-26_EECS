@@ -1,18 +1,24 @@
-# If using multiprocessing, switch the queue type being used
 from queue import Queue
 # from multiprocessing import Queue
 
 from os import path
-import time
+from abc import ABC, abstractmethod
+from datetime import datetime
 import pandas as pd
 
-# Useage: Create a TelemetryLogger object, then pass in your data to the corresponding function
+
+# Useage: Create a TelemetryLogger object, then pass in your data to the corresponding logging function
 class TelemetryLogger:
     def __init__(self):
         # Get sensor data csv object
-        self.sensor_data_csv = self.__SensorDataCsv() 
+        self.sensor_data_csv = SensorDataCsv() 
         
-    def print_helper(self, data):
+    @staticmethod
+    def get_timestamp():
+        return datetime.now().strftime("%H:%M:%S.%f")[:15]
+    
+    @staticmethod
+    def print_dictionary(data: dict):
         for label, data in data.items():        
             print(str(label) + ": " + str(data), end=", ")
         print()
@@ -20,32 +26,46 @@ class TelemetryLogger:
     def log_sensor(self, data : dict):
         self.sensor_data_csv.queue.put(data)
         self.sensor_data_csv.write()
-        self.print_helper(data)
+        TelemetryLogger.print_dictionary(data) # Print to stdout too for our viewing pleasure
 
+    # If/When we want to create more log types:
     # def log_rover():
     
     # def log_console():
 
 
 
-    # Singleton Class for Sensor Data CSV File
-    # TODO: Make this class into an abstract class so all files can use it
-    class __SensorDataCsv:
-        __SENSOR_LOGGING_PATH = "sensor_data" + str(time.time()) + ".csv" 
+# Classes for managing csv files
+# TODO: Make the singleton logic better (ie metaclass) 
+# TODO: Make singleton logic thread safe
+class AbstractLoggingCSV(ABC):
+    LOGGING_FILE_PATH = None # Subclass must override
 
-        def __new__(cls):
-            if not hasattr(cls, 'inst'):
-                cls.inst = super().__new__(cls)
-            return cls.inst 
-        
-        def __init__(self):
+    # Only 1 instance of this each subclass is allowed
+    def __new__(cls):
+        if not hasattr(cls, 'inst'):
+            cls.inst = super().__new__(cls)
+            cls.inst._initialized = False
+        return cls.inst 
+    
+    def __init__(self):
+        if not self._initialized:
+            # TODO Create a thread/process to run the write function asynchronously??
             self.queue = Queue()
-            
-        def write(self):
-            data = self.queue.get(block=True)
-            df = pd.DataFrame([data]) 
-            # TODO Keep file open or maybe try not to recreate objects on each write??
-            # Batch writes in the queue to logging speed up? Very slow as is
-            df.to_csv(path_or_buf=self.__SENSOR_LOGGING_PATH, mode='a', 
-                      header=not path.exists(self.__SENSOR_LOGGING_PATH), index=False)
+            self.inst._initialized = True
+        
+    def write(self):
+        # TODO Keep file open or maybe try not to recreate objects on each write??
+        # Batch writes in the queue to logging speed up? Very slow as is
+        data = self.queue.get(block=True)
+        df = pd.DataFrame([data]) 
+        df.to_csv(path_or_buf=self.LOGGING_FILE_PATH, mode='a', 
+                header=not path.exists(self.LOGGING_FILE_PATH), index=False)
 
+
+class SensorDataCsv(AbstractLoggingCSV):
+    LOGGING_FILE_PATH = "sensor_data_" + str(TelemetryLogger.get_timestamp()) + ".csv" 
+
+
+class RoverDataCsv(AbstractLoggingCSV):
+    LOGGING_FILE_PATH = "rover_data_" + str(TelemetryLogger.get_timestamp()) + ".csv" 
