@@ -10,7 +10,7 @@ GRAVITY = 9.81 #m s^-2
 
 rocketMass=18.302   #initial rocket mass:  kg (40.35 lbs)
 fuelMass=2.013      #initial fuel mass:  kg (extrapolated from landing mass, CDR pg 15)
-burnRate =0.5591     #burn rate:  kg s^-1 (extrapolated from fuel mass and burn time)
+burnRate=0.5591     #burn rate:  kg s^-1 (extrapolated from fuel mass and burn time)
 burnTime=3.6        #burn time:  s (CDR pg 94)
 
 class Sensor_Data_Simulator:
