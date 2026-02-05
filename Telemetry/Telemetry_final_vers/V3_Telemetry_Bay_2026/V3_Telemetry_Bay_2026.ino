@@ -49,7 +49,8 @@ float temperature;
 float i_altitude;
 int stage = 0;
 
-const double dt = 0.05; /* must be accurate to data rate */
+uint32_t t_now, t_prev;
+double dt = 0.05; /* must be accurate to data rate */
 const double sigma_j = 0.2; /* process StdDev: TUNED */
 const double sigma_s = 0.1666667; /* altitude reading StdDev */
 const double sigma_a = 0.179; /* acceleration reading StdDev */
@@ -225,12 +226,34 @@ void setup() {
   setElement(filter->P_k_prev, 2, 2, 100);
   setElement(filter->P_k_prev, 3, 3, 100);
   
+  t_prev = micros();
   Serial.println("Setup complete!");
 }
 
 void loop() {
   // Get timestamp
+  
+  t_now = micros();
+  dt = (double)(t_now - t_prev) * 1e-6; /* new dt in seconds */
+  t_prev = micros();
   String ts = rtc.getTimestamp(true);
+
+  /* F_k for constant acceleration assumption */
+  setElement(filter->F_k, 1, 2, dt);
+  setElement(filter->F_k, 1, 3, 0.5*dt*dt);
+  setElement(filter->F_k, 2, 2, 1);
+  setElement(filter->F_k, 2, 3, dt);
+
+  /* process covar */
+  setElement(filter->Q_k, 1, 1, pow(sigma_j, 2) * (1.0/36) * pow(dt, 6));
+  setElement(filter->Q_k, 1, 2, pow(sigma_j, 2) * (1.0/12) * pow(dt, 5));
+  setElement(filter->Q_k, 1, 3, pow(sigma_j, 2) * (1.0/6 ) * pow(dt, 4));
+  setElement(filter->Q_k, 2, 1, pow(sigma_j, 2) * (1.0/12) * pow(dt, 5));
+  setElement(filter->Q_k, 2, 2, pow(sigma_j, 2) * (1.0/4 ) * pow(dt, 4));
+  setElement(filter->Q_k, 2, 3, pow(sigma_j, 2) * (1.0/2 ) * pow(dt, 3));
+  setElement(filter->Q_k, 3, 1, pow(sigma_j, 2) * (1.0/6 ) * pow(dt, 4));
+  setElement(filter->Q_k, 3, 2, pow(sigma_j, 2) * (1.0/2 ) * pow(dt, 3));
+  setElement(filter->Q_k, 3, 3, pow(sigma_j, 2) *  1.0     * pow(dt, 2));
 
   // Read GPS data
   char nmea_tmp[100];
@@ -393,7 +416,7 @@ void loop() {
       imu_data.data.imu.quat[0], imu_data.data.imu.quat[1], imu_data.data.imu.quat[2], imu_data.data.imu.quat[3],
       imu_data.data.imu.gyro[0], imu_data.data.imu.gyro[1], imu_data.data.imu.gyro[2]);
   snprintf(dataBuffer, sizeof(dataBuffer),
-      "KALMAN: %.2f,%.2f,%.2f",
+      "KALMAN: [%.6f] %.2f,%.2f,%.2f", dt,
       kalman_data.data.kalman.kalman_altitude, kalman_data.data.kalman.kalman_velocity, kalman_data.data.kalman.kalman_acceleration);
   Serial.println("Stage: " + String(stage));
   Serial.println(dataBuffer);
