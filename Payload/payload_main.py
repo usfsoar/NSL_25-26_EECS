@@ -75,13 +75,6 @@ data = {
     "velocity": 0,
     "apogee": 0
     }
-# current_state = 0
-# current_g_force = 0
-# current_altitude = 0
-# current_velocity = 0
-# current_apogee = -1
-#decide between vertical velocity or velocity magnitude
-
 
 # #state transition evaluation constants
 # STABLE_READINGS_FOR_LAUNCH  = 3
@@ -149,8 +142,9 @@ def get_sensor_data():
         vel_z = bno.get_vertical_velocity()
 
         data["g_force"]   = ALPHA_GFORCE   * g_force     + (1 - ALPHA_GFORCE)   * data["g_force"]
-        data["altitude"] = ALPHA_ALTITUDE * alt         + (1 - ALPHA_ALTITUDE) * data["altitude"]
+        data["altitude"] = ALPHA_ALTITUDE  * alt         + (1 - ALPHA_ALTITUDE) * data["altitude"]
         data["velocity"]  = ALPHA_VELOCITY * abs(vel_z)  + (1 - ALPHA_VELOCITY) * data["velocity"]
+
         data["apogee"] = max(data["apogee"], data["altitude"])
 
 
@@ -158,6 +152,7 @@ def set_zero_altitude():
     for i in range(5):
         time.sleep(0.5)
         bmp.get_pressure()
+    bmp.set_sea_level_pressure(bmp.get_pressure())
 
 def main():
     initialize_sensors()
@@ -166,7 +161,7 @@ def main():
     else:
         set_zero_altitude()
 
-    while data["state"] != 3:
+    while data["state"] != "LANDING":
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()

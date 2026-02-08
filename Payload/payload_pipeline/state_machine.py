@@ -7,9 +7,10 @@ class StateMachine:
         self.landing_vel_threshold = landing_vel_threshold
         self.landing_gforce_threshold = landing_gforce_threshold
         self.landing_altitude_threshold = landing_altitude_threshold
+
+        self.counters = {"launch": 0, "descent": 0, "landing": 0}
+        self.thresholds = {"launch": 3, "descent": 3, "landing": 10}
         
-        
-    
     def update(self, current_state, g_force, altitude, velocity, apogee):
         self.current_state = current_state
         self.g_force = g_force
@@ -22,20 +23,51 @@ class StateMachine:
 
     def get_state(self):
         match self.current_state:
-            case 0:
+            case "READY":
                 if (self.g_force > self.launch_gforce_threshold) or (self.altitude > self.launch_altitude_threshold):
-                    self.current_state = 1
+                    self.counters["launch"] += 1
                 else:
-                    self.current_state = 0
-            case 1:
+                    self.counters["launch"] = 0
+
+                if self.counters["launch"] >= self.thresholds["launch"]:
+                    self.current_state = "LAUNCHED"
+                
+            case "LAUNCHED":
                 if (self.apogee > self.descent_apogee_threshold) and (self.altitude < (self.apogee - self.descent_altitude_threshold)):
-                    self.current_state = 2
+                    self.counters["descent"] += 1
                 else:
-                    self.current_state = 1
-            case 2:
-                if (self.velocity < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
-                    self.current_state = 3
+                    self.counters["descent"] = 0
+                
+                if self.counters["descent"] >= self.thresholds["descent"]:
+                    self.current_state = "DESCENT"
+
+            case "DESCENT":
+                if (abs(self.velocity) < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
+                    self.counters["landing"] += 1
                 else:
-                    self.current_state = 2
-            case 3:
-                self.current_state = 3
+                    self.counters["landing"] = 0
+
+                if self.counters["landing"] >= self.thresholds["landing"]:
+                    self.current_state = "LANDING"
+
+            case "LANDING":
+                self.current_state = "LANDING"
+                
+        # match self.current_state:
+        #     case "READY":
+        #         if (self.g_force > self.launch_gforce_threshold) or (self.altitude > self.launch_altitude_threshold):
+        #             self.current_state = "LAUNCHED"
+        #         else:
+        #             self.current_state = "READY"
+        #     case "LAUNCHED":
+        #         if (self.apogee > self.descent_apogee_threshold) and (self.altitude < (self.apogee - self.descent_altitude_threshold)):
+        #             self.current_state = "DESCENT"
+        #         else:
+        #             self.current_state = "LAUNCHED"
+        #     case "DESCENT":
+        #         if (abs(self.velocity) < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
+        #             self.current_state = "LANDING"
+        #         else:
+        #             self.current_state = "DESCENT"
+        #     case "LANDING":
+        #         self.current_state = "LANDING"
