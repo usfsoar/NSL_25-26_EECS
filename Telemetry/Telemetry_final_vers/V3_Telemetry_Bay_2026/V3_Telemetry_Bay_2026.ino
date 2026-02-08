@@ -33,7 +33,7 @@ SOAR_BNO085 imu;                  // Wire
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 
 char* msg = (char*)malloc(MAX_DATA);
-float RFM96W_FREQ = 433.0;
+float RFM96W_FREQ = 430.0;
 const int FILE_WRITE_DELAY = 100;
 
 matrix * quat;
@@ -168,7 +168,7 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rfm96w.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  rfm96w.setModemConfig(RH_RF95::Bw62Cr45Sf128);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 

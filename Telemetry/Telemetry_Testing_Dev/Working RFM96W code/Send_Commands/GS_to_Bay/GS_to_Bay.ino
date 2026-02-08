@@ -18,7 +18,7 @@
 #define RFM96W_RST  D2
 #define RFM96W_INT  D3
 
-float currentFreqMHz = 433.0;
+float currentFreqMHz = 430.0;
 static uint32_t g_seq = 1;
 
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
@@ -69,7 +69,7 @@ TaskHandle_t radioTaskHandle = nullptr;
 static FreqTxn freqTxn;
 
 static bool validFreq433(float f) {
-  return (f >= 430.0 && f <= 440.0);
+  return (f >= 428.5 && f <= 431.5) || (f >= 445.5 && f <= 449.0);
 }
 
 static bool startsWith(const char* s, const char* prefix) {
@@ -123,7 +123,7 @@ static void enqueueRadioCommand(String line) {
   if (line.startsWith("freq ")) {
     float f = line.substring(5).toFloat();
     if (!validFreq433(f)) {
-      Serial.println("Invalid freq. For 433 band try 433.0 to 434.79.");
+      Serial.println("Invalid freq. For 433 band try 428.5 to 431.5 or 445.5 to 449.0.");
       return;
     }
     if (freqTxn.state != TXN_IDLE && freqTxn.state != TXN_DONE && freqTxn.state != TXN_FAIL) {
@@ -184,16 +184,25 @@ void RadioTask(void *pv) {
         if (xQueueSend(rxQueue, &pkt, 0) != pdTRUE) {}
         if (pkt.len > 0) {
           if (pkt.data[0] == '0') {
-            sd.appendBytes(TEST_FILEPATH, pkt.data, pkt.len);
-            sd.appendFile(TEST_FILEPATH, "\n");
+            sd.appendBytes(IMU_FILEPATH, pkt.data, pkt.len);
+            sd.appendFile(IMU_FILEPATH, "\n");
           } else if (pkt.data[0] == '1') {
-            sd.appendBytes(TEST2_FILEPATH, pkt.data, pkt.len);
-            sd.appendFile(TEST2_FILEPATH, "\n");
-          }
-        }
+            sd.appendBytes(ALTIMETER_FILEPATH, pkt.data, pkt.len);
+            sd.appendFile(ALTIMETER_FILEPATH, "\n");
+          } else if (pkt.data[0] == '2') {
+            sd.appendBytes(GPS_FILEPATH, pkt.data, pkt.len);
+            sd.appendFile(GPS_FILEPATH, "\n");
+          } else if *(pkt.data[0] == '3') {
+            sd.appendBytes(KALMAN_FILEPATH, pkt.data, pkt.len);
+            sd.appendFile(KALMAN_FILEPATH, "\n");
+        } else {
+          Serial.printf("[RadioTask] Received len=%u: %s\n", pkt.len, pkt.data);
+          sd.appendBytes(TEST_FILEPATH, pkt.data, pkt.len);
+          sd.appendFile(TEST_FILEPATH, "\n");
       }
       rfm96w.setModeRx();
     }
+  }
 
     RadioCmd cmd;
     while (xQueueReceive(cmdQueue, &cmd, 0) == pdTRUE) {
@@ -216,6 +225,7 @@ void RadioTask(void *pv) {
     }
     vTaskDelay(pdMS_TO_TICKS(2));
   }
+}
 }
 
 void AppTask(void *pv) {
@@ -351,7 +361,7 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rfm96w.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  rfm96w.setModemConfig(RH_RF95::Bw62Cr45Sf128);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 
