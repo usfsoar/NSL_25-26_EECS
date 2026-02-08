@@ -183,22 +183,33 @@ void RadioTask(void *pv) {
         pkt.data[pkt.len] = 0;
         if (xQueueSend(rxQueue, &pkt, 0) != pdTRUE) {}
         if (pkt.len > 0) {
-          if (pkt.data[0] == '0') {
-            sd.appendBytes(IMU_FILEPATH, pkt.data, pkt.len);
-            sd.appendFile(IMU_FILEPATH, "\n");
-          } else if (pkt.data[0] == '1') {
-            sd.appendBytes(ALTIMETER_FILEPATH, pkt.data, pkt.len);
-            sd.appendFile(ALTIMETER_FILEPATH, "\n");
-          } else if (pkt.data[0] == '2') {
-            sd.appendBytes(GPS_FILEPATH, pkt.data, pkt.len);
-            sd.appendFile(GPS_FILEPATH, "\n");
-          } else if *(pkt.data[0] == '3') {
-            sd.appendBytes(KALMAN_FILEPATH, pkt.data, pkt.len);
-            sd.appendFile(KALMAN_FILEPATH, "\n");
-        } else {
-          Serial.printf("[RadioTask] Received len=%u: %s\n", pkt.len, pkt.data);
-          sd.appendBytes(TEST_FILEPATH, pkt.data, pkt.len);
-          sd.appendFile(TEST_FILEPATH, "\n");
+          switch (pkt.data[0]) {
+            case 0:
+              Serial.printf("%s\n", pkt.data);
+              sd.appendBytes(IMU_FILEPATH, pkt.data, pkt.len);
+              sd.appendFile(IMU_FILEPATH, "\n");
+              // break;
+            case 1:
+              Serial.printf("%s\n", pkt.data);
+              sd.appendBytes(ALTIMETER_FILEPATH, pkt.data, pkt.len);
+              sd.appendFile(ALTIMETER_FILEPATH, "\n");
+              // break;
+            case 2:
+              Serial.printf("%s\n", pkt.data);
+              sd.appendBytes(GPS_FILEPATH, pkt.data, pkt.len);
+              sd.appendFile(GPS_FILEPATH, "\n");
+              // break;
+            case 3:
+              Serial.printf("%s\n", pkt.data);
+              sd.appendBytes(KALMAN_FILEPATH, pkt.data, pkt.len);
+              sd.appendFile(KALMAN_FILEPATH, "\n");
+              // break;
+            default:
+              Serial.printf("[RadioTask] Received len=%u: %s\n", pkt.len, pkt.data);
+              sd.appendBytes(TEST_FILEPATH, pkt.data, pkt.len);
+              sd.appendFile(TEST_FILEPATH, "\n");
+              // break;
+          }
       }
       rfm96w.setModeRx();
     }
@@ -225,7 +236,6 @@ void RadioTask(void *pv) {
     }
     vTaskDelay(pdMS_TO_TICKS(2));
   }
-}
 }
 
 void AppTask(void *pv) {
@@ -339,10 +349,16 @@ void setup() {
     Serial.println("SD init failed; continuing without logging.");
   }
   sd.deleteFile(TEST_FILEPATH);
-  sd.deleteFile(TEST2_FILEPATH);
+  sd.deleteFile(IMU_FILEPATH);
+  sd.deleteFile(GPS_FILEPATH);
+  sd.deleteFile(ALTIMETER_FILEPATH);
+  sd.deleteFile(KALMAN_FILEPATH);
   sd.writeFile(TEST_FILEPATH, "test\n");
-  sd.writeFile(TEST2_FILEPATH, "test2\n");
-  while (!Serial && millis() < 2000) {}
+  sd.writeFile(IMU_FILEPATH, "time_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
+  sd.writeFile(ALTIMETER_FILEPATH, "time_stamp,altitude,temperature,pressure\n");
+  sd.writeFile(GPS_FILEPATH, "time_stamp,gps_data\n");
+  sd.writeFile(KALMAN_FILEPATH, "time_stamp,altitude,velocity,acceleration\n");
+  while (!Serial && millis() < 1000) {}
 
   SPI.begin(RFM96W_SCK, RFM96W_MISO, RFM96W_MOSI, RFM96W_CS);
 
@@ -361,7 +377,7 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rfm96w.setModemConfig(RH_RF95::Bw62Cr45Sf128);
+  rfm96w.setModemConfig(RH_RF95:: Bw31_25Cr48Sf512);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 
@@ -381,5 +397,5 @@ void setup() {
 }
 
 void loop() {
-  vTaskDelay(pdMS_TO_TICKS(1000));
+  // vTaskDelay(pdMS_TO_TICKS(1000));
 }
