@@ -1,9 +1,10 @@
 """
 TO DO:
--clarify if sim and launch thresholds are the same. if so then switch mode to 1 and 0.
+-clarify if sim and launch thresholds
 -implement power loss
 -implement actual rocket thresolds
 -decide on velocity- vertical or magnitude
+--make sure function returns vertical velocity
 """
 
 #----IMPORTS----    
