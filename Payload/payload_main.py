@@ -1,19 +1,9 @@
 """
 TO DO:
--data saving class- need to save sensor data to file
--save print statements to log file
--implement simulation mode
 -clarify if sim and launch thresholds are the same. if so then switch mode to 1 and 0.
 -implement power loss
 -implement actual rocket thresolds
--filter data: ema or kalman filter. maybe ema until kalman is done
-----ema=value*alpha + prev_ema*(1-alpha)
--need to evaluate transition validity
-----stick to stable_readings method
--rover stuff after landing
 -decide on velocity- vertical or magnitude
-
---classes to create: data_saving_and_logger, filter, power_loss
 """
 
 #----IMPORTS----    
@@ -24,7 +14,7 @@ import time
 from payload_pipeline.state_machine import StateMachine
 
 from payload_sensor.bmp580 import BMP
-from payload_sensor.bno055 import BNO
+from payload_sensor.bno085 import BNO
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
     
 from payload_pipeline.telemetry_logger import TelemetryLogger
@@ -139,7 +129,7 @@ def get_sensor_data():
     else:
         g_force = bno.get_g_force()
         alt= bmp.get_altitude()
-        vel_z = bno.get_vertical_velocity()
+        vel_z = bno.get_velocity()
 
         data["g_force"]   = ALPHA_GFORCE   * g_force     + (1 - ALPHA_GFORCE)   * data["g_force"]
         data["altitude"] = ALPHA_ALTITUDE  * alt         + (1 - ALPHA_ALTITUDE) * data["altitude"]
