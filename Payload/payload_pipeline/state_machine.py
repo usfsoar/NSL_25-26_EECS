@@ -8,7 +8,7 @@ class StateMachine:
         self.landing_gforce_threshold = landing_gforce_threshold
         self.landing_altitude_threshold = landing_altitude_threshold
 
-        self.counters = {"launch": 0, "descent": 0, "landing": 0}
+        self.counters = 0
         self.thresholds = {"launch": 3, "descent": 3, "landing": 10}
         
     def update(self, current_state, g_force, altitude, velocity, apogee):
@@ -25,30 +25,33 @@ class StateMachine:
         match self.current_state:
             case "READY":
                 if (self.g_force > self.launch_gforce_threshold) or (self.altitude > self.launch_altitude_threshold):
-                    self.counters["launch"] += 1
+                    self.counters += 1
                 else:
-                    self.counters["launch"] = 0
+                    self.counters = 0
 
-                if self.counters["launch"] >= self.thresholds["launch"]:
+                if self.counters >= self.thresholds["launch"]:
                     self.current_state = "LAUNCHED"
+                    self.counters = 0
                 
             case "LAUNCHED":
                 if (self.apogee > self.descent_apogee_threshold) and (self.altitude < (self.apogee - self.descent_altitude_threshold)):
-                    self.counters["descent"] += 1
+                    self.counters += 1
                 else:
-                    self.counters["descent"] = 0
+                    self.counters = 0
                 
-                if self.counters["descent"] >= self.thresholds["descent"]:
+                if self.counters >= self.thresholds["descent"]:
                     self.current_state = "DESCENT"
+                    self.counters = 0
 
             case "DESCENT":
                 if (abs(self.velocity) < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
-                    self.counters["landing"] += 1
+                    self.counters += 1
                 else:
-                    self.counters["landing"] = 0
+                    self.counters = 0
 
-                if self.counters["landing"] >= self.thresholds["landing"]:
+                if self.counters >= self.thresholds["landing"]:
                     self.current_state = "LANDING"
+                    self.counters = 0
 
             case "LANDING":
                 self.current_state = "LANDING"

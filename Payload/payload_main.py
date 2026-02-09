@@ -5,6 +5,8 @@ TO DO:
 -implement actual rocket thresolds
 -decide on velocity- vertical or magnitude
 --make sure function returns vertical velocity
+-make stable readings a parameter in state machine
+-backup sensor data from alternate sensors
 """
 
 #----IMPORTS----    
