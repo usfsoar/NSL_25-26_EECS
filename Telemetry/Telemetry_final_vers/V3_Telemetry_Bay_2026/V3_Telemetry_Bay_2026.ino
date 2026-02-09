@@ -168,7 +168,8 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rfm96w.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
+  rfm96w.setSignalBandwidth(100'000.0);
+  rfm96w.setSpreadingFactor(6);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 
@@ -235,6 +236,7 @@ void loop() {
   
   t_now = micros();
   dt = (double)(t_now - t_prev) * 1e-6; /* new dt in seconds */
+  Serial.printf("\nloop time = %.2lf\n", dt);
   t_prev = micros();
   String ts = rtc.getTimestamp(true);
 

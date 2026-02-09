@@ -7,7 +7,7 @@
 #define RFM96W_RST 9
 #define RFM96W_INT 2
 
-float RFM96W_FREQ = 433.0;
+float RFM96W_FREQ = 430.0;
 char* msg = (char*)malloc(sizeof (int) + 5 * sizeof (char));
 int id = 1;
 
@@ -35,7 +35,8 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rfm96w.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  rfm96w.setSignalBandwidth(100'000.0);
+  rfm96w.setSpreadingFactor(6);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 
@@ -44,7 +45,7 @@ void setup() {
 }
 
 void loop() {
-  sprintf(msg, "%dData", id);
+  sprintf(msg, "%d: Data", id);
   Serial.print("Sending: ");
   Serial.println(msg);
   Serial.println(strlen(msg));
@@ -56,9 +57,3 @@ void loop() {
   delay(100); // sending speed
 }
 /* Restart function */
-/*
-void restartMCU() {
-    SCB_AIRCR = 0x05FA0004; 
-    while (1) {}
-}
-*/

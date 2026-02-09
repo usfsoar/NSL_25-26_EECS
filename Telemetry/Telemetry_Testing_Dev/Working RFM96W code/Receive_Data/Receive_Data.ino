@@ -14,7 +14,7 @@
 #define RFM96W_RST  D2
 #define RFM96W_INT  D3
 
-#define RF96W_FREQ 433.0
+#define RF96W_FREQ 430.0
 
 RH_RF95 rf96w(RFM96W_CS, RFM96W_INT);
 SOAR_SD_CARD sd(D1, false);
@@ -26,11 +26,17 @@ void setup() {
 
   Serial.begin(115200);
   sd.begin();
-  sd.deleteFile(TEST_FILEPATH);
-  sd.deleteFile(TEST2_FILEPATH);
-  sd.writeFile(TEST_FILEPATH, "test\n");
-  sd.writeFile(TEST2_FILEPATH, "test2\n");
 
+  sd.deleteFile(TEST_FILEPATH);
+  sd.deleteFile(IMU_FILEPATH);
+  sd.deleteFile(GPS_FILEPATH);
+  sd.deleteFile(ALTIMETER_FILEPATH);
+  sd.deleteFile(KALMAN_FILEPATH);
+  sd.writeFile(TEST_FILEPATH, "test\n");
+  sd.writeFile(IMU_FILEPATH, "time_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
+  sd.writeFile(ALTIMETER_FILEPATH, "time_stamp,altitude,temperature,pressure\n");
+  sd.writeFile(GPS_FILEPATH, "time_stamp,gps_data\n");
+  sd.writeFile(KALMAN_FILEPATH, "time_stamp,altitude,velocity,acceleration\n");
 
   while (!Serial && millis() < 2000) {}
 
@@ -51,7 +57,7 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rf96w.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  rf96w.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
 
   Serial.print("Receiving frequency set to ");
   Serial.println(RF96W_FREQ);
