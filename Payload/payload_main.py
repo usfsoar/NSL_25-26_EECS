@@ -5,6 +5,7 @@ TO DO:
 -implement actual rocket thresolds
 -make stable readings a parameter in state machine
 -backup sensor data from alternate sensors
+-Store non-ema data
 """
 
 #----IMPORTS----    
@@ -55,14 +56,17 @@ else:
 
 #----GLOBAL VARIABLES----
 ALPHA_GFORCE   = 0.8
-ALPHA_ALTITUDE = 0.5
+ALPHA_ALTITUDE = 0.5 # Calculate by hand before go/no go
 ALPHA_VELOCITY = 0.8
 #if ema, set to 1.0
 data = {
     "time": 0,
     "state": "READY",
+    "raw_g_force": 0,
     "g_force": 0,
+    "raw_altitude": 0,
     "altitude": 0,
+    "raw_velocity"
     "velocity": 0,
     "apogee": 0
     }
@@ -123,18 +127,18 @@ def validate_data():
 def get_sensor_data():
     if MODE == "sim":
         sim.updateValues()
-        data["g_force"] = abs(sim.getAccel()) / 9.81
-        data["altitude"] = sim.getAlt()
-        data["velocity"] = sim.getVelocity()
+        data["raw_g_force"] = data["g_force"] = abs(sim.getAccel()) / 9.81
+        data["raw_altitude"] = data["altitude"] = sim.getAlt()
+        data["raw_velocity"] = data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
     else:
-        g_force = bno.get_g_force()
-        alt= bmp.get_altitude()
-        vel_z = bmp.get_vertical_velocity()
+        data["raw_g_force"] = bno.get_g_force()
+        data["raw_altitude"] = bmp.get_altitude()
+        data["raw_velocity"] = bmp.get_vertical_velocity()
 
-        data["g_force"]   = ALPHA_GFORCE   * g_force     + (1 - ALPHA_GFORCE)   * data["g_force"]
-        data["altitude"] = ALPHA_ALTITUDE  * alt         + (1 - ALPHA_ALTITUDE) * data["altitude"]
-        data["velocity"]  = ALPHA_VELOCITY * abs(vel_z)  + (1 - ALPHA_VELOCITY) * data["velocity"]
+        data["g_force"]   = ALPHA_GFORCE   * data["raw_g_force"]     + (1 - ALPHA_GFORCE)   * data["g_force"]
+        data["altitude"] = ALPHA_ALTITUDE  * data["raw_altitude"]         + (1 - ALPHA_ALTITUDE) * data["altitude"]
+        data["velocity"]  = ALPHA_VELOCITY * abs(data["raw_velocity"])  + (1 - ALPHA_VELOCITY) * data["velocity"]
 
         data["apogee"] = max(data["apogee"], data["altitude"])
 
@@ -166,8 +170,10 @@ def main():
         
         # Log data to file: (Time, Current State, G-Force, Altitute, Velocity, Apogee)
         log.log_sensor(data={"time": TelemetryLogger.get_timestamp(), "state": data["state"], 
-                             "g_force": data["g_force"], "altitude": data["altitude"], 
-                             "velocity": data["velocity"], "apogee": data["apogee"]})
+                             "raw_g_force": data["raw_g_force"], "g_force": data["g_force"], 
+                             "raw_altitude": data["raw_altitude"], "altitude": data["altitude"], 
+                             "raw_velocity": data["raw_velocity"], "velocity": data["velocity"], 
+                             "apogee": data["apogee"]})
         
 
         # loop_time = time.perf_counter() - start_loop

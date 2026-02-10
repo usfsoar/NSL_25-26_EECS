@@ -1,6 +1,7 @@
 # Wrapper class for the BNO085 IMU Sensor
 # API Reference: https://docs.circuitpython.org/projects/bno08x/en/latest/
 
+from adafruit_bno08x.i2c import BNO08X_I2C
 import adafruit_bno08x
 import board
 import busio
@@ -36,14 +37,14 @@ class BNO():
         
         for i in range(10):
             try:
-                self.sensor = adafruit_bno08x.BNO08X_I2C(self.i2c)#, address=address)
+                self.sensor = BNO08X_I2C(self.i2c)#, address=address)
 
                 # Initalize sensor
-                self.sensor.initialize()
-                time.sleep(0.05)
+                #self.sensor.initialize()
+                #time.sleep(0.05)
                 
                 # Calibrate
-                self.sensor.begin_calibration()
+                #self.sensor.begin_calibration()
                 time.sleep(0.05)
 
                 self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ACCELEROMETER)
