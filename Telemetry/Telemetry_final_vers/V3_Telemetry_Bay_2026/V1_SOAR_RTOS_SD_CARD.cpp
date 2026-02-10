@@ -14,7 +14,7 @@ void SOAR_SD_CARD::begin() {
     success = _sd.begin(SdioConfig(FIFO_SDIO));
   } else {
     // External SD uses SPI
-    success = _sd.begin(SdSpiConfig(_cs_pin, SHARED_SPI, SD_SCK_MHZ(4)));
+    success = _sd.begin(SdSpiConfig(_cs_pin, SHARED_SPI, SD_SCK_MHZ(4), &SPI1));
   }
   
   if (!success) {

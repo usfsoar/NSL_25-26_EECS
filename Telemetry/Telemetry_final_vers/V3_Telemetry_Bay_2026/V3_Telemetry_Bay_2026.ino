@@ -169,7 +169,7 @@ void setup() {
     while (1) delay(100);
   }
   rfm96w.setSignalBandwidth(100'000.0);
-  rfm96w.setSpreadingFactor(6);
+  rfm96w.setSpreadingFactor(7);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 
