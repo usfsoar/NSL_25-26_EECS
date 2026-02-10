@@ -3,8 +3,6 @@ TO DO:
 -clarify if sim and launch thresholds
 -implement power loss
 -implement actual rocket thresolds
--decide on velocity- vertical or magnitude
---make sure function returns vertical velocity
 -make stable readings a parameter in state machine
 -backup sensor data from alternate sensors
 """
@@ -62,7 +60,7 @@ ALPHA_VELOCITY = 0.8
 #if ema, set to 1.0
 data = {
     "time": 0,
-    "state": 0,
+    "state": "READY",
     "g_force": 0,
     "altitude": 0,
     "velocity": 0,
@@ -132,7 +130,7 @@ def get_sensor_data():
     else:
         g_force = bno.get_g_force()
         alt= bmp.get_altitude()
-        vel_z = bno.get_velocity()
+        vel_z = bmp.get_vertical_velocity()
 
         data["g_force"]   = ALPHA_GFORCE   * g_force     + (1 - ALPHA_GFORCE)   * data["g_force"]
         data["altitude"] = ALPHA_ALTITUDE  * alt         + (1 - ALPHA_ALTITUDE) * data["altitude"]
