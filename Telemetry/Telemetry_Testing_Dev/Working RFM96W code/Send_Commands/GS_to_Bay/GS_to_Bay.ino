@@ -184,31 +184,31 @@ void RadioTask(void *pv) {
         if (xQueueSend(rxQueue, &pkt, 0) != pdTRUE) {}
         if (pkt.len > 0) {
           switch (pkt.data[0]) {
-            case 0:
+            case '0':
               Serial.printf("%s\n", pkt.data);
               sd.appendBytes(IMU_FILEPATH, pkt.data, pkt.len);
               sd.appendFile(IMU_FILEPATH, "\n");
-              // break;
-            case 1:
+              break;
+            case '1':
               Serial.printf("%s\n", pkt.data);
               sd.appendBytes(ALTIMETER_FILEPATH, pkt.data, pkt.len);
               sd.appendFile(ALTIMETER_FILEPATH, "\n");
-              // break;
-            case 2:
+              break;
+            case '2':
               Serial.printf("%s\n", pkt.data);
               sd.appendBytes(GPS_FILEPATH, pkt.data, pkt.len);
               sd.appendFile(GPS_FILEPATH, "\n");
-              // break;
-            case 3:
+              break;
+            case '3':
               Serial.printf("%s\n", pkt.data);
               sd.appendBytes(KALMAN_FILEPATH, pkt.data, pkt.len);
               sd.appendFile(KALMAN_FILEPATH, "\n");
-              // break;
+              break;
             default:
               Serial.printf("[RadioTask] Received len=%u: %s\n", pkt.len, pkt.data);
               sd.appendBytes(TEST_FILEPATH, pkt.data, pkt.len);
               sd.appendFile(TEST_FILEPATH, "\n");
-              // break;
+              break;
           }
       }
       rfm96w.setModeRx();
@@ -378,7 +378,7 @@ void setup() {
     while (1) delay(100);
   }
   rfm96w.setSignalBandwidth(100000);
-  rfm96w.setSpreadingFactor(6);
+  rfm96w.setSpreadingFactor(7);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 

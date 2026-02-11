@@ -57,7 +57,8 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rf96w.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
+  rf96w.setSignalBandwidth(100'000);
+  rf96w.setSpreadingFactor(7);
 
   Serial.print("Receiving frequency set to ");
   Serial.println(RF96W_FREQ);

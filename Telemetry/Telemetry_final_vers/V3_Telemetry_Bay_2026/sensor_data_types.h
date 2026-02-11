@@ -1,5 +1,5 @@
 enum {
-    MAX_DATA = 10 * 1024 /* 10 KB */
+    MAX_DATA = 10 * 1024 /* KB */
 };
 
 struct imu_packet

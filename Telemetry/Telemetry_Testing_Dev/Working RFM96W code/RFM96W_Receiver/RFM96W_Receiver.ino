@@ -57,6 +57,8 @@ void setup() {
   Serial.println(RF96W_FREQ);
 }
 
+
+
 void loop() {
   if (rf96w.available()) {
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
@@ -64,9 +66,18 @@ void loop() {
 
     if (rf96w.recv(buf, &len)) {
       buf[len] = 0;
-      messages++;
-      Serial.printf("Received (%d): ", messages);
-      Serial.println((char*)buf);
+      Serial.printf("Received: %s\n", (char*)buf);
+      switch (buf[0]) {
+        case '0':
+          break;
+        case '1':
+          break;
+        case '2':
+          break;
+        case '3':
+          break;
+      }
+
       if (buf[0] == '0') {
         sd.appendFile(TEST_FILEPATH, (char*)buf);
         sd.appendFile(TEST_FILEPATH, "\n");

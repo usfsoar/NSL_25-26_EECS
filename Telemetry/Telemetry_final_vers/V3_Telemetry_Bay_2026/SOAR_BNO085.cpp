@@ -44,8 +44,10 @@ void SOAR_BNO085::update() {
     setReports();
   }
 
-  if (bno08x.getSensorEvent(&sensorValue)) {
-    processSensorEvent();
+  for (int i = 0; i < 16; i++) {
+    if (bno08x.getSensorEvent(&sensorValue)) {
+        processSensorEvent();
+    }
   }
 }
 
