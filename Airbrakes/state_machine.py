@@ -74,7 +74,7 @@ class StateMachine:
                 if not self.state4_started:
                     self.state4_started = True
                 else:
-                    if  -10 < velocity < 10:
+                    if  -10 < velocity and velocity < 10 and altitude < 200:
                         self.state5_counter += 1
                         if self.state5_counter >= self.state5_threshold:
                             self.current_state = 5
