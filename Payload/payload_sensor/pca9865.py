@@ -35,25 +35,52 @@ class PCA():
                 if i == 9:
                     raise Exception(f"Error initializing PCA: {e}")
                 continue
+        
+        return adafruit_pca9685.channels[0], adafruit_pca9685.channels[4]
 
 
-    def set_duty_cycle(self, duty_cycle: int):
-        """
-        Input: Indicated how much of a cycle is high versus low: 0xffff high to 0 low\n
-        Output: None
-        """
-        self.sensor.duty_cycle = duty_cycle
+#    def set_duty_cycle(self, duty_cycle: int):
+#        """
+#        Input: Indicated how much of a cycle is high versus low: 0xffff high to 0 low\n
+#        Output: None
+#        """
+#       self.sensor.duty_cycle = duty_cycle
 
 
-if __name__ == '__main__':
-    pca = PCA()
-    try:
-        pca.initialize()
-    except Exception as e:
-        print(e)
 
-    duty_cycle = 0
-    while True:
-        duty_cycle = (duty_cycle + 0x1) % 0xffff
-        pca.set_duty_cycle(duty_cycle)
-        time.sleep(1)
+#if __name__ == '__main__':
+#    pca = PCA()
+#    try:
+#        pca.initialize()
+#    except Exception as e:
+#        print(e)
+#
+#    duty_cycle = 0
+#    while True:
+#        duty_cycle = (duty_cycle + 0x1) % 0xffff
+#        pca.set_duty_cycle(duty_cycle)
+#        time.sleep(1)
+
+
+#Test code
+pca = PCA()
+try:
+    L, R = pca.initialize()
+except Exception as e:
+    print(e)
+
+dutyc = 0
+while True:
+    if dutyc == 0xffff:
+        time.sleep(10)
+        break 
+    dutyc = (dutyc + 85) % 0xffff
+
+    L.duty_cycle(dutyc)
+
+    R.duty_cycle(dutyc)
+    
+    print (dutyc)
+    time.sleep(1)
+    
+
