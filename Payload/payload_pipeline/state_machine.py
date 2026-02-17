@@ -1,5 +1,9 @@
+import time
 class StateMachine:
-    def __init__(self, launch_gforce_threshold, launch_altitude_threshold, descent_apogee_threshold, descent_altitude_threshold, landing_vel_threshold, landing_gforce_threshold, landing_altitude_threshold):
+    def __init__(self, launch_gforce_threshold, launch_altitude_threshold, 
+                 descent_apogee_threshold, descent_altitude_threshold, landing_vel_threshold, 
+                 landing_gforce_threshold, landing_altitude_threshold,
+                 stable_readings, stable_readings_for_landing, timeout):
         self.launch_gforce_threshold = launch_gforce_threshold
         self.launch_altitude_threshold = launch_altitude_threshold
         self.descent_apogee_threshold = descent_apogee_threshold
@@ -7,11 +11,16 @@ class StateMachine:
         self.landing_vel_threshold = landing_vel_threshold
         self.landing_gforce_threshold = landing_gforce_threshold
         self.landing_altitude_threshold = landing_altitude_threshold
+        self.stable_readings = stable_readings
+        self.stable_readings_for_landing = stable_readings_for_landing
+        self.timeout = timeout
 
         self.counters = 0
-        self.thresholds = {"launch": 3, "descent": 3, "landing": 10}
+        self.start_time = 0
+        self.current_time = 0
         
-    def update(self, current_state, g_force, altitude, velocity, apogee):
+    def update(self, time, current_state, g_force, altitude, velocity, apogee):
+        self.time = time
         self.current_state = current_state
         self.g_force = g_force
         self.altitude = altitude
@@ -19,7 +28,7 @@ class StateMachine:
         self.apogee = apogee
 
         self.get_state()
-        return self.current_state
+        return self.current_time, self.current_state
 
     def get_state(self):
         match self.current_state:
@@ -29,27 +38,38 @@ class StateMachine:
                 else:
                     self.counters = 0
 
-                if self.counters >= self.thresholds["launch"]:
+                if self.counters >= self.stable_readings:
                     self.current_state = "LAUNCHED"
+                    self.start_time = time.time()
                     self.counters = 0
                 
             case "LAUNCHED":
+                self.current_time = time.time() - self.start_time
+                if self.current_time > self.timeout:
+                    self.current_state  = "LANDING"
+                    return
+
                 if (self.apogee > self.descent_apogee_threshold) and (self.altitude < (self.apogee - self.descent_altitude_threshold)):
                     self.counters += 1
                 else:
                     self.counters = 0
                 
-                if self.counters >= self.thresholds["descent"]:
+                if self.counters >= self.stable_readings:
                     self.current_state = "DESCENT"
                     self.counters = 0
 
             case "DESCENT":
+                self.current_time = time.time() - self.start_time
+                if self.current_time > self.timeout:
+                    self.current_state  = "LANDING"
+                    return
+                
                 if (abs(self.velocity) < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
                     self.counters += 1
                 else:
                     self.counters = 0
 
-                if self.counters >= self.thresholds["landing"]:
+                if self.counters >= self.stable_readings_for_landing:
                     self.current_state = "LANDING"
                     self.counters = 0
 

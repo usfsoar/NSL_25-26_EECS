@@ -1,16 +1,23 @@
 """
 TO DO:
+-drop test thresholds?
+
+
 -clarify if sim and launch thresholds
--implement power loss
 -implement actual rocket thresolds
--make stable readings a parameter in state machine
+
+-implement power loss backup
+--may have to grab from csv file
+
 -backup sensor data from alternate sensors
+
 -Store non-ema data
+--check intial data values. may have to set 1 for ema
 """
 
 #----IMPORTS----    
 #import libraries
-import time
+
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
@@ -21,7 +28,7 @@ from payload_sensor.sensor_simulation import Sensor_Data_Simulator
     
 from payload_pipeline.telemetry_logger import TelemetryLogger
 
-#----CONSTANTS----
+#----GLOBAL VARIABLES----
 #mode: launch, hand, sim
 MODE = "sim"
 
@@ -44,38 +51,44 @@ elif MODE == "hand":
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
     LANDING_ALTITUDE_THRESHOLD  = 3.0   #m
 elif MODE == "launch":
-    LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
-    LAUNCH_ALTITUDE_THRESHOLD   = 1.0   #m
-    DESCENT_ALTITUDE_THRESHOLD  = 2.0   #m
-    DESCENT_APOGEE_THRESHOLD    = 0.2  #m
+    LAUNCH_GFORCE_THRESHOLD     = 2.0   #G
+    LAUNCH_ALTITUDE_THRESHOLD   = 15.0   #m
+    DESCENT_ALTITUDE_THRESHOLD  = 10.0   #m
+    DESCENT_APOGEE_THRESHOLD    = 500.0  #m
     LANDING_GFORCE_THRESHOLD    = 0.8   #G
-    LANDING_VEL_THRESHOLD       = 0.8   #m/s
-    LANDING_ALTITUDE_THRESHOLD  = 3.0   #m
+    LANDING_VEL_THRESHOLD       = 1.0   #m/s
+    LANDING_ALTITUDE_THRESHOLD  = 20.0   #m
 else:
     exit("Invalid MODE selected")
 
-#----GLOBAL VARIABLES----
+#ema constants
 ALPHA_GFORCE   = 0.8
 ALPHA_ALTITUDE = 0.5 # Calculate by hand before go/no go
 ALPHA_VELOCITY = 0.8
-#if ema, set to 1.0
+
+#state transition evaluation constants
+STABLE_READINGS = 3
+STABLE_READINGS_FOR_LANDING = 10
+
+#timeout constants
+FLIGHT_TIMEOUT = 600
+# ROVER_TIMEOUT = 900
+
+#data storage
 data = {
     "time": 0,
+    "timestamp": 0,
     "state": "READY",
     "raw_g_force": 0,
     "g_force": 0,
     "raw_altitude": 0,
     "altitude": 0,
-    "raw_velocity"
+    "raw_velocity": 0,
     "velocity": 0,
     "apogee": 0
     }
 
-# #state transition evaluation constants
-# STABLE_READINGS_FOR_LAUNCH  = 3
-# STABLE_READINGS_FOR_DESCENT = 3
-# STABLE_READINGS_FOR_LANDING = 10
-# STABLE_READINGS_FOR_LANDING_VG = 3
+
 
 #----INITIALIZE CLASSES----
 if MODE == "sim":
@@ -94,7 +107,10 @@ sm = StateMachine(
     DESCENT_ALTITUDE_THRESHOLD,
     LANDING_VEL_THRESHOLD,
     LANDING_GFORCE_THRESHOLD,
-    LANDING_ALTITUDE_THRESHOLD
+    LANDING_ALTITUDE_THRESHOLD,
+    STABLE_READINGS,
+    STABLE_READINGS_FOR_LANDING,
+    FLIGHT_TIMEOUT
 )
 
 # Initialize Logger
@@ -144,10 +160,22 @@ def get_sensor_data():
 
 
 def set_zero_altitude():
-    for i in range(5):
-        time.sleep(0.5)
-        bmp.get_pressure()
+    prev = bmp.get_pressure()
+    while True:
+        curr = bmp.get_pressure()
+        if abs(curr - prev) < 5:
+            break
+        prev = curr
     bmp.set_sea_level_pressure(bmp.get_pressure())
+
+    # for i in range(15):
+    #     bmp.get_pressure()  
+    # bmp.set_sea_level_pressure(bmp.get_pressure())
+
+    # for i in range(5):
+    #     time.sleep(0.5)
+    #     bmp.get_pressure()
+    # bmp.set_sea_level_pressure(bmp.get_pressure())
 
 def main():
     initialize_sensors()
@@ -160,7 +188,8 @@ def main():
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
-        data["state"] = sm.update(
+        data["time"], data["state"] = sm.update(
+            data["time"],
             data["state"],
             data["g_force"],
             data["altitude"],
@@ -178,7 +207,7 @@ def main():
 
         # loop_time = time.perf_counter() - start_loop
 
-        time.sleep(0.1)
+        #time.sleep(0.1)
     
     #plot data here
     #run rover stuff here

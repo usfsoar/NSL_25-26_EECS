@@ -35,6 +35,7 @@ class BMP():
         for i in range(10):
             try:
                 self.sensor = adafruit_bmp5xx.BMP5XX_I2C(self.i2c, address=address)
+                self.sensor.pressure_oversample = 8
                 self.set_sea_level_pressure(sea_level)
                 break
             except Exception as e:

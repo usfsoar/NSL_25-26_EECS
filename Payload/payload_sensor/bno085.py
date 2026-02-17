@@ -47,7 +47,7 @@ class BNO():
                 #self.sensor.begin_calibration()
                 time.sleep(0.05)
 
-                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ACCELEROMETER)
+                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ACCELEROMETER, 2000)
                 self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)
                 self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ROTATION_VECTOR)
                 self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_LINEAR_ACCELERATION)
