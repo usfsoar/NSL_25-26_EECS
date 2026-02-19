@@ -68,21 +68,21 @@ class Motor():
             self.step.direction = Direction.OUTPUT
             print("Basic GPIO initialized")
 
-        def move_to(self, target_fullsteps):
-            if self.method == 2:
-                self.tmc.run_to_position_fullsteps(target_fullsteps)
-            else:
-                diff = target_fullsteps - self.current_pos
-                self.dir.value = (diff > 0) #true when out direction, false when in direction
+    def move_to(self, target_fullsteps):
+        if self.method == 2:
+            self.tmc.run_to_position_fullsteps(target_fullsteps)
+        else:
+            diff = target_fullsteps - self.current_pos
+            self.dir.value = (diff > 0) #true when out direction, false when in direction
 
-                steps = abs(diff) * self.micro_mode
-                for i in range(steps):
-                    self.step.value = True
-                    time.sleep(0.001)
-                    self.step.value = False
-                    time.sleep(0.001)
-                
-                self.current_pos = target_fullsteps
+            steps = abs(diff) * self.micro_mode
+            for i in range(steps):
+                self.step.value = True
+                time.sleep(0.001)
+                self.step.value = False
+                time.sleep(0.001)
+            
+            self.current_pos = target_fullsteps
 
 
 
