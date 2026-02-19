@@ -29,8 +29,8 @@ from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 from payload_pipeline.telemetry_logger import TelemetryLogger
 
 #----GLOBAL VARIABLES----
-#mode: launch, hand, sim
-MODE = "sim"
+#mode: launch, drop, hand, sim
+MODE = "drop"
 
 #three type of thresholds: hand, sim, and launch
 #hand thresholds
@@ -42,14 +42,24 @@ if MODE == "sim":
     LANDING_GFORCE_THRESHOLD    = 0.2   #G  gs needed to call landing
     LANDING_VEL_THRESHOLD       = 0.8   #m/s velocity needed to call landing
     LANDING_ALTITUDE_THRESHOLD  = 3.0   #m height needed to call landing
+elif MODE == "drop":
+    LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
+    LAUNCH_ALTITUDE_THRESHOLD   = 0.75   #m
+    DESCENT_ALTITUDE_THRESHOLD  = .1   #m
+    DESCENT_APOGEE_THRESHOLD    = 1.5   #m
+    LANDING_GFORCE_THRESHOLD    = 0.2   #G
+    LANDING_VEL_THRESHOLD       = 0.8   #m/s
+    LANDING_ALTITUDE_THRESHOLD  = -1.0   #m
+
 elif MODE == "hand":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
-    LAUNCH_ALTITUDE_THRESHOLD   = 1.0   #m
-    DESCENT_ALTITUDE_THRESHOLD  = 0.5   #m
-    DESCENT_APOGEE_THRESHOLD    = 2.0   #m
+    LAUNCH_ALTITUDE_THRESHOLD   = 3.0   #m
+    DESCENT_ALTITUDE_THRESHOLD  = 5.0   #m
+    DESCENT_APOGEE_THRESHOLD    = 3.0   #m
     LANDING_GFORCE_THRESHOLD    = 0.2   #G
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
     LANDING_ALTITUDE_THRESHOLD  = 3.0   #m
+
 elif MODE == "launch":
     LAUNCH_GFORCE_THRESHOLD     = 2.0   #G
     LAUNCH_ALTITUDE_THRESHOLD   = 15.0   #m
@@ -71,7 +81,7 @@ STABLE_READINGS = 3
 STABLE_READINGS_FOR_LANDING = 10
 
 #timeout constants
-FLIGHT_TIMEOUT = 600
+FLIGHT_TIMEOUT = 90000
 # ROVER_TIMEOUT = 900
 
 #data storage
