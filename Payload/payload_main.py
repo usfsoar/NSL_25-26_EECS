@@ -21,12 +21,14 @@ TO DO:
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
+from payload_pipeline.telemetry_logger import TelemetryLogger
 
 from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
     
-from payload_pipeline.telemetry_logger import TelemetryLogger
+from payload_rover.rover_control import RoverControl
+from payload_rover.motor_control import MotorControl
 
 #----GLOBAL VARIABLES----
 #mode: launch, hand, sim
@@ -71,7 +73,9 @@ STABLE_READINGS = 3
 STABLE_READINGS_FOR_LANDING = 10
 
 #timeout constants
-FLIGHT_TIMEOUT = 600
+FLIGHT_TIMEOUT = 300
+ROVER_TIMEOUT = 900
+
 # ROVER_TIMEOUT = 900
 
 #data storage
@@ -116,6 +120,11 @@ sm = StateMachine(
 # Initialize Logger
 log = TelemetryLogger()
 
+motors = MotorControl(pins=[1, 2, 3, 4])
+rover = RoverControl(motors, ROVER_TIMEOUT)
+
+
+#----FUNCTIONS----
 def initialize_sensors():
     if MODE == "sim":
         pass
@@ -176,6 +185,17 @@ def set_zero_altitude():
     #     time.sleep(0.5)
     #     bmp.get_pressure()
     # bmp.set_sea_level_pressure(bmp.get_pressure())
+
+def get_landing_orientation():
+    accel = bno.get_acceleration()
+    x = accel[0]
+    y = accel[1]
+    z = accel[2]
+
+    #ideal situation
+    # z = 9.81, x = 0, y = 0
+    
+
 
 def main():
     initialize_sensors()
