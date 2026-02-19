@@ -47,6 +47,7 @@ while True:
         altitude = bmpsensor.altitude()
         if not altitude:
             raise NoneError("Altitude is None!")
+        
     except Exception as e:
         print(e)
         time.sleep(extra_dt)

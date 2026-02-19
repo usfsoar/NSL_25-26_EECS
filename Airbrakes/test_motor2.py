@@ -42,7 +42,7 @@ tmc = Tmc2209(
 )
 
 
-tmc.set_home()
+tmc.reset_position()
 tmc.movement_abs_rel = MovementAbsRel.ABSOLUTE
 
 tmc.set_direction_reg(False)
