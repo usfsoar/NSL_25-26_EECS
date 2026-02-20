@@ -94,10 +94,7 @@ static void radioSetFreq(float freq) {
 static bool parseAckFreq(const char* s, uint32_t& seqOut, float& fOut) {
   if (!startsWith(s, "ACKFREQ,")) return false;
 
-  const char* p = s + 7;            // points at comma before seq
-  if (*p != ',') return false;
-  p++;
-
+  const char* p = s + 7;   // points at start of seq (correct)
   char* end1 = nullptr;
   unsigned long seq = strtoul(p, &end1, 10);
   if (!end1 || *end1 != ',') return false;
