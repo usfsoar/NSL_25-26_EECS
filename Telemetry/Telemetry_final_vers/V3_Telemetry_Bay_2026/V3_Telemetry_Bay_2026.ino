@@ -168,8 +168,8 @@ void setup() {
     Serial.println("setFrequency failed");
     while (1) delay(100);
   }
-  rfm96w.setSignalBandwidth(100'000.0);
-  rfm96w.setSpreadingFactor(7);
+  rfm96w.setSignalBandwidth(100000);
+  rfm96w.setSpreadingFactor(9);
 
   rfm96w.setTxPower(20, false); // 20 dBm
 
