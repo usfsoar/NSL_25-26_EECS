@@ -2,7 +2,7 @@ class MotorControl:
     def __init__(self, pins):
         pass
 
-    def turn_right(self,):
+    def turn_right(self):
         pass
-    def go_straigth(self):
+    def go_straigth(self, distance):
         pass

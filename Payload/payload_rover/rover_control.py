@@ -11,9 +11,11 @@ class RoverControl:
 
     def do_scan(self):
         while time.time() - self.start_time < self.timeout:
-            #multithread grid pattern and detection
+        #multithread grid pattern, and if detect objects condition. need to move and detect at the same time
             self.grid_pattern(self.calc_dist())
-            
+            self.run_detection()
+
+    def run_detection(self):
             if (self.detect_objects()):
                 if (self.classify_plant()):
                     self.get_ndvi()
@@ -21,13 +23,16 @@ class RoverControl:
                     self.save_frame()
                 self.go_around()
             self.save_frame()
-            self.send_data()
-
+            self.send_data()        
 
     def grid_pattern(self, distance):
-        pass
+        self.motors.go_straigth(distance)
+        self.motors.turn_right()
+
 
     def calc_dist(self):
+        #use time, and increase over time
+        #use velocity and time to calculate distance
         pass
 
     def detect_objects(self):

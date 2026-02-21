@@ -194,6 +194,11 @@ def get_landing_orientation():
 
     #ideal situation
     # z = 9.81, x = 0, y = 0
+    if abs(z) > abs(x) and abs(z) > abs(y):
+        if z > 0:
+            return 1
+        else:
+            return 0
     
 
 
@@ -224,10 +229,19 @@ def main():
                              "raw_velocity": data["raw_velocity"], "velocity": data["velocity"], 
                              "apogee": data["apogee"]})
         
-
         # loop_time = time.perf_counter() - start_loop
 
         #time.sleep(0.1)
+    #end of loop
+    
+    if (get_landing_orientation() == 0):
+        print("bad landing orientation")
+        return
+    
+    rover.exit_rover()
+    rover.do_scan()
+    
+
     
     #plot data here
     #run rover stuff here
