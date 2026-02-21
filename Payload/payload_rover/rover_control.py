@@ -5,8 +5,13 @@ class RoverControl:
         self.motors = motors
         self.timeout = timeout
 
+        self.cubesat_length = 300
+
     def exit_rover(self):
         self.start_time = time.time()
+        if (self.detect_objects()):
+            self.motors.reverse(300)
+            self.motors.turn_180()
         
 
     def do_scan(self):

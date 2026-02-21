@@ -191,7 +191,6 @@ def get_landing_orientation():
     x = accel[0]
     y = accel[1]
     z = accel[2]
-
     #ideal situation
     # z = 9.81, x = 0, y = 0
     if abs(z) > abs(x) and abs(z) > abs(y):
@@ -200,7 +199,13 @@ def get_landing_orientation():
         else:
             return 0
     
-
+def get_landing_altitude():
+    alt = bmp.get_altitude()
+    #need to take account of change in elevation
+    if alt >= 1:
+        return 0
+    else:
+        return 1
 
 def main():
     initialize_sensors()
@@ -233,9 +238,9 @@ def main():
 
         #time.sleep(0.1)
     #end of loop
-    
-    if (get_landing_orientation() == 0):
-        print("bad landing orientation")
+
+    if (get_landing_orientation() == 0 or get_landing_altitude() == 0):
+        print("bad landing orientation or altitude")
         return
     
     rover.exit_rover()
