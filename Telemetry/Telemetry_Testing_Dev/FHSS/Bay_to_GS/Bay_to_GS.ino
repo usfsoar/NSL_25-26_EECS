@@ -49,10 +49,7 @@ static bool parseSeq(char* str, uint32_t& seqOut) {
 static bool parseFreqCmd(const char* str, float& fOut) {
   // "FREQ,<mhz>"
   if (!startsWith(str, "FREQ,")) return false;
-  const char* p = str + 5;
-
-  float f = (float)strtod(end1 + 1, nullptr);
-  fOut = f;
+  fOut = (float)strtod(str + 5, nullptr);
   return true;
 }
 
@@ -146,13 +143,14 @@ void loop() {
     if (rfm96w.recv(buf, &len)) {
       float fNew;
       buf[len] = 0;
-      const char* str1 = (const char*)buf;
+      char* str1 = (char*)buf;
 
       // Any command triggers a quiet window to reduce airtime collisions
       pauseTelemetry(QUIET_AFTER_CMD_MS);
 
       /* parse seq and increment str pointer */
-      const char* str2 = (const char*)parseSeq(str1, seq);
+      parseSeq(str1, seq);
+      const char* str2 = (const char*)str1;
 
       if (parseFreqCmd(str1, seq, fNew)) {
         Serial.print("[Bay] RX ");

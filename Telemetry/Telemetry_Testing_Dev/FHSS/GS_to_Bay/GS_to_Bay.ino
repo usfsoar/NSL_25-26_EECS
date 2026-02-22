@@ -77,41 +77,42 @@ static bool startsWith(const char* s, const char* prefix) {
 }
 
 static void radioSendAscii(const char* msg) {
-  RadioCmd c{};
-  c.type = CMD_SEND_COMM;
-  c.len = (uint8_t)min((int)strlen(msg), (int)sizeof(c.data));
-  memcpy(c.data, msg, c.len);
-  xQueueSend(cmdQueue, &c, portMAX_DELAY);
+  RadioCmd cmd{};
+  cmd.type = CMD_SEND_COMM;
+  cmd.len = (uint8_t)min((int)strlen(msg), (int)sizeof(cmd.data));
+  memcpy(cmd.data, msg, cmd.len);
+  xQueueSend(cmdQueue, &cmd, portMAX_DELAY);
 }
 
 static void radioSetFreq(float freq) {
-  RadioCmd c{};
-  c.type = CMD_SET_FREQ;
-  c.freq_mhz = freq;
-  xQueueSend(cmdQueue, &c, portMAX_DELAY);
+  RadioCmd cmd{};
+  cmd.type = CMD_SET_FREQ;
+  cmd.freq_mhz = freq;
+  xQueueSend(cmdQueue, &cmd, portMAX_DELAY);
 }
 
-static bool parseAckFreq(const char* s, uint32_t& seqOut, float& fOut) {
+static bool parseSeq(char* str, uint32_t& seqOut) {
+    // "<seq>,..."
+    char* end_ptr = nullptr;
+    unsigned long seq = strtoul(str, &end, 10);
+    if (!end || *end1 != ',') return false;
+
+    seqOut = (uint32_t)seq;
+    // remove sequence from string
+    str = end_ptr;
+    return true;
+}
+
+static bool parseAckFreq(const char* s, float& fOut) {
+  // "ACKFREQ,<freq>"
   if (!startsWith(s, "ACKFREQ,")) return false;
-
-  const char* p = s + 7;            // points at comma before seq
-  if (*p != ',') return false;
-  p++;
-
-  char* end1 = nullptr;
-  unsigned long seq = strtoul(p, &end1, 10);
-  if (!end1 || *end1 != ',') return false;
-
-  float f = (float)strtod(end1 + 1, nullptr);
-  seqOut = (uint32_t)seq;
-  fOut = f;
+  fOut = (float)strtod(s + 8, nullptr);
   return true;
 }
 
 static bool parseAckPing(const char* s, uint32_t& seqOut) {
-  // "ACKPING,<seq>"
-  if (!startsWith(s, "ACKPING,")) return false;
-  seqOut = (uint32_t)strtoul(s + 8, nullptr, 10);
+  // "ACKPING"
+  if (!startsWith(s, "ACKPING")) return false;
   return true;
 }
 
@@ -119,7 +120,7 @@ static void enqueueRadioCommand(String line) {
   line.trim();
   if (line.length() == 0) return;
 
-  RadioCmd c{};
+  RadioCmd cmd{};
   if (line.startsWith("freq ")) {
     float f = line.substring(5).toFloat();
     if (!validFreq433(f)) {
@@ -164,10 +165,10 @@ static void enqueueRadioCommand(String line) {
   }
 
   // default: raw send
-  c.type = CMD_SEND_COMM;
-  c.len = (uint8_t)min((int)line.length(), (int)sizeof(c.data));
-  memcpy(c.data, line.c_str(), c.len);
-  xQueueSend(cmdQueue, &c, portMAX_DELAY);
+  cmd.type = CMD_SEND_COMM;
+  cmd.len = (uint8_t)min((int)line.length(), (int)sizeof(cmd.data));
+  memcpy(cmd.data, line.c_str(), cmd.len);
+  xQueueSend(cmdQueue, &cmd, portMAX_DELAY);
   Serial.println("Queued: raw send");
 }
 
@@ -242,22 +243,24 @@ void AppTask(void *pv) {
   Serial.printf("[AppTask] core=%d\n", xPortGetCoreID());
   Serial.setTimeout(50);
 
-  for (;;) {
+  while (true) {
     RadioRx rx;
     while (xQueueReceive(rxQueue, &rx, 0) == pdTRUE) {
-      const char* s = (const char*)rx.data;
+      char* str = (char*)rx.data;
+      uint_32t seq;
+      parseSeq(str, seq);
+      const char* s = (const char*)str;
 
       if (freqTxn.state == TXN_WAIT_ACKFREQ) {
-        uint32_t seq; float f;
-        if (parseAckFreq(s, seq, f) && seq == freqTxn.seq) {
+        float f;
+        if (parseAckFreq(s, f) && seq == freqTxn.seq) {
           Serial.printf("[GS] Got ACKFREQ seq=%lu f=%.3f (still on old freq)\n",
                         (unsigned long)seq, f);
           // Move to switch state
           freqTxn.state = TXN_SWITCH_TO_NEW;
         }
       } else if (freqTxn.state == TXN_WAIT_ACKPING) {
-        uint32_t seq;
-        if (parseAckPing(s, seq) && seq == freqTxn.seq) {
+        if (parseAckPing(s) && seq == freqTxn.seq) {
           Serial.printf("[GS] Got ACKPING seq=%lu on new freq %.3f MHz ✅\n",
                         (unsigned long)seq, freqTxn.f_new);
           freqTxn.state = TXN_DONE;
