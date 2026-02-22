@@ -8,7 +8,7 @@
 #define RFM96W_RST 9
 #define RFM96W_INT 2
 
-static float currentFreqMHz = 433.0;
+static float currentFreqMHz = 430.0;
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 
 // ---- Telemetry pause control ----
@@ -106,7 +106,8 @@ void setup() {
     while (1) delay(100);
   }
 
-  rfm96w.setModemConfig(RH_RF95::Bw125Cr45Sf128);
+  rfm96w.setSignalBandwidth(100000);
+  rfm96w.setSpreadingFactor(7);
   rfm96w.setTxPower(20, false);
 
   Serial.print("Bay freq set to ");
@@ -195,13 +196,7 @@ void loop() {
 
   // --------- 2) Telemetry sender (paused during handshake) ----------
   if ((int32_t)(millis() - quietUntilMs) >= 0) {
-    const char* msg  = "0DATA";
-    const char* msg2 = "1DATA";
-
-    sendAscii(msg);
-    delay(100);
-
-    sendAscii(msg2);
+    sendAscii(buf);
     delay(100);
   } else {
     // While quiet, keep loop responsive
