@@ -1,18 +1,12 @@
 """
 TO DO:
--drop test thresholds?
+motor class and code
 
+add euler angle calculation for landing orientation and rover turning
 
--clarify if sim and launch thresholds
--implement actual rocket thresolds
+ndvi calculation and plant classification
 
--implement power loss backup
---may have to grab from csv file
-
--backup sensor data from alternate sensors
-
--Store non-ema data
---check intial data values. may have to set 1 for ema
+add kalman filter
 """
 
 #----IMPORTS----    
@@ -74,9 +68,13 @@ STABLE_READINGS_FOR_LANDING = 10
 
 #timeout constants
 FLIGHT_TIMEOUT = 300
-ROVER_TIMEOUT = 900
+ROVER_SCAN_TIMEOUT = 900
+ROVER_EXIT_TIMEOUT = 60
 
-# ROVER_TIMEOUT = 900
+#rover dimensions
+WHEEL_RADIUS = 0
+WHEEL_BASE = 0
+WHEEL_CIRCUM = 2 * 3.14 * WHEEL_RADIUS
 
 #data storage
 data = {
@@ -119,9 +117,12 @@ sm = StateMachine(
 
 # Initialize Logger
 log = TelemetryLogger()
-
+tof = None
 motors = MotorControl(pins=[1, 2, 3, 4])
-rover = RoverControl(motors, ROVER_TIMEOUT)
+rover = RoverControl(motors, tof, ROVER_SCAN_TIMEOUT, ROVER_EXIT_TIMEOUT)
+
+
+
 
 
 #----FUNCTIONS----
@@ -187,6 +188,8 @@ def set_zero_altitude():
     # bmp.set_sea_level_pressure(bmp.get_pressure())
 
 def get_landing_orientation():
+    #implement euler
+    #from adafruit import rvc
     accel = bno.get_acceleration()
     x = accel[0]
     y = accel[1]
