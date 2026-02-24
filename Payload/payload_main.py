@@ -1,5 +1,7 @@
 """
 TO DO:
+add motor dimensions from cad
+
 motor class and code
 
 add euler angle calculation for landing orientation and rover turning

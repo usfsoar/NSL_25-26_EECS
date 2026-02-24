@@ -1,3 +1,5 @@
+import time
+
 class MotorControl:
     def __init__(self, pins, wheel_circum, bno, bmp):
         self.pins = pins
@@ -21,23 +23,16 @@ class MotorControl:
         #use time, and increase over time
         #use velocity and time to calculate distance
         #pid control???
+        #use traveled = bno.get_velocity * (time.time() - move_time)
         traveled = 0
-        acceleration = 1
-        dt = 0.1
-        velocity = 0
+        move_time = time.time()
         while (traveled < distance):
-            velocity += acceleration * dt
-            traveled += velocity * dt
+            traveled += self.bno.get_velocity() * (time.time() - move_time)
             self.set_pwm(127, 127)
 
     def reverse(self, distance):
         traveled = 0
-        acceleration = 1
-        dt = 0.1
-        velocity = 0
         while (traveled < distance):
-            velocity += acceleration * dt
-            traveled += velocity * dt
             self.set_pwm(-127, -127)
 
     def turn_180(self):
