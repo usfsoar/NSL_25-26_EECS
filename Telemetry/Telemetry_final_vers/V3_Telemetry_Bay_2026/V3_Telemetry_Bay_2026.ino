@@ -11,6 +11,7 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <Watchdog_t4.h>
 #include "V1_SOAR_RTOS_SD_CARD.h"
 #include "V1_SOAR_RTOS_GPS.h"
 #include "sensor_data_types.h"
@@ -23,6 +24,7 @@
 #include "matrix.h"
 #include "extras.h"
 
+WDT_T4<WDT3> wdt;
 SOAR_SD_CARD sd_card(254, true);  // Built-in, use SDIO
 SOAR_SD_CARD sd_card2(10, false);            // External, use SPI
 SOAR_RTC rtc;
@@ -177,12 +179,12 @@ void setup() {
 
   Wire1.begin();
   Wire1.setClock(100000);
-  Wire1.setTransmissionTimeout(50000);
+  Wire1.setTimeout(500000);
   gps2.setup();
 
   Wire2.begin();
   Wire2.setClock(400000);
-  Wire2.setTransmissionTimeout(50000);
+  Wire2.setTimeout(500000);  
   barometer.begin();
 
   delay(1000);
@@ -233,7 +235,7 @@ void setup() {
   Serial.println("Setup complete!");
 
   WDT_timings_t config;
-  config.timeout = 5; // 5 seconds
+  config.timeout = 30; // 30 seconds
   wdt.begin(config);
 }
 
@@ -246,8 +248,8 @@ void loop() {
   if (dt <= 0 || dt > 1.0) dt = 0.05;
   Serial.printf("\nloop time = %.2lf\n", dt);
   t_prev = micros();
-  char ts[32];
-  rtc.getTimestamp(ts, sizeof(ts));
+  String ts = rtc.getTimestamp(true);
+
 
   /* F_k for constant acceleration assumption */
   setElement(filter->F_k, 1, 2, dt);
