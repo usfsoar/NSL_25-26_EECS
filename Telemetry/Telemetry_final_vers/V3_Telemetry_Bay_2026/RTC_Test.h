@@ -8,17 +8,8 @@ class SOAR_RTC {
 public:
     SOAR_RTC();
     
-    int getTimeHours();
-    int getTimeMinutes();
-    int getTimeSeconds();
-    unsigned long getTimeMicroseconds();
-    unsigned long getTimeMilliseconds();
-    
     // Get formatted timestamp string for logging
-    String getTimestamp(bool includeMillis = false);
-    
-    unsigned long getElapsedMillis();
-    unsigned long getElapsedMicros();
+    void getTimestamp(char* out, size_t outSize, bool includeMillis);
 };
 
 #endif // SOAR_RTC_H

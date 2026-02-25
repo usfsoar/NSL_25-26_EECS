@@ -66,15 +66,10 @@ char dataBuffer[512];
 
 void write_sd_file_headers(SOAR_SD_CARD& sd) {
   Serial.println("Writing SD file headers");
-  sd.deleteFile(IMU_FILEPATH);
-  sd.deleteFile(ALTIMETER_FILEPATH);
-  sd.deleteFile(GPS_FILEPATH);
-  sd.deleteFile(KALMAN_FILEPATH);
-
-  sd.writeFile(IMU_FILEPATH, "time_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
-  sd.writeFile(ALTIMETER_FILEPATH, "time_stamp,altitude,temperature,pressure\n");
-  sd.writeFile(GPS_FILEPATH, "time_stamp,gps_data\n");
-  sd.writeFile(KALMAN_FILEPATH, "time_stamp,altitude,velocity,acceleration\n");
+  sd.appendFile(IMU_FILEPATH, "\n\nInitializing\n\ntime_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
+  sd.appendFile(ALTIMETER_FILEPATH, "\n\nInitializing\n\ntime_stamp,altitude,temperature,pressure\n");
+  sd.appendFile(GPS_FILEPATH, "\n\nInitializing\n\ntime_stamp,gps_data\n");
+  sd.appendFile(KALMAN_FILEPATH, "\n\nInitializing\n\ntime_stamp,altitude,velocity,acceleration\n");
 }
 
 void writeToBothCards(const char* filename, const char* data) {
@@ -248,7 +243,8 @@ void loop() {
   if (dt <= 0 || dt > 10.0) dt = 0.05;
   Serial.printf("\nloop time = %.2lf\n", dt);
   t_prev = micros();
-  String ts = rtc.getTimestamp(true);
+  char ts[20];
+  rtc.getTimestamp(ts, sizeof(ts), true);
 
 
   /* F_k for constant acceleration assumption */
@@ -273,7 +269,7 @@ void loop() {
   gps2.GET_NMEA(nmea_tmp, sizeof(nmea_tmp));
   SensorData gps_data;
   gps_data.type = GPS;
-  strncpy(gps_data.timestamp, ts.c_str(), sizeof(gps_data.timestamp) - 1);
+  strncpy(gps_data.timestamp, ts, sizeof(gps_data.timestamp) - 1);
   gps_data.timestamp[sizeof(gps_data.timestamp) - 1] = '\0';
   strncpy(gps_data.data.gps.nmea, nmea_tmp, sizeof(gps_data.data.gps.nmea) - 1);
   gps_data.data.gps.nmea[sizeof(gps_data.data.gps.nmea) - 1] = '\0';
@@ -298,7 +294,7 @@ void loop() {
 
   SensorData altimeter_data;
   altimeter_data.type = ALTIMETER;
-  strncpy(altimeter_data.timestamp, ts.c_str(), sizeof(altimeter_data.timestamp) - 1);
+  strncpy(altimeter_data.timestamp, ts, sizeof(altimeter_data.timestamp) - 1);
   altimeter_data.timestamp[sizeof(altimeter_data.timestamp) - 1] = '\0';
   altimeter_data.data.alt.altitude = altitude;
   altimeter_data.data.alt.temp = temperature;
@@ -317,7 +313,7 @@ void loop() {
   imu.update();
   SensorData imu_data;
   imu_data.type = IMU;
-  strncpy(imu_data.timestamp, ts.c_str(), sizeof(imu_data.timestamp) - 1);
+  strncpy(imu_data.timestamp, ts, sizeof(imu_data.timestamp) - 1);
   imu_data.timestamp[sizeof(imu_data.timestamp) - 1] = '\0';
   imu_data.data.imu.accel[0] = imu.sensorData.acceleration.x;
   imu_data.data.imu.accel[1] = imu.sensorData.acceleration.y;
@@ -373,7 +369,7 @@ void loop() {
 
   SensorData kalman_data;
   kalman_data.type = KALMAN;
-  strncpy(kalman_data.timestamp, ts.c_str(), sizeof(kalman_data.timestamp) - 1);
+  strncpy(kalman_data.timestamp, ts, sizeof(kalman_data.timestamp) - 1);
   kalman_data.timestamp[sizeof(kalman_data.timestamp) - 1] = '\0';
   kalman_data.data.kalman.kalman_altitude = kalman_altitude;
   kalman_data.data.kalman.kalman_velocity = kalman_velocity;

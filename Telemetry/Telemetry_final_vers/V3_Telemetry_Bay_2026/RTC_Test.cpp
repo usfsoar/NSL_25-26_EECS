@@ -8,48 +8,27 @@
 
 SOAR_RTC::SOAR_RTC() {}
 
-unsigned long SOAR_RTC::getElapsedMillis() {
-    return millis();
-}
+void SOAR_RTC::getTimestamp(char* out, size_t outSize, bool includeMillis) {
+    if (!out || outSize == 0) return;
 
-unsigned long SOAR_RTC::getElapsedMicros() {
-    return micros();
-}
+    uint32_t totalMillis = millis();
 
-unsigned long SOAR_RTC::getTimeMilliseconds() {
-    return millis();
-}
+    // TOTAL hours since boot (T+ hours)
+    uint32_t hours = totalMillis / 3600000UL;
+    uint32_t minutes = (totalMillis / 60000UL) % 60UL;
+    uint32_t seconds = (totalMillis / 1000UL) % 60UL;
+    uint32_t ms = totalMillis % 1000UL;
 
-unsigned long SOAR_RTC::getTimeMicroseconds() {
-    return micros();
-}
-
-int SOAR_RTC::getTimeHours() {
-    return (millis() / 3600000) % 24;
-}
-
-int SOAR_RTC::getTimeMinutes() {
-    return (millis() / 60000) % 60;
-}
-
-int SOAR_RTC::getTimeSeconds() {
-    return (millis() / 1000) % 60;
-}
-
-String SOAR_RTC::getTimestamp(bool includeMillis) {
-    unsigned long totalMillis = millis();
-    
-    int hours = (totalMillis / 3600000) % 24;
-    int minutes = (totalMillis / 60000) % 60;
-    int seconds = (totalMillis / 1000) % 60;
-    int milliseconds = totalMillis % 1000;
-    
-    char buffer[16];
     if (includeMillis) {
-        sprintf(buffer, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
+        snprintf(out, outSize, "%lu:%02lu:%02lu.%03lu",
+                 (unsigned long)hours,
+                 (unsigned long)minutes,
+                 (unsigned long)seconds,
+                 (unsigned long)ms);
     } else {
-        sprintf(buffer, "%02d:%02d:%02d", hours, minutes, seconds);
+        snprintf(out, outSize, "%lu:%02lu:%02lu",
+                 (unsigned long)hours,
+                 (unsigned long)minutes,
+                 (unsigned long)seconds);
     }
-    
-    return String(buffer);
 }
