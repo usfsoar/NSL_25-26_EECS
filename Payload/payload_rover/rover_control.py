@@ -38,9 +38,18 @@ class RoverControl:
             self.send_data()        
 
     def grid_pattern(self, distance):
-        self.motors.go_straight(distance)
+        self.go_straight(distance)
         self.motors.turn_right()
 
+    def go_straight(self, distance):
+        traveled = 0
+        kp = 0.1
+        move_time = time.time()
+        while (traveled < distance):
+            traveled += self.bno.get_velocity() * (time.time() - move_time)
+            error = distance - traveled
+            pwm = max(0, min(int(error * kp), 127))
+            self.motors.set_pwm(pwm, pwm)
 
     def calc_dist(self):
 

@@ -25,10 +25,13 @@ class MotorControl:
         #pid control???
         #use traveled = bno.get_velocity * (time.time() - move_time)
         traveled = 0
+        kp = 0.1
         move_time = time.time()
         while (traveled < distance):
             traveled += self.bno.get_velocity() * (time.time() - move_time)
-            self.set_pwm(127, 127)
+            error = distance - traveled
+            pwm = max(0, min(int(error * kp), 127))
+            self.set_pwm(pwm, pwm)
 
     def reverse(self, distance):
         traveled = 0

@@ -2,7 +2,8 @@
 TO DO:
 add motor dimensions from cad
 
-motor class and code
+add p control for distance control
+-see if while loop will mess up multithreading
 
 add euler angle calculation for landing orientation and rover turning
 
