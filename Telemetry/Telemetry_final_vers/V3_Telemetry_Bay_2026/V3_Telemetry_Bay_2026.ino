@@ -1,5 +1,5 @@
 /*
- * V2_Telemetry_Bay_2026.ino
+ * V3_Telemetry_Bay_2026.ino
  * 
  * Integrated Telemetry System for Teensy 4.1
  * Reads data from IMU (BNO085), Barometer (BMP581), and GPS sensors
@@ -177,10 +177,12 @@ void setup() {
 
   Wire1.begin();
   Wire1.setClock(100000);
+  Wire1.setTransmissionTimeout(50000);
   gps2.setup();
 
   Wire2.begin();
   Wire2.setClock(400000);
+  Wire2.setTransmissionTimeout(50000);
   barometer.begin();
 
   delay(1000);
@@ -229,16 +231,23 @@ void setup() {
   
   t_prev = micros();
   Serial.println("Setup complete!");
+
+  WDT_timings_t config;
+  config.timeout = 5; // 5 seconds
+  wdt.begin(config);
 }
 
 void loop() {
   // Get timestamp
-  
+  wdt.feed();
+
   t_now = micros();
   dt = (double)(t_now - t_prev) * 1e-6; /* new dt in seconds */
+  if (dt <= 0 || dt > 1.0) dt = 0.05;
   Serial.printf("\nloop time = %.2lf\n", dt);
   t_prev = micros();
-  String ts = rtc.getTimestamp(true);
+  char ts[32];
+  rtc.getTimestamp(ts, sizeof(ts));
 
   /* F_k for constant acceleration assumption */
   setElement(filter->F_k, 1, 2, dt);
