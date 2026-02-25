@@ -235,7 +235,7 @@ void setup() {
   Serial.println("Setup complete!");
 
   WDT_timings_t config;
-  config.timeout = 30; // 30 seconds
+  config.timeout = 30000; // 30 seconds
   wdt.begin(config);
 }
 
@@ -245,7 +245,7 @@ void loop() {
 
   t_now = micros();
   dt = (double)(t_now - t_prev) * 1e-6; /* new dt in seconds */
-  if (dt <= 0 || dt > 1.0) dt = 0.05;
+  if (dt <= 0 || dt > 10.0) dt = 0.05;
   Serial.printf("\nloop time = %.2lf\n", dt);
   t_prev = micros();
   String ts = rtc.getTimestamp(true);
