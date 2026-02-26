@@ -56,7 +56,7 @@ ax[0, 0].set_ylim(min(altitude), max(altitude) * 1.1)
 ax[0, 0].xaxis.set_major_locator(ticker.MultipleLocator(int(time[len(time) - 1]) / 20)) # time between ticks on x axis
 ax[0, 0].annotate(
     "Max: " + str(max(altitude)),
-    xy = (time[altitude.index(max(altitude))], max(altitude) * 1.01), color = 'black')
+    xy = (time[altitude.index(max(altitude))], max(altitude) * 1.01), color = 'black', fontsize = 14)
 
 # Graph 1, Time vs Acceleration X
 # ax2 = ax[0, 0].twinx() # creates second y axis on right side of graph  
