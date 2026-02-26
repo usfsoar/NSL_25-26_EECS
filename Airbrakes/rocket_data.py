@@ -18,17 +18,9 @@ class RocketData():
     
     # Create the csv file and write headers
     def createFile(self):
-        data = {
-            'Time' : [],
-            'Altitude' : [],
-            'Velocity' : [],
-            'Acceleration X': [],
-            'Acceleration Y': [],
-            'Acceleration Z': [],
-            'State' : [],
-            'Servo Angle' : [],
-            'Predicted Apogee' : []
-        }
+        data = {}
+        for x in self.headers:
+            data[x] = []
         df = pd.DataFrame(data)
         df.to_csv(self.filename, mode = "w", header = True, index = False)
     
