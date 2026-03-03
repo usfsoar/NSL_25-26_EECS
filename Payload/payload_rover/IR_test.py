@@ -16,7 +16,7 @@ COOLDOWN_SECONDS = 0.75
 
 SAVE_FOLDER = "plant_images"
 
-# Creates folder if doesn't exist (It should)
+# Creates folder if doesn't exist
 if not os.path.exists(SAVE_FOLDER):
     os.makedirs(SAVE_FOLDER)
 
