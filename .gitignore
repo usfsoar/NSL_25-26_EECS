@@ -21,3 +21,7 @@ desktop.ini
 # Project specific temporary files
 # *.log
 *.tmp
+
+# Flight Data (add files manually through github or something idk)
+airbrakes*.csv
+airbrakes*.png

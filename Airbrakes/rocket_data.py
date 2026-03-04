@@ -210,7 +210,7 @@ class RocketData():
 if __name__ == '__main__':
     import datetime
     
-    data = RocketData('flightdata' + str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")) + '.csv', ['Time', 'Altitude', 'Velocity', 'Acceleration X', 'Acceleration Y', 'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error'])
+    data = RocketData('airbrakes' + str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")) + '.csv', ['Time', 'Altitude', 'Velocity', 'Acceleration X', 'Acceleration Y', 'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error'])
     data.createFile()
     data.masterPlot()
     plt.show()
