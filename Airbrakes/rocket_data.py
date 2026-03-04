@@ -32,7 +32,7 @@ class RocketData():
         df = pd.DataFrame(data)
         df.to_csv(self.filename, mode = "a", header = False, index = False)
            
-    # will return an array of all data points in a row
+    # will return an array of all data points in a col
     def readColumn(self):
         df = pd.read_csv(self.filename)
         arr = df.to_numpy()
@@ -92,7 +92,7 @@ class RocketData():
                 state.append(float(row[6]))
                 steps.append(float(row[7]))
                 predicted_apogee.append(float(row[8]))
-                error.append(float(row[8]) - float(row[1]))
+                error.append(float(row[9]))
                 
 
         fig.suptitle('Data', fontsize = 20) # fig.suptitle sets overall title
@@ -208,10 +208,9 @@ class RocketData():
 
 
 if __name__ == '__main__':
-    import time
     import datetime
     
-    data = RocketData('flightdata' + str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")) + '.csv', ['Time', 'Altitude', 'Velocity', 'Acceleration X', 'Acceleration Y', 'Acceleration Z', 'State', 'Steps', 'Predicted Apogee'])
+    data = RocketData('flightdata' + str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")) + '.csv', ['Time', 'Altitude', 'Velocity', 'Acceleration X', 'Acceleration Y', 'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error'])
     data.createFile()
     data.masterPlot()
     plt.show()
