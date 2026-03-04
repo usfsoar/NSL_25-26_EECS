@@ -235,7 +235,7 @@ void setup() {
   Serial.println("Setup complete!");
 
   WDT_timings_t config;
-  config.timeout = 30; // 30 seconds
+  config.timeout = 30000; // 30 seconds
   wdt.begin(config);
 }
 

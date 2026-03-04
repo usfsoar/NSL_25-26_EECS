@@ -1,13 +1,13 @@
 #include "V1_SOAR_RTOS_GPS.h"
-#define GPSECHO false
+#define GPSECHO true
 
-SOAR_RTOS_GPS::SOAR_RTOS_GPS():GPS(&Wire) {
+SOAR_RTOS_GPS::SOAR_RTOS_GPS():GPS(&Wire1) {
   // Constructor implementation
 }
 
 void SOAR_RTOS_GPS::setup() {
   GPS.begin(0x10); // Set the baud rate for the GPS module
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
   GPS.sendCommand(PGCMD_ANTENNA);
   delay(1000);
@@ -18,9 +18,23 @@ bool SOAR_RTOS_GPS::GET_NMEA(char* out, size_t outSize) {
   if (!out || outSize == 0) return false;
 
   // Pump the GPS parser a bit
-  GPS.read();
+  char c = GPS.read();
+
+  if (GPSECHO)
+    if (c) Serial.print(c);
+
+  if (GPS.newNMEAreceived()) {
+    // a tricky thing here is if we print the NMEA sentence, or data
+    // we end up not listening and catching other sentences!
+    // so be very wary if using OUTPUT_ALLDATA and trying to print out data
+    Serial.print(GPS.lastNMEA()); // this also sets the newNMEAreceived() flag to false
+    if (!GPS.parse(GPS.lastNMEA())) // this also sets the newNMEAreceived() flag to false
+      out[0] = '\0';
+      return false; // we can fail to parse a sentence in which case we should just wait for another
+  }
 
   char* gps_data = GPS.lastNMEA();
+
   if (!gps_data || gps_data[0] == '\0') {
     out[0] = '\0';
     return false;
