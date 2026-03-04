@@ -1,5 +1,5 @@
-#ifndef V1_SOAR_RTOS_SD_CARD_H
-#define V1_SOAR_RTOS_SD_CARD_H
+#ifndef SOAR_GS_SD_CARD_H
+#define SOAR_GS_SD_CARD_H
 
 #include <SdFat.h>
 
