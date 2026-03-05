@@ -221,7 +221,7 @@ def main():
     
     #plot data here
     #run rover stuff here
-
+    # Rover main loop needs to select plant target
         
 if __name__ == '__main__':
     main()
