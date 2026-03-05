@@ -7,12 +7,9 @@ import rocket_data
 import time
 import state_machine
 import motor_control
-
-
+import datetime
 class NoneError(Exception):
     pass
-
-import datetime
 
 # Initialize bmp
 bmpsensor = bmp.BMP()
@@ -93,7 +90,7 @@ while True:
             break
 
     # Save all data to CSV file
-    stuff = {
+    samuel_johnson = {
         'Time' : [elapsed_time],
         'Altitude' : [altitude],
         'Velocity' : [velocity],
@@ -103,10 +100,9 @@ while True:
         'State' : [states],
         'Steps' : [steps],
         'Predicted Apogee' : [predicted_apogee],
-        'Error' : [error],
-        'PID Output' : [pid_output]
+        'Error' : [error]
     }
-    data.writeFile(stuff)
+    data.writeFile(samuel_johnson)
     # Update values
     previous_altitude = altitude
     
