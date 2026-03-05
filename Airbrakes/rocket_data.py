@@ -209,6 +209,13 @@ class RocketData():
 
 if __name__ == '__main__':
     import datetime
+    def create_alt(x):
+        return ((-31/3200) * (x**2)) + ((31/9)*x)
+    # Create fake data
+
+    time = np.arange(0,3600,0.05)
+    altitude = map(create_alt, time)
+    
     
     data = RocketData('airbrakes' + str(datetime.datetime.now().strftime("%Y-%b-%d-%H-%M-%S")) + '.csv', ['Time', 'Altitude', 'Velocity', 'Acceleration X', 'Acceleration Y', 'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error'])
     data.createFile()

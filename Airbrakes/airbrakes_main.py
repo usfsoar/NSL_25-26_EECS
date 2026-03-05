@@ -7,6 +7,7 @@ import rocket_data
 import time
 import state_machine
 import servo_control
+import datetime
 
 # Initialize bmp
 bmpsensor = bmp.BMP()
@@ -19,9 +20,11 @@ states = state_machine.StateMachine()
 # Create PID object
 mypid = pid.PID()
 # Create Rocket Data object
-data = rocket_data.RocketData("flight.csv", ["Time", "Altitude", "Velocity", 
-                                             "Acceleration X", "Acceleration Y", "Acceleration Z",
-                                             "State", "Servo Angle", "Predicted Apogee"])
+data = rocket_data.RocketData(
+    'airbrakes' + str(datetime.datetime.now().strftime("%Y-%b-%d-%H-%M-%S")) + 
+    '.csv', ['Time', 'Altitude', 'Velocity', 'Acceleration X', 'Acceleration Y',
+    'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error']
+)
 data.createFile()
 
 # Initial values
