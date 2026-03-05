@@ -34,6 +34,8 @@ class StateMachine:
                     self.state1_counter += 1
                     if self.state1_counter >= self.state1_threshold:
                         self.current_state = 1  
+                else: 
+                    self.state1_counter = 0
             case 1:
                 if self.state1_started == False:
                     self.state1_started = True
@@ -58,6 +60,9 @@ class StateMachine:
                         self.state3_counter = 0
                         if self.state4_counter >= self.state4_threshold:
                             self.current_state = 4
+                    else: 
+                        self.state3_counter = 0
+                        self.state4_counter = 0
             case 3:
                 if not self.state3_started:
                     self.state3_started = True
@@ -70,6 +75,8 @@ class StateMachine:
                         self.state4_counter += 1
                         if self.state4_counter >= self.state4_threshold:
                             self.current_state = 4
+                    else:
+                        self.state4_counter = 0
             case 4:
                 if not self.state4_started:
                     self.state4_started = True
@@ -78,6 +85,8 @@ class StateMachine:
                         self.state5_counter += 1
                         if self.state5_counter >= self.state5_threshold:
                             self.current_state = 5
+                    else:
+                        self.state5_counter = 0
             case 5:
                 pass
             case _:
