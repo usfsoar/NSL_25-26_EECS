@@ -6,7 +6,12 @@ import pid
 import rocket_data
 import time
 import state_machine
-import servo_control
+import motor_control
+
+
+class NoneError(Exception):
+    pass
+
 import datetime
 
 # Initialize bmp
@@ -14,11 +19,11 @@ bmpsensor = bmp.BMP()
 # Initialize bno
 bnosensor = bno.BNO()
 # Initialize servo controller
-servo = servo_control.Servo()
+motor = motor_control.Motor()
 # Create State Machine object
 states = state_machine.StateMachine()
 # Create PID object
-mypid = pid.PID()
+mypid = pid.PID(0.1,0.01,0.01)
 # Create Rocket Data object
 data = rocket_data.RocketData(
     'airbrakes' + str(datetime.datetime.now().strftime("%Y-%b-%d-%H-%M-%S")) + 
@@ -28,63 +33,87 @@ data = rocket_data.RocketData(
 data.createFile()
 
 # Initial values
-target_apogee = 1219.20 # Our target max height in meters
-dt = 0 # time between iterations
+target_apogee = 3048 # Our target max height in meters
+dt = 0.1 # time between iterations
 extra_dt = 0.05 # added time between iterations to remove errors in velocity
 apogee = 0 # our current max height
 previous_altitude = 0
 
-start_time = time.time() #
-elapsed_time = time.time() - start_time
+start_time = time.time() # start time of program
+elapsed_time = time.time() - start_time # time passed since start of program
 
 while True:
     # Update dt
-    dt = time.time() - start_time - elapsed_time
-    elapsed_time = time.time - start_time
+    elapsed_time = time.time() - start_time
     # Get sensor data
-    altitude = bmpsensor.altitude()
+    try:
+        altitude = bmpsensor.altitude()
+        if not altitude:
+            raise NoneError("Altitude is None!")
+        
+    except Exception as e:
+        print(e)
+        time.sleep(extra_dt)
+        dt = dt + time.time() - start_time - elapsed_time
+        continue
     velocity = (altitude - previous_altitude) / dt
     # pressure = bmpsensor.pressure()
     # temperature = bmpsensor.temperature()
-    acceleration = bnosensor.acceleration()
-    states = state_machine.transition(altitude, velocity, acceleration)
-    
+    try:
+        acceleration = bnosensor.linear_acceleration()
+        if None in acceleration:
+            raise NoneError("Acceleration is None!")
+        accelerationX, accelerationY, accelerationZ = acceleration
+    except Exception as e:
+        print(e)
+        time.sleep(extra_dt)
+        dt = dt + time.time() - start_time - elapsed_time
+        continue
+
     # Update State Machine
-
-    # If in state 1
-        # Keep airbrakes closed
-
-    # If in state 2
-        # Run PID
-        # Actuate Servo
+    states = state_machine.transition(altitude, velocity, accelerationZ, apogee)
     
-    # If in state 3
-        # Fully actuate servo
-
-    # if in state 4
-        # Keep airbrakes closed
-
-    # if in state 5
-        # break loop
+    match states:
+        # If motor is burning or rocket is descending -> close airbrakes
+        case 1 | 4:
+            motor.moveToStep(0)
+        # When in active state -> run PID
+        case 2:
+            mypid.update(elapsed_time, altitude, velocity, accelerationZ)
+            error = mypid.error()
+            pid_output = mypid.pidSum()
+            predicted_apogee = mypid.projHeight
+            steps = mypid.motorInput(pid_output)
+            motor.moveToStep(0)
+        # If rocket has passed target -> fully open airbrakes
+        case 3:
+            motor.moveToStep(motor.max_step)
+        # When rocket has landed -> break loop
+        case 5:
+            break
 
     # Save all data to CSV file
-    # angle = PID something or other
-    # predicted_apogee = ^
     stuff = {
         'Time' : [elapsed_time],
         'Altitude' : [altitude],
         'Velocity' : [velocity],
-        'Acceleration X': [acceleration[0]],
-        'Acceleration Y': [acceleration[1]],
+        'Acceleration X': [accelerationX],
+        'Acceleration Y': [accelerationY],
+        'Acceleration Z': [accelerationZ],
         'State' : [states],
-        'Servo Angle' : [],
-        'Predicted Apogee' : []
+        'Steps' : [steps],
+        'Predicted Apogee' : [predicted_apogee],
+        'Error' : [error],
+        'PID Output' : [pid_output]
     }
     data.writeFile(stuff)
     # Update values
     previous_altitude = altitude
     
     # Delay before next iteration
+    time.sleep(extra_dt)
+    # Update dt
+    dt = time.time() - start_time - elapsed_time
     
 
 # Create graphs and save to SD card
