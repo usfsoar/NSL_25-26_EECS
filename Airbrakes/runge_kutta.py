@@ -1,12 +1,16 @@
 import numpy as np
+import math
 # Function to predict the rocket's apogee
-def prediction(time, altitude, velocity):
-    dt = 0.1
-    while velocity > 0:
-        def f(t, a, v):
+
+def f(t, a, v):
             accel = -9.8
-            # accel = drag / mass - 9.8
+            accel = d / 20 - 9.8 #20 is the assumed mass
             return np.array([v, accel])
+def prediction(time, altitude, velocity, acceleration):
+    dt = 0.1
+    
+    while velocity > 0:
+        
         
         k1 = f(time, altitude, velocity)
         k2 = f(time + dt/2, altitude + k1[0] * dt/2, velocity + k1[1] * dt/2)

@@ -18,7 +18,7 @@ class StateMachine:
         self.state1_timeout = 6.5
         self.state1_started = False
         self.elapsed_time = time.time()
-        self.target_height = 1219
+        self.target_height = 3048
         self.state2_started = False
         self.state2_time = 0
         self.state2_timeout = 30
@@ -34,6 +34,8 @@ class StateMachine:
                     self.state1_counter += 1
                     if self.state1_counter >= self.state1_threshold:
                         self.current_state = 1  
+                else: 
+                    self.state1_counter = 0
             case 1:
                 if self.state1_started == False:
                     self.state1_started = True
@@ -58,6 +60,9 @@ class StateMachine:
                         self.state3_counter = 0
                         if self.state4_counter >= self.state4_threshold:
                             self.current_state = 4
+                    else: 
+                        self.state3_counter = 0
+                        self.state4_counter = 0
             case 3:
                 if not self.state3_started:
                     self.state3_started = True
@@ -70,14 +75,18 @@ class StateMachine:
                         self.state4_counter += 1
                         if self.state4_counter >= self.state4_threshold:
                             self.current_state = 4
+                    else:
+                        self.state4_counter = 0
             case 4:
                 if not self.state4_started:
                     self.state4_started = True
                 else:
-                    if  -10 < velocity < 10:
+                    if  -10 < velocity and velocity < 10 and altitude < 200:
                         self.state5_counter += 1
                         if self.state5_counter >= self.state5_threshold:
                             self.current_state = 5
+                    else:
+                        self.state5_counter = 0
             case 5:
                 pass
             case _:
