@@ -54,8 +54,8 @@ class PID:
         return self.derivativeValue
 
     def pidSum(self):
-        #self.update(self, self.time, self.acceleration, self.altitude, self.velocity)
-        self.pidOutput = self.proportionalValue + self.integralValue + self.derivativeValue
+        self.integralSum()
+        self.pidOutput = self.proportional() + self.integral() + self.derivative()
         return self.pidOutput
             
     def motorInput(self):

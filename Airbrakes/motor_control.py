@@ -2,6 +2,7 @@
 import time
 import board
 from digitalio import DigitalInOut, Direction
+import serial
 
 try:                             #tmc import checks
     from tmc_driver import (
@@ -66,6 +67,7 @@ class Motor():
             self.dir.direction = Direction.OUTPUT
             self.step = DigitalInOut(board.D6)
             self.step.direction = Direction.OUTPUT
+            self.max_step = 6000
             print("Basic GPIO initialized")
 
     def move_to(self, target_fullsteps):

@@ -81,10 +81,10 @@ while True:
             pid_output = mypid.pidSum()
             predicted_apogee = mypid.projHeight
             steps = mypid.motorInput(pid_output)
-            motor.moveToStep(0)
+            motor.move_to(steps)
         # If rocket has passed target -> fully open airbrakes
         case 3:
-            motor.moveToStep(motor.max_step)
+            motor.move_to(motor.max_step)
         # When rocket has landed -> break loop
         case 5:
             break
