@@ -76,7 +76,7 @@ while True:
             motor.moveToStep(0)
         # When in active state -> run PID
         case 2:
-            mypid.update(elapsed_time, altitude, velocity, accelerationZ)
+            mypid.update(elapsed_time, altitude, velocity, accelerationZ, dt)
             error = mypid.error()
             pid_output = mypid.pidSum()
             predicted_apogee = mypid.projHeight

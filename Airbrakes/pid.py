@@ -16,7 +16,7 @@ class PID:
         self.apogee = apogee
         self.flapArea = flapArea
         self.minSteps = 0
-        self.maxSteps = 60 #6000/100 NEEDS TO BE REVISED
+        self.maxSteps = 600 #6000/100 NEEDS TO BE REVISED
 
         self.dt = 1
         self.derivativeValue = 0
@@ -25,11 +25,12 @@ class PID:
         self.prevError = 0
         self.pidOutput = 0
 
-    def update(self, time, acceleration, altitude, velocity):
+    def update(self, time, altitude, velocity, acceleration, dt):
         self.time = time
         self.acceleration = acceleration
         self.altitude = altitude
         self.velocity = velocity
+        self.dt = dt
 
     def error(self):
         self.projHeight = runge_kutta.prediction(self.time, self.altitude, self.velocity)
@@ -41,7 +42,8 @@ class PID:
         return self.proportionalValue
     
     def integralSum(self):
-        self.integralValue = self.integralValue + (self.errorValue * self.dt)
+        if not self.clamp():
+            self.integralValue += (self.errorValue * self.dt)
         return self.integralValue
     
     def integral(self): #past error
@@ -59,18 +61,15 @@ class PID:
     def motorInput(self):
         pass # we need the conversion rate from pid output to formula
 
-    def clamp(self, inputSteps): #inputSteps being the number of steps the code demands
-        resetIntegral = True
+    def clamp(self): #inputSteps being the number of steps the code demands
 
-        if (inputSteps >= self.minSteps or inputSteps <= self.maxSteps):
-            resetIntegral = False
+        if (self.pidOutput >= self.minSteps and self.pidOutput <= self.maxSteps):
+            return False
 
         if (self.errorValue > 0 and self.pidOutput > 0) or (self.errorValue < 0 and self.pidOutput < 0):
-            resetIntegral = False
+            return False
 
-        if resetIntegral == True:
-            self.integralValue = 0
-            return self.integralValue
+        return True
 
 if __name__ == '__main__':
     pass
