@@ -60,10 +60,8 @@ class RungeKutta4:
         a = -(drag / ROCKET_MASS) - 9.81
         return a
 
-
-
     @njit
-    def prediction(self, time, altitude, velocity, acceleration):
+    def prediction(self, time, altitude, velocity, angle):
         dt = self.dt
         while velocity > 0:
             v1, a1 = velocity, self.get_accel(altitude, velocity, angle)
