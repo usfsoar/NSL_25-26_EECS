@@ -63,8 +63,7 @@ class RungeKutta4:
 
 
     @njit
-    def step(self, time, altitude, velocity, angle):
-        vel = velocity
+    def prediction(self, time, altitude, velocity, acceleration):
         dt = self.dt
         while velocity > 0:
             v1, a1 = velocity, self.get_accel(altitude, velocity, angle)
@@ -77,6 +76,6 @@ class RungeKutta4:
             time += dt
 
         return altitude
-    
+
 if __name__ == '__main__':
     pass

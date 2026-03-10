@@ -35,7 +35,7 @@ class PID:
         self.dt = dt
 
     def error(self):
-        self.projHeight = runge_kutta.step(self.time, self.altitude, self.velocity, self.acceleration)
+        self.projHeight = self.rk4.prediction(self.time, self.altitude, self.velocity, self.acceleration)
         self.errorValue = self.apogee - self.projHeight #projHeight from runge_kutta
         return self.errorValue
 
