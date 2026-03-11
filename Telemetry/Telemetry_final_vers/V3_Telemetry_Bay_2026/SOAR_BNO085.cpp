@@ -6,12 +6,17 @@ SOAR_BNO085::SOAR_BNO085() : bno08x(-1) {
   Wire.begin();
   Wire.setClock(400000L); // Use 400kHz I2C speed
 
-  if (!bno08x.begin_I2C()) {
-    Serial.println("Failed to find BNO08x. Check wiring.");
-    while (1) { delay(10); }
+  for (int i = 0; i < 3; i++) {
+      if (!bno08x.begin_I2C()) {
+          Serial.printf("Attempt %d failed to find BNO08x. Check wiring.\n", i+1);
+      }
+      else {
+          Serial.println("BNO08x Found!");
+          setReports();
+          break;
+      }
+      delay(100);
   }
-  Serial.println("BNO08x Found!");
-  setReports();
 }
 
 // choose sensor outputs
@@ -38,7 +43,8 @@ void SOAR_BNO085::setReports(void) {
 }
 
 // Poll the sensor and update internal data structures
-void SOAR_BNO085::update() {
+bool SOAR_BNO085::update() {
+  bool processed_event = false;
   if (bno08x.wasReset()) {
     Serial.println("Sensor reset detected, re-enabling reports.");
     setReports();
@@ -47,8 +53,11 @@ void SOAR_BNO085::update() {
   for (int i = 0; i < 16; i++) {
     if (bno08x.getSensorEvent(&sensorValue)) {
         processSensorEvent();
+        processed_event = true;
     }
   }
+
+  return processed_event;
 }
 
 // Private helper to process a sensor event

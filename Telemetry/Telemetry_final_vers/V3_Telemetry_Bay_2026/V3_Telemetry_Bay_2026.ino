@@ -33,6 +33,10 @@ Adafruit_GPS gps_hw(&Wire1);
 BMP581Sensor barometer;           // Wire 2
 SOAR_BNO085 imu;                  // Wire
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
+bool RADIO_ACTIVE = false;
+bool IMU_ACTIVE = false;
+bool ALT_ACTIVE = false;
+bool GPS_ACTIVE = false;
 
 char* msg = (char*)malloc(MAX_DATA);
 float RFM96W_FREQ = 430.0;
@@ -162,20 +166,24 @@ void setup() {
 
   if (!rfm96w.init()) {
     Serial.println("RFM96W initialization failed");
-    while (1) delay(100);
+    // while (1) delay(100);
+  } else {
+    Serial.println("RFM96W initialization succeeded");
+    RADIO_ACTIVE = true;
   }
-  Serial.println("RFM96W initialization succeeded");
 
-  if (!rfm96w.setFrequency(RFM96W_FREQ)) {
-    Serial.println("setFrequency failed");
-    while (1) delay(100);
-  }
-  rfm96w.setSignalBandwidth(100000);
-  rfm96w.setSpreadingFactor(9);
+  if (RADIO_ACTIVE) {
+      if (!rfm96w.setFrequency(RFM96W_FREQ)) {
+        Serial.println("setFrequency failed");
+        // while (1) delay(100);
+      }
+      rfm96w.setSignalBandwidth(100000);
+      rfm96w.setSpreadingFactor(9);
 
-  rfm96w.setTxPower(20, false); // 20 dBm
+      rfm96w.setTxPower(20, false); // 20 dBm
 
-  Serial.printf("Transmit frequency set to %f.0 Mhz\n", RFM96W_FREQ);
+      Serial.printf("Transmit frequency set to %f.0 Mhz\n", RFM96W_FREQ);
+    }
 
   Wire1.begin();
   Wire1.setClock(100000);
@@ -185,7 +193,10 @@ void setup() {
   Wire2.begin();
   Wire2.setClock(400000);
   Wire2.setTimeout(500000);  
-  barometer.begin();
+
+  if (barometer.begin()) {
+    ALT_ACTIVE = true;
+  }
 
   delay(1000);
   i_altitude = barometer.get_altitude();
@@ -193,7 +204,7 @@ void setup() {
   quat = matrixCreate(4, 1);
   dir = matrixCreate(3, 1);
   acc = matrixCreate(3, 1);
-  setElement(dir, 3, 1, 1);
+  setElement(dir, Z_UP, 1, 1);
 
   filter = kalmanFilterCreate(states, observations);
 
@@ -270,7 +281,8 @@ void loop() {
 
   // Read GPS data
   char nmea_tmp[100];
-  gps2.GET_NMEA(nmea_tmp, sizeof(nmea_tmp));
+  gps2.GET_NMEA(nmea_tmp);
+  Serial.printf("NMEA pre-processing: %s\n", nmea_tmp);
   SensorData gps_data;
   gps_data.type = GPS;
   strncpy(gps_data.timestamp, ts.c_str(), sizeof(gps_data.timestamp) - 1);
@@ -284,8 +296,10 @@ void loop() {
 
   dataToString(gps_data, msg);
   Serial.printf("Sending gps: %s\n", msg); 
-  rfm96w.send((uint8_t*)msg, strlen(msg));
-  rfm96w.waitPacketSent();
+  if (RADIO_ACTIVE) {
+    rfm96w.send((uint8_t*)msg, strlen(msg));
+    rfm96w.waitPacketSent();
+  }
 
   // Read altimeter data
   altitude = barometer.get_altitude() - i_altitude;
@@ -309,9 +323,11 @@ void loop() {
   delay(FILE_WRITE_DELAY);
 
   dataToString(altimeter_data, msg);
-  Serial.printf("Sending alt: %s\n", msg); 
-  rfm96w.send((uint8_t*)msg, strlen(msg));
-  rfm96w.waitPacketSent();
+  if (RADIO_ACTIVE) {
+    Serial.printf("Sending alt: %s\n", msg); 
+    rfm96w.send((uint8_t*)msg, strlen(msg));
+    rfm96w.waitPacketSent();
+  }
 
   // Read IMU data
   imu.update();
@@ -341,9 +357,11 @@ void loop() {
   delay(FILE_WRITE_DELAY);
 
   dataToString(imu_data, msg);
-  Serial.printf("Sending imu: %s\n", msg); 
-  rfm96w.send((uint8_t*)msg, strlen(msg));
-  rfm96w.waitPacketSent();
+  if (RADIO_ACTIVE) {
+    Serial.printf("Sending imu: %s\n", msg); 
+    rfm96w.send((uint8_t*)msg, strlen(msg));
+    rfm96w.waitPacketSent();
+  }
 
   // Kalman filter
   if (altitude < MIN_ALT) { // fully trust sensors
@@ -384,9 +402,11 @@ void loop() {
   delay(FILE_WRITE_DELAY);
 
   dataToString(kalman_data, msg);
-  Serial.printf("Sending kalman: %s\n", msg); 
-  rfm96w.send((uint8_t*)msg, strlen(msg));
-  rfm96w.waitPacketSent();
+  if (RADIO_ACTIVE) {
+    Serial.printf("Sending kalman: %s\n", msg); 
+    rfm96w.send((uint8_t*)msg, strlen(msg));
+    rfm96w.waitPacketSent();
+  }
 
   // Stage update
   switch (stage) {

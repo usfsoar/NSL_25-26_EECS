@@ -6,6 +6,12 @@
 #include <string.h>
 #include "matrix.h"
 
+enum {
+    X_UP = 1,
+    Y_UP = 2,
+    Z_UP = 3
+};
+
 int vectorComponent(matrix *vec, matrix *quat, matrix *unit_dir_vec, double *magnitude) {
     matrix *quat_prime, *unit_dir_quat, *quat_temp, *unit_dir_vec_prime;
     double num = 0;
