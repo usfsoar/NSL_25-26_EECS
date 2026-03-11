@@ -8,6 +8,15 @@ import busio
 import time
 import math
 
+from adafruit_bno08x import (
+    BNO_REPORT_ACCELEROMETER
+  #  BNO_REPORT_GYROSCOPE,
+   # BNO_REPORT_MAGNETOMETER,
+   # BNO_REPORT_ROTATION_VECTOR,
+   # BNO_REPORT_LINEAR_ACCELERATION,
+   # BNO_REPORT_GRAVITY
+)
+
 # todo: Class getters should probably have exceptions and bad data handled
 
 class BNO():
@@ -19,7 +28,7 @@ class BNO():
         pass
     
 
-    def initialize(self, address: int = 0x28):
+    def initialize(self, address: int = 0x4a):
         """
         Input: I2C Address\n
         Output: None\n
@@ -37,7 +46,7 @@ class BNO():
         
         for i in range(10):
             try:
-                self.sensor = BNO08X_I2C(self.i2c)#, address=address)
+                self.sensor = BNO08X_I2C(self.i2c, address=address)
 
                 # Initalize sensor
                 #self.sensor.initialize()
@@ -45,13 +54,13 @@ class BNO():
                 
                 # Calibrate
                 #self.sensor.begin_calibration()
-                time.sleep(0.05)
+                # time.sleep(0.05)
 
-                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ACCELEROMETER, 2000)
-                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)
-                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ROTATION_VECTOR)
-                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_LINEAR_ACCELERATION)
-                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_GRAVITY)
+                self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ACCELEROMETER)#, 2000)
+                # self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)
+                # self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_ROTATION_VECTOR)
+                # self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_LINEAR_ACCELERATION)
+                # self.sensor.enable_feature(adafruit_bno08x.BNO_REPORT_GRAVITY)
                 time.sleep(0.05)
                 break
             except Exception as e:
@@ -66,7 +75,14 @@ class BNO():
         Output: Returns raw acceleration (accel_x, accel_y, accel_z) m/s^2\n
         Note: If acceleration has been disabled, returns empty 3-tuple
         """
-        return self.sensor.acceleration
+        accel = (0, 0, 0)
+        for i in range (8):
+            try:
+                accel = self.sensor.acceleration
+            except Exception as e:
+                print(e)
+
+        return accel
     
 
     def get_linear_acceleration(self):
@@ -133,5 +149,3 @@ if __name__ == '__main__':
         print(f"Calibrated: {bno.is_calibrated()}")
 
         time.sleep(1)
-
-
