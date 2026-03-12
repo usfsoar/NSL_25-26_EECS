@@ -17,7 +17,8 @@ TO DO:
 
 #----IMPORTS----    
 #import libraries
-
+import os
+import csv
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
@@ -126,6 +127,64 @@ sm = StateMachine(
 # Initialize Logger
 log = TelemetryLogger()
 
+def check_power_loss():
+    if os.path.exists(".running.txt"):
+        # Check if running file is there
+        # If it is, then we lost power
+        with open(".running.txt", "r") as file:
+            log_file = file.readline()
+
+        # Overwrite file with new logging path
+        with open(".running.txt", "w") as file:
+            file.write(log.LOGGING_FILE_PATH)
+
+        return (True, log_file)
+    else:
+        # If not, we are starting from blank, then make a new running file
+        with open(".running.txt", "w") as file:
+            file.write(log.LOGGING_FILE_PATH)
+        
+        return (False, "")
+
+
+def power_loss_recovery():
+    powerLoss, logFile = check_power_loss()
+
+    if powerLoss:
+        with open(logFile, newline='') as csvfile:
+            rows = csv.reader(csvfile)
+            mappings = next(rows)
+            state_index = mappings.index('state')
+
+        with open(logFile, "rb") as csvfile:
+            csvfile.seek(0, 2)
+            pos = csvfile.tell() - 1
+
+            newline_count = 0
+            while pos > 0:
+                csvfile.seek(pos)
+                if csvfile.read(1) == b"\n":
+                    newline_count += 1
+                    if newline_count >= 2:
+                        break
+                pos -= 1
+
+            last_data = csvfile.readline().decode() # Last row of complete data
+        
+        for row in csv.reader([last_data]):
+            # data['time'] = row[0]
+            data['state'] = row[state_index]
+            # data["raw_g_force"] = row[2]
+            # data["g_force"] = row[3]
+            # data["raw_altitude"] = row[4]
+            # data["altitude"] = row[5]
+            # data["raw_velocity"] = row[6]
+            # data["velocity"] = row[7]
+            # data["apogee"] = row[8]
+    return data['state']
+
+
+
 def initialize_sensors():
     if MODE == "sim":
         pass
@@ -188,6 +247,8 @@ def set_zero_altitude():
     # bmp.set_sea_level_pressure(bmp.get_pressure())
 
 def main():
+    power_loss_recovery()
+
     initialize_sensors()
     if MODE == "sim":
         pass
@@ -222,6 +283,11 @@ def main():
     #plot data here
     #run rover stuff here
     # Rover main loop needs to select plant target
+
+    # On finish, remove running file
+    if os.path.exists(".running.txt"):
+        os.remove(".running.txt")
+
         
 if __name__ == '__main__':
     main()

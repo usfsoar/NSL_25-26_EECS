@@ -12,6 +12,7 @@ class TelemetryLogger:
     def __init__(self):
         # Get sensor data csv object
         self.sensor_data_csv = SensorDataCsv() 
+        self.LOGGING_FILE_PATH = self.sensor_data_csv.LOGGING_FILE_PATH
         
     @staticmethod
     def get_timestamp():
