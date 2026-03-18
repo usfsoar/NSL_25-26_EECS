@@ -8,7 +8,7 @@
 
 #include "SOAR_GS_SD_CARD.h"
 #include "_config.h"
-
+#include <inttypes.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
@@ -229,6 +229,9 @@ void RadioTask(void *pv) {
       pkt.len = RH_RF95_MAX_MESSAGE_LEN;
 
       if (rfm96w.recv(pkt.data, &pkt.len)) {
+        int8_t rssi = rfm96w.lastRssi(); // Get the RSSI
+        Serial.print("RSSI: ");
+        Serial.println(rssi, DEC);
         pkt.data[pkt.len] = 0;
 
         // Push to AppTask for FREQ handshake parsing, etc.
@@ -250,25 +253,25 @@ void RadioTask(void *pv) {
           // Storing just payload keeps CSV clean.
           switch (type) {
             case 0:
-              Serial.printf("[TLM IMU] bay_seq=%lu gs_seq=%lu\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1));
+              Serial.printf("[TLM IMU] bay_seq=%lu gs_seq=%lu Data: %s\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1), s);
               sd.appendBytes(IMU_FILEPATH, (const uint8_t*)payload, (uint32_t)strlen(payload));
               sd.appendFile(IMU_FILEPATH, "\n");
               break;
 
             case 1:
-              Serial.printf("[TLM ALT] bay_seq=%lu gs_seq=%lu\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1));
+              Serial.printf("[TLM ALT] bay_seq=%lu gs_seq=%lu Data: %s\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1), s);
               sd.appendBytes(ALTIMETER_FILEPATH, (const uint8_t*)payload, (uint32_t)strlen(payload));
               sd.appendFile(ALTIMETER_FILEPATH, "\n");
               break;
 
             case 2:
-              Serial.printf("[TLM GPS] bay_seq=%lu gs_seq=%lu\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1));
+              Serial.printf("[TLM GPS] bay_seq=%lu gs_seq=%lu Data: %s\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1), s);
               sd.appendBytes(GPS_FILEPATH, (const uint8_t*)payload, (uint32_t)strlen(payload));
               sd.appendFile(GPS_FILEPATH, "\n");
               break;
 
             case 3:
-              Serial.printf("[TLM KAL] bay_seq=%lu gs_seq=%lu\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1));
+              Serial.printf("[TLM KAL] bay_seq=%lu gs_seq=%lu Data: %s\n", (unsigned long)baySeq, (unsigned long)(gs_seq - 1), s);
               sd.appendBytes(KALMAN_FILEPATH, (const uint8_t*)payload, (uint32_t)strlen(payload));
               sd.appendFile(KALMAN_FILEPATH, "\n");
               break;
@@ -282,7 +285,7 @@ void RadioTask(void *pv) {
         } else {
           // Not telemetry; log unknown or leave it to AppTask
           // (Optional) Uncomment if you want to see non-TLM packets:
-          // Serial.printf("[RadioTask] RX: %s\n", s);
+          Serial.printf("[RadioTask] RX: %s\n", s);
         }
       }
 

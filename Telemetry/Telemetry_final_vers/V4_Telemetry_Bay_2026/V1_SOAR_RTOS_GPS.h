@@ -1,5 +1,6 @@
 #ifndef SOAR_RTOS_GPS_h
 #define SOAR_RTOS_GPS_h
+#include <cstring>
 #include <Wire.h>
 #include <Adafruit_GPS.h>
 
@@ -7,7 +8,7 @@ class SOAR_RTOS_GPS {
   public:
     SOAR_RTOS_GPS(); // Constructor
     void setup();
-    bool GET_NMEA(char* out, size_t outSize);
+    void GET_NMEA(char* nmea);
 
     private:
       Adafruit_GPS GPS;  // GPS

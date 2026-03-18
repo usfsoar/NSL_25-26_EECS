@@ -41,6 +41,8 @@ RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 static float RFM96W_FREQ = 430.0f;
 static const uint32_t RFM_BW_HZ = 100000;
 static const uint8_t  RFM_SF    = 9;
+bool telemetry_on = false;
+const char initial_msg[100] = "Callsign: KR4IJA | Team: 24 | Beginning Transmissions \n";
 
 // ------------------- Buffers / misc -------------------
 static const int FILE_WRITE_DELAY = 0;
@@ -315,7 +317,7 @@ static void getTimestamp(char* ts, size_t n) {
 
 static void updateGPS(const char* ts) {
   char nmea_tmp[100];
-  gps2.GET_NMEA(nmea_tmp, sizeof(nmea_tmp));
+  gps2.GET_NMEA(nmea_tmp);
 
   latest_gps.type = GPS;
   strncpy(latest_gps.timestamp, ts, sizeof(latest_gps.timestamp) - 1);
@@ -561,7 +563,40 @@ void setup() {
 void loop() {
   wdt.feed();
 
-  // --------- A) RX handler (commands + ACKs) ----------
+ if (rfm96w.available()) {
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN + 1];
+    uint8_t len = RH_RF95_MAX_MESSAGE_LEN;
+
+    if (rfm96w.recv(buf, &len)) {
+        buf[len] = 0; // Null terminate to treat as string
+        
+        // Use your existing startsWith helper for consistency
+        if (buf[0] == '1') {
+            telemetry_on = true;
+            Serial.println("Telemetry: ENABLED");
+            rfm96w.send((uint8_t*)initial_msg, 100);
+            delay(50);
+            rfm96w.waitPacketSent();
+        } else if (buf[0] == '0') {
+            telemetry_on = false;
+            Serial.println("Telemetry: DISABLED");
+        }
+    }
+}
+
+if (!telemetry_on) {
+    // Instead of delay(500), use a non-blocking timer if you want to print 
+    static uint32_t lastPrint = 0;
+    if (millis() - lastPrint > 1000) {
+        Serial.println("System is on standby");
+        lastPrint = millis();
+    }
+    
+    // IMPORTANT: Keep feeding the watchdog even in standby!
+    wdt.feed(); 
+    return; // Exit loop() early to skip sensor/TX logic
+} else {
+ // --------- A) RX handler (commands + ACKs) ----------
   if (rfm96w.available()) {
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN + 1];
     uint8_t len = RH_RF95_MAX_MESSAGE_LEN;
@@ -753,4 +788,7 @@ void loop() {
 
   // lightweight yield
   delay(1);
+  }
+
+ 
 }
