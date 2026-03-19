@@ -39,7 +39,7 @@ RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 
 // ------------------- Radio params -------------------
 static float RFM96W_FREQ = 430.0f;
-static const uint32_t RFM_BW_HZ = 100000;
+static const uint32_t RFM_BW_HZ = 60000;
 static const uint8_t  RFM_SF    = 9;
 bool telemetry_on = false;
 const char initial_msg[100] = "Callsign: KR4IJA | Team: 24 | Beginning Transmissions \n";
@@ -562,8 +562,7 @@ void setup() {
 // ------------------- Main loop -------------------
 void loop() {
   wdt.feed();
-
- if (rfm96w.available()) {
+ if (rfm96w.available() && !telemetry_on) {
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN + 1];
     uint8_t len = RH_RF95_MAX_MESSAGE_LEN;
 
@@ -577,10 +576,7 @@ void loop() {
             rfm96w.send((uint8_t*)initial_msg, 100);
             delay(50);
             rfm96w.waitPacketSent();
-        } else if (buf[0] == '0') {
-            telemetry_on = false;
-            Serial.println("Telemetry: DISABLED");
-        }
+        } 
     }
 }
 
@@ -685,8 +681,10 @@ if (!telemetry_on) {
           delay(200);
           Serial.println("[Bay] Rebooting...");
           teensyReboot();
-        }
-        else {
+        } else if (buf[0] == '0') {
+            telemetry_on = false;
+            Serial.println("Telemetry: DISABLED");
+        } else {
           Serial.print("[Bay] RX unknown: ");
           Serial.println(s);
         }

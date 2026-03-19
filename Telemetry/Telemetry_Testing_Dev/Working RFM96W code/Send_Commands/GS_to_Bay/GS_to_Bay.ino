@@ -23,7 +23,7 @@
 
 // ---------- Radio settings (MUST match Bay) ----------
 static float currentFreqMHz = 430.0f;
-static const uint32_t RFM_BW_HZ = 100000;
+static const uint32_t RFM_BW_HZ = 60000;
 static const uint8_t  RFM_SF    = 9;
 
 // ---------- Sequences ----------
