@@ -125,9 +125,6 @@ motors = MotorControl(pins=[1, 2, 3, 4])
 rover = RoverControl(motors, tof, ROVER_SCAN_TIMEOUT, ROVER_EXIT_TIMEOUT)
 
 
-
-
-
 #----FUNCTIONS----
 def initialize_sensors():
     if MODE == "sim":
@@ -250,7 +247,7 @@ def main():
         return
     
     rover.exit_rover()
-    rover.do_scan()
+    rover.do_scan_2()
     
 
     

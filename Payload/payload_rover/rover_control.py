@@ -9,8 +9,9 @@ class RoverControl:
 
         self.dist = 5
         self.detect_dist = 20
+        self.dist_increment = 5
 
-
+        self.kp = 0.1
 
     def exit_rover(self):
         #if object is detected in front of rover at start, reverse and turn 180
@@ -20,13 +21,35 @@ class RoverControl:
         
         self.motors.turn_180()
         
-
+    #multithread version
     def do_scan(self):
         while time.time() - self.start_time < self.timeout:
         #multithread grid pattern, and if detect objects condition. need to move and detect at the same time
             self.grid_pattern(self.calc_dist())
             self.run_detection()
 
+    #single thread
+    def do_scan_2(self):
+        while time.time() - self.start_time < self.timeout:
+            self.save_frame()
+            self.send_data()
+            traveled = 0
+            move_time = time.time()
+            self.calc_dist()
+            #p control
+            while (traveled < self.dist):
+                traveled += self.bno.get_velocity() * (time.time() - move_time)
+                error = self.dist - traveled
+                pwm = max(0, min(int(error * self.kp), 127))
+                self.motors.set_pwm(pwm, pwm)
+                if (self.detect_objects()):
+                    self.run_detection()
+                    #continue moving forward after detection
+                    move_time = time.time()
+            
+            self.motors.turn_right()
+
+    #if object, classify and ndvi, send and save data, go around        
     def run_detection(self):
             if (self.detect_objects()):
                 if (self.classify_plant()):
@@ -51,11 +74,10 @@ class RoverControl:
             pwm = max(0, min(int(error * kp), 127))
             self.motors.set_pwm(pwm, pwm)
 
+    #
     def calc_dist(self):
+        self.dist += self.dist_increment
 
-
-        self.dist += 5
-        return self.dist
 
 
     def detect_objects(self):
