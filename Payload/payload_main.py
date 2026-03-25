@@ -23,6 +23,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
+from payload_sensor.sr04 import DistanceSensor
     
 from payload_rover.rover_control import RoverControl
 from payload_rover.motor_control import MotorControl
@@ -120,7 +121,7 @@ sm = StateMachine(
 
 # Initialize Logger
 log = TelemetryLogger()
-tof = None
+tof = DistanceSensor()
 motors = MotorControl(pins=[1, 2, 3, 4])
 rover = RoverControl(motors, tof, ROVER_SCAN_TIMEOUT, ROVER_EXIT_TIMEOUT)
 

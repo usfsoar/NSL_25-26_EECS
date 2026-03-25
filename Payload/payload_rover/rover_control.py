@@ -1,9 +1,11 @@
 import time
+from payload_rover.motor_control import motors
 
 class RoverControl:
-    def __init__(self, motors, tof, timeout, exit_timeout):
+    def __init__(self, motors, tof, bno, timeout, exit_timeout):
         self.motors = motors
         self.tof = tof
+        self.bno = bno
         self.timeout = timeout
         self.exit_timeout = exit_timeout
 
