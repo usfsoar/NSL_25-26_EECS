@@ -1,13 +1,22 @@
 # from aicamlib.aicamera import AICamera
+
 import time
 import numpy as np
 
 # Camera constants
-FOCAL_LENGTH_AI = 0.00474 # Meters
+FOCAL_LENGTH_AI = 4.74
+SENSOR_SIZE = 6.287
+RESOLUTION_WIDTH = 2028
+RESOLUTION_HEIGHT = 1520
+FRAME_RATE = 30 
+# FOCAL_LENGTH_AI = (FOCAL_LENGTH_MM * RESOLUTION_WIDTH ) / SENSOR_SIZE # in pixels pixels
 DISTANCE_CAMERAS = 0.1 # Meters NEEDS TO BE CHANGED
+DELAY_TIME = 1 / (FRAME_RATE + 1)
 
 def target_distance_estimation():    
     T_d0, d0 = recoverT_d()
+
+    time.sleep(DELAY_TIME)
 
     T_d1, d1 = recoverT_d()
 
@@ -37,7 +46,7 @@ def recoverT_d():
     vel0 = getCurrentVelocity() # Get velocity from BNO
     # Time how long we sleep
     start_time = time.perf_counter()
-    time.sleep(0.01)
+    time.sleep(DELAY_TIME)
 
     # Get bounding box at timestep t+1
     # Get updated inference from main loop
@@ -59,6 +68,22 @@ def get_ircamera_offset(distance):
     # disparity = Coordinate in Left Image - Coordinate in Right Image
     # Coordinate IR = Coordinate AI - Disparity 
     
-    disparty = distance / (FOCAL_LENGTH_AI)(DISTANCE_CAMERAS)
+    disparty = distance / (FOCAL_LENGTH_AI * DISTANCE_CAMERAS)
 
     return disparty
+
+
+if __name__ == "__main__":
+    from generateCameraData import *
+
+    while True:
+        try:
+            distance_estimate = target_distance_estimation()
+            distance_actual = getActualDistance()
+            print(f"Estimate of distance from target: {distance_estimate}")
+            print(f"Actual distance from target: {distance_actual}")
+            print(f"Estimate Percent Error: {100 * abs(distance_actual - distance_estimate) / distance_actual}")
+            print(f"Calculated IR camera offset: {get_ircamera_offset(distance_estimate)}\n")
+            time.sleep(1)
+        except:
+            break
