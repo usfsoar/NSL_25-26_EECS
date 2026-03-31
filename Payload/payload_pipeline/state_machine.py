@@ -1,4 +1,6 @@
 import time
+from datetime import datetime
+
 class StateMachine:
     def __init__(self, launch_gforce_threshold, launch_altitude_threshold, 
                  descent_apogee_threshold, descent_altitude_threshold, landing_vel_threshold, 
@@ -18,9 +20,14 @@ class StateMachine:
         self.counters = 0
         self.start_time = 0
         self.current_time = 0
+
+    def recover(self, start_time):
+        t = datetime.strptime(start_time, "%H:%M:%S.%f").time()
+        self.start_time = t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1e6
         
-    def update(self, time, current_state, g_force, altitude, velocity, apogee):
-        self.time = time
+    def update(self, cur_time, current_state, g_force, altitude, velocity, apogee):
+        t = datetime.strptime(cur_time, "%H:%M:%S.%f").time()
+        self.time = t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1e6
         self.current_state = current_state
         self.g_force = g_force
         self.altitude = altitude
@@ -28,7 +35,7 @@ class StateMachine:
         self.apogee = apogee
 
         self.get_state()
-        return self.current_time, self.current_state
+        return self.current_state
 
     def get_state(self):
         match self.current_state:
@@ -40,11 +47,11 @@ class StateMachine:
 
                 if self.counters >= self.stable_readings:
                     self.current_state = "LAUNCHED"
-                    self.start_time = time.time()
+                    self.start_time = self.time
                     self.counters = 0
                 
             case "LAUNCHED":
-                self.current_time = time.time() - self.start_time
+                self.current_time = self.time - self.start_time
                 if self.current_time > self.timeout:
                     self.current_state  = "LANDING"
                     return
@@ -59,7 +66,7 @@ class StateMachine:
                     self.counters = 0
 
             case "DESCENT":
-                self.current_time = time.time() - self.start_time
+                self.current_time = self.time - self.start_time
                 if self.current_time > self.timeout:
                     self.current_state  = "LANDING"
                     return

@@ -31,7 +31,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
-MODE = "drop"
+MODE = "hand"
 
 #three type of thresholds: hand, sim, and launch
 #hand thresholds
@@ -87,7 +87,6 @@ FLIGHT_TIMEOUT = 90000
 
 #data storage
 data = {
-    "time": 0,
     "timestamp": 0,
     "state": "READY",
     "raw_g_force": 0,
@@ -157,7 +156,19 @@ def power_loss_recovery():
             state_index = mappings.index('state')
 
         with open(logFile, "rb") as csvfile:
-            csvfile.seek(0, 2)
+            # Get start time:
+            pos = csvfile.tell()
+            while csvfile.read(1) != b'\n':
+                pos += 1
+                csvfile.seek(pos)
+            pos += 1
+            csvfile.seek(pos)
+            first_row = csvfile.readline().decode()
+            for row in csv.reader([first_row]):
+                print(row[0])
+                sm.recover(row[0])
+            
+            csvfile.seek(0, os.SEEK_END)
             pos = csvfile.tell() - 1
 
             newline_count = 0
@@ -171,18 +182,17 @@ def power_loss_recovery():
 
             last_data = csvfile.readline().decode() # Last row of complete data
         
-        for row in csv.reader([last_data]):
-            # data['time'] = row[0]
-            data['state'] = row[state_index]
-            # data["raw_g_force"] = row[2]
-            # data["g_force"] = row[3]
-            # data["raw_altitude"] = row[4]
-            # data["altitude"] = row[5]
-            # data["raw_velocity"] = row[6]
-            # data["velocity"] = row[7]
-            # data["apogee"] = row[8]
-    return data['state']
-
+            for row in csv.reader([last_data]):
+                # data['time'] = row[0]
+                print(f"Recovering from {logFile}")
+                data['state'] = row[state_index]
+                data["raw_g_force"] = float(row[2])
+                data["g_force"] = float(row[3])
+                data["raw_altitude"] = float(row[4])
+                data["altitude"] = float(row[5])
+                data["raw_velocity"] = float(row[6])
+                data["velocity"] = float(row[7])
+                data["apogee"] = float(row[8])
 
 
 def initialize_sensors():
@@ -210,6 +220,8 @@ def validate_data():
         data["velocity"] = 0
 
 def get_sensor_data():
+    data["timestamp"] = TelemetryLogger.get_timestamp()
+
     if MODE == "sim":
         sim.updateValues()
         data["raw_g_force"] = data["g_force"] = abs(sim.getAccel()) / 9.81
@@ -259,8 +271,8 @@ def main():
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
-        data["time"], data["state"] = sm.update(
-            data["time"],
+        data["state"] = sm.update(
+            data["timestamp"],
             data["state"],
             data["g_force"],
             data["altitude"],
@@ -269,11 +281,7 @@ def main():
         )
         
         # Log data to file: (Time, Current State, G-Force, Altitute, Velocity, Apogee)
-        log.log_sensor(data={"time": TelemetryLogger.get_timestamp(), "state": data["state"], 
-                             "raw_g_force": data["raw_g_force"], "g_force": data["g_force"], 
-                             "raw_altitude": data["raw_altitude"], "altitude": data["altitude"], 
-                             "raw_velocity": data["raw_velocity"], "velocity": data["velocity"], 
-                             "apogee": data["apogee"]})
+        log.log_sensor(data=data)
         
 
         # loop_time = time.perf_counter() - start_loop
