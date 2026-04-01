@@ -512,7 +512,7 @@ void setup() {
   quat = matrixCreate(4, 1);
   dir = matrixCreate(3, 1);
   acc = matrixCreate(3, 1);
-  setElement(dir, 3, 1, 1);
+  setElement(dir, Z_UP, 1, 1);
 
   filter = kalmanFilterCreate(states, observations);
 
