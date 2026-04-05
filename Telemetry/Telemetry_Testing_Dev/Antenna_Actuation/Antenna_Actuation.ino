@@ -1,8 +1,14 @@
 #include <stdio.h>
+#include <Servo.h>
 #include "antenna_actuation.h"
 
-int setup(void)
+#define SERVO_PIN 9
+Servo antenna_servo;
+
+void setup(void)
 {
+    antenna_servo.attach(SERVO_PIN);
+
     double init_lat, init_long;
     double new_long, new_lat;
     double delta_long, delta_lat;
@@ -20,10 +26,12 @@ int setup(void)
     delta_lat = init_lat - new_lat;
 
     /* output */
-    phi = posToPhi(init_lat, delta_lat, delta_long, altitude);
-    Serial.printf("phi: %.3f\n", toDegrees(phi));
+    /* Serial.printf("phi: %.3f\n", toDegrees(phi)); */
 }
 
-int loop(void)
-{
+void loop() {
+    phi = posToPhi(init_lat, delta_lat, delta_long, altitude);
+    theta = map(phi, -M_PI/2, M_PI/2, 0, 180);
+    antenna_servo.write(theta);
+    delay(15);
 }
