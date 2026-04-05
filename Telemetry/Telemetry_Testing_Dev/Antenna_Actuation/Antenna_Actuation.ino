@@ -2,11 +2,12 @@
 #include <Servo.h>
 #include "antenna_actuation.h"
 
-#define SERVO_PIN 9
+#define SERVO_PIN D4
 Servo antenna_servo;
 
 void setup(void)
 {
+    pinMode(SERVO_PIN, output);
     antenna_servo.attach(SERVO_PIN);
 
     double init_lat, init_long;
