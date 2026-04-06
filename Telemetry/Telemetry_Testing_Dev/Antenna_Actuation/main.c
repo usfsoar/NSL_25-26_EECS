@@ -1,5 +1,22 @@
 #include <stdio.h>
 #include "antenna_actuation.h"
+#include "pcg.h"
+
+pcg32_random_t my_rng;
+
+double init_lat, init_long;
+double new_long, new_lat;
+double delta_long, delta_lat;
+double phi, phi_deg;
+double altitude; /* meters */
+
+void randomWalk(pcg32_random_t *rng, double *latitude, double *longitude) {
+    double sigma_x = 0.01;
+    double sigma_y = 0.01;
+    *longitude += sigma_x * pcg32_normal_r(rng);
+    *latitude += sigma_y * pcg32_normal_r(rng);
+    return;
+}
 
 int main(void)
 {

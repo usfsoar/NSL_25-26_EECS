@@ -21,6 +21,7 @@ double posToPhi(double init_lat, double delta_lat, double delta_long, double alt
     x = EARTH_RADIUS * delta_long_rads * cos(init_lat_rads + delta_lat_rads);
     y = EARTH_RADIUS * delta_lat_rads;
     z = altitude;
+    /* printf("[%.0f, %.0f, %.0f]\n", x, y, z); */
     
     rho = sqrt(x*x + y*y + z*z);
     return acos(z / rho);
