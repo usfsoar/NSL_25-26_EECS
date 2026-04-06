@@ -13,6 +13,7 @@ desktop.ini
 /build/
 *.o
 *.d
+*.exe
 
 # IDE specific
 .vscode/
