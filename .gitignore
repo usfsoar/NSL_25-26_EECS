@@ -25,3 +25,4 @@ desktop.ini
 # Flight Data (add files manually through github or something idk)
 airbrakes*.csv
 airbrakes*.png
+airbrakes*.xlsx
