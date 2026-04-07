@@ -24,6 +24,7 @@ class StateMachine:
         self.state2_timeout = 30
         self.state3_started = False
         self.descent_threshold = 5
+        self.state4_started = False
 
 
     def transition(self, altitude, velocity, acceleration, apogee):
