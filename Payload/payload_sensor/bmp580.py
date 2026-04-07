@@ -57,7 +57,14 @@ class BMP():
         Input: None
         Output: Returns altitude in meters
         """
-        return self.sensor.altitude
+        # TRY EXCEPT BLOCKS
+        altitude = 0
+        for i in range (8):
+            try:
+                altitude = self.sensor.altitude
+            except Exception as e:
+                print(e)
+        return altitude
     
 
     def get_vertical_velocity(self):
@@ -66,12 +73,12 @@ class BMP():
         Output: Returns vertical velocity in m/s
         """
         # This velocity will be very noise dependent. Should implement filtering here or on the user's end
+        start_alt  = self.get_altitude()
         start_t = time.time() # Possibly switch this to time.perf_counter()
-        start_alt  = self.get_altitude() # Should these just get straight from sensor and avoid function overhead?
         time.sleep(0.2) # Max Sampling Rate of the BMP is 200 Hz (ie 200 ms)
         end_alt = self.get_altitude()
         delta_t = time.time() - start_t
-
+        
         return (end_alt - start_alt) / delta_t
 
 
@@ -80,7 +87,13 @@ class BMP():
         Input: None
         Output: Returns pressure in hPa
         """
-        return self.sensor.pressure
+        pressure = 0
+        for i in range (8):
+            try:
+                pressure = self.sensor.pressure
+            except Exception as e:
+                print(e)
+        return pressure
 
 
     def get_temperature(self):
@@ -88,7 +101,13 @@ class BMP():
         Input: None
         Output: Returns temperature in Celsius
         """
-        return self.sensor.temperature
+        temperature = 0
+        for i in range (8):
+            try:
+                temperature = self.sensor.temperature
+            except Exception as e:
+                print(e)
+        return temperature
 
 
 if __name__ == '__main__':

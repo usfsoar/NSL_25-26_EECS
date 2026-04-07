@@ -1,7 +1,7 @@
 from queue import Queue
 # from multiprocessing import Queue
 
-from os import path
+from os import path, mkdir
 from abc import ABC, abstractmethod
 from datetime import datetime
 import pandas as pd
@@ -13,6 +13,8 @@ class TelemetryLogger:
         # Get sensor data csv object
         self.sensor_data_csv = SensorDataCsv() 
         self.LOGGING_FILE_PATH = self.sensor_data_csv.LOGGING_FILE_PATH
+        if not path.exists("logs"):
+            mkdir("logs")
         
     @staticmethod
     def get_timestamp():
@@ -65,8 +67,8 @@ class AbstractLoggingCSV(ABC):
 
 
 class SensorDataCsv(AbstractLoggingCSV):
-    LOGGING_FILE_PATH = "sensor_data_" + str(TelemetryLogger.get_timestamp()) + ".csv" 
+    LOGGING_FILE_PATH = "logs/sensor_data_" + str(TelemetryLogger.get_timestamp()) + ".csv" 
 
 
 class RoverDataCsv(AbstractLoggingCSV):
-    LOGGING_FILE_PATH = "rover_data_" + str(TelemetryLogger.get_timestamp()) + ".csv" 
+    LOGGING_FILE_PATH = "logs/rover_data_" + str(TelemetryLogger.get_timestamp()) + ".csv" 

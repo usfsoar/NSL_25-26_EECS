@@ -91,7 +91,13 @@ class BNO():
         Output: Returns acceleration without gravity (accel_x, accel_y, accel_z) m/s^2\n
         Note: If linear acceleration has been disabled, retuns empty 3-tuple
         """
-        return self.sensor.linear_acceleration
+        linear_accel = 0
+        for i in range (8):
+            try:
+                linear_accel = self.sensor.linear_acceleration
+            except Exception as e:
+                print(e)
+        return linear_accel
 
     def get_g_force(self):
         """
@@ -123,7 +129,13 @@ class BNO():
         Output: Returns the gravity vector (gravity_x, gravity_y, gravity_z)\n
         Note: If gravity has been disabled, returns empty 3-tuple
         """
-        return self.sensor.gravity
+        gravity = 0
+        for i in range (8):
+            try:
+                gravity = self.sensor.gravity
+            except Exception as e:
+                print(e)
+        return gravity
 
 
     def is_calibrated(self):
@@ -131,7 +143,13 @@ class BNO():
         Input: None\n
         Output: Boolean indicating if sensor is calibrated
         """
-        return self.sensor.calibration_status
+        status = 0
+        for i in range (8):
+            try:
+                status = self.sensor.calibration_status
+            except Exception as e:
+                print(e)
+        return status
 
 
 if __name__ == '__main__':

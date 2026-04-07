@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 TO DO:
 -drop test thresholds?
@@ -19,6 +21,7 @@ TO DO:
 #import libraries
 import os
 import csv
+import time
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
@@ -31,7 +34,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
-MODE = "hand"
+MODE = "sim"
 
 #three type of thresholds: hand, sim, and launch
 #hand thresholds
@@ -286,7 +289,8 @@ def main():
 
         # loop_time = time.perf_counter() - start_loop
 
-        #time.sleep(0.1)
+        if MODE == "sim":
+            time.sleep(0.04)
     
     #plot data here
     #run rover stuff here

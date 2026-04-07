@@ -21,3 +21,6 @@ desktop.ini
 # Project specific temporary files
 # *.log
 *.tmp
+
+# Ignore log files
+Payload/logs/*.csv
