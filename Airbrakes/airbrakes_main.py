@@ -8,8 +8,13 @@ import time
 import state_machine
 import motor_control
 import datetime
+import math
 class NoneError(Exception):
     pass
+
+
+start_time = time.time() # start time of program
+elapsed_time = time.time() - start_time # time passed since start of program
 
 # Initialize bmp
 bmpsensor = bmp.BMP()
@@ -30,14 +35,17 @@ data = rocket_data.RocketData(
 data.createFile()
 
 # Initial values
-target_apogee = 3048 # Our target max height in meters
+target_apogee = 1.5 # Our target max height in meters
 dt = 0.1 # time between iterations
 extra_dt = 0.05 # added time between iterations to remove errors in velocity
 apogee = 0 # our current max height
 previous_altitude = 0
+steps = 0
+accelerationX, accelerationY, accelerationZ = None, None, None
+predicted_apogee = 0
+error = 0
 
-start_time = time.time() # start time of program
-elapsed_time = time.time() - start_time # time passed since start of program
+bmpsensor.set_sea_level()
 
 while True:
     # Update dt
@@ -68,41 +76,43 @@ while True:
         continue
 
     # Update State Machine
-    states = state_machine.transition(altitude, velocity, accelerationZ, apogee)
+    state = states.transition(altitude, velocity, accelerationZ, apogee)
     
-    match states:
+    match state:
         # If motor is burning or rocket is descending -> close airbrakes
         case 1 | 4:
-            motor.moveToStep(0)
+            motor.move_to(0)
         # When in active state -> run PID
         case 2:
             mypid.update(elapsed_time, altitude, velocity, accelerationZ, dt)
             error = mypid.error()
             pid_output = mypid.pidSum()
             predicted_apogee = mypid.projHeight
-            steps = mypid.motorInput(pid_output)
+            steps = int(mypid.motorInput(pid_output))
             motor.move_to(steps)
         # If rocket has passed target -> fully open airbrakes
         case 3:
-            motor.move_to(motor.max_step)
+            # motor.move_to(motor.max_step)
+            print("State 3")
         # When rocket has landed -> break loop
         case 5:
             break
 
     # Save all data to CSV file
     samuel_johnson = {
-        'Time' : [elapsed_time],
-        'Altitude' : [altitude],
-        'Velocity' : [velocity],
-        'Acceleration X': [accelerationX],
-        'Acceleration Y': [accelerationY],
-        'Acceleration Z': [accelerationZ],
-        'State' : [states],
-        'Steps' : [steps],
-        'Predicted Apogee' : [predicted_apogee],
-        'Error' : [error]
+        'Time' : [round(elapsed_time,4)],
+        'Altitude' : [round(altitude,4)],
+        'Velocity' : [round(velocity,4)],
+        'Acceleration X': [round(accelerationX,4)],
+        'Acceleration Y': [round(accelerationY,4)],
+        'Acceleration Z': [round(accelerationZ,4)],
+        'State' : [round(state,4)],
+        'Steps' : [round(steps,4)],
+        'Predicted Apogee' : [round(predicted_apogee,4)],
+        'Error' : [round(error,4)]
     }
     data.writeFile(samuel_johnson)
+    print(f'Time: {elapsed_time}, Altitude: {altitude}, Velocity: {velocity}, Acceleration: {accelerationZ}, State: {state}')
     # Update values
     previous_altitude = altitude
     
@@ -113,3 +123,4 @@ while True:
     
 
 # Create graphs and save to SD card
+data.masterPlot()

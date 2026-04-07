@@ -6,7 +6,7 @@ import math
 import runge_kutta
 
 class PID:
-    def __init__(self, gainP, gainI, gainD, time, apogee, flapArea): #constructor
+    def __init__(self, gainP, gainI, gainD, time=0, apogee=0, flapArea=0): #constructor
         self.time = time
        
         self.gainP = gainP
@@ -33,7 +33,7 @@ class PID:
         self.dt = dt
 
     def error(self):
-        self.projHeight = runge_kutta.prediction(self.time, self.altitude, self.velocity)
+        self.projHeight = runge_kutta.prediction(self.time, self.altitude, self.velocity, self.acceleration)
         self.errorValue = self.apogee - self.projHeight #projHeight from runge_kutta
         return self.errorValue
 
@@ -58,8 +58,9 @@ class PID:
         self.pidOutput = self.proportional() + self.integral() + self.derivative()
         return self.pidOutput
             
-    def motorInput(self):
-        pass # we need the conversion rate from pid output to formula
+    def motorInput(self, pid):
+        return pid
+        # we need the conversion rate from pid output to formula
 
     def clamp(self): #inputSteps being the number of steps the code demands
 

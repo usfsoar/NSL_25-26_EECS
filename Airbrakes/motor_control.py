@@ -15,7 +15,7 @@ try:                             #tmc import checks
     TmcMotionControlStepDir,
     )
     from tmc_driver.com import TmcComUart
-    tmc = True
+    tmc = False
 except:
     tmc = False
     print("TMC import failed")
@@ -62,13 +62,14 @@ class Motor():
             except Exception as e:
                 print(f"TMC initialization failed:{e}")
             
-            self.method = 1
-            self.dir = DigitalInOut(board.D5)
-            self.dir.direction = Direction.OUTPUT
-            self.step = DigitalInOut(board.D6)
-            self.step.direction = Direction.OUTPUT
-            self.max_step = 6000
-            print("Basic GPIO initialized")
+            
+        self.method = 1
+        self.dir = DigitalInOut(board.D5)
+        self.dir.direction = Direction.OUTPUT
+        self.step = DigitalInOut(board.D6)
+        self.step.direction = Direction.OUTPUT
+        self.max_step = 6000
+        print("Basic GPIO initialized")
 
     def move_to(self, target_fullsteps):
         if self.method == 2:

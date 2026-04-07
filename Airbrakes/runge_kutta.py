@@ -4,7 +4,7 @@ import math
 
 def f(t, a, v):
             accel = -9.8
-            accel = d / 20 - 9.8 #20 is the assumed mass
+            accel = 10 / 20 - 9.8 #20 is the assumed mass
             return np.array([v, accel])
 def prediction(time, altitude, velocity, acceleration):
     dt = 0.1
