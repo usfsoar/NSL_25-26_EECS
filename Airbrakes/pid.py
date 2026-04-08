@@ -16,7 +16,7 @@ class PID:
         self.apogee = apogee
         self.flapArea = flapArea
         self.minSteps = 0
-        self.maxSteps = 600 #6000/100 NEEDS TO BE REVISED
+        self.maxSteps = 600 #6000/100 NEEDS TO BE REVISED!!!!!!!!
 
         self.dt = 1
         self.derivativeValue = 0
