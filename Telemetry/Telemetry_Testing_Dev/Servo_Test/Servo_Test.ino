@@ -1,30 +1,34 @@
-#include <stdio.h>
 #include <ESP32Servo.h>
 
-#define SERVO_PIN D4
-Servo antenna_servo;
+Servo myservo;
+int pos = 0;
 
-double theta;
+int myServoPin = D4;
 
-void setup(void)
-{
-    Serial.begin(9600);
-    while (!Serial) { delay(100); }
-    Serial.println("Serial Initialized");
-
-    antenna_servo.attach(SERVO_PIN);
+void setup() {
+	// Allow allocation of all timers
+	ESP32PWM::allocateTimer(0);
+	ESP32PWM::allocateTimer(1);
+	ESP32PWM::allocateTimer(2);
+	ESP32PWM::allocateTimer(3);
+	myservo.setPeriodHertz(50);    // standard 50 hz servo
+	myservo.attach(myServoPin, 500, 2500); // attaches the servo on pin 18 to the servo object
+	// using default min/max of 1000us and 2000us
+	// different servos may require different min/max settings
+	// for an accurate 0 to 180 sweep
 }
 
 void loop() {
-    for (theta = 0; theta <= 180; theta++) {
-        Serial.printf("theta: %.0f\n", theta);
-        antenna_servo.write(theta);
-        delay(15);
-    }
-    for (theta = 180; theta >= 0; theta--) {
-        Serial.printf("theta: %.0f\n", theta);
-        antenna_servo.write(theta);
-        delay(15);
-    }
+
+	for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+		// in steps of 1 degree
+		myservo.write(pos);    // tell servo to go to position in variable 'pos'
+		delay(15);             // waits 15ms for the servo to reach the position
+	}
+	for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+		myservo.write(pos);    // tell servo to go to position in variable 'pos'
+		delay(15);             // waits 15ms for the servo to reach the position
+	}
 }
+
 
