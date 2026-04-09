@@ -1,20 +1,22 @@
 from queue import Queue
 # from multiprocessing import Queue
+import multiprocessing as mp
 
-from os import path, mkdir
+import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-import pandas as pd
+import csv
 
 
 # Useage: Create a TelemetryLogger object, then pass in your data to the corresponding logging function
 class TelemetryLogger:
-    def __init__(self):
+    def __init__(self, sensor_data: dict):
+        if not os.path.exists("logs"):
+            os.mkdir("logs")
+
         # Get sensor data csv object
-        self.sensor_data_csv = SensorDataCsv() 
+        self.sensor_data_csv = SensorDataCsv(sensor_data) 
         self.LOGGING_FILE_PATH = self.sensor_data_csv.LOGGING_FILE_PATH
-        if not path.exists("logs"):
-            mkdir("logs")
         
     @staticmethod
     def get_timestamp():
@@ -28,8 +30,10 @@ class TelemetryLogger:
 
     def log_sensor(self, data : dict):
         self.sensor_data_csv.queue.put(data)
-        self.sensor_data_csv.write()
         TelemetryLogger.print_dictionary(data) # Print to stdout too for our viewing pleasure
+
+    def kill(self):
+        self.sensor_data_csv.kill()
 
     # If/When we want to create more log types:
     # def log_rover():
@@ -45,25 +49,46 @@ class AbstractLoggingCSV(ABC):
     LOGGING_FILE_PATH = None # Subclass must override
 
     # Only 1 instance of this each subclass is allowed
-    def __new__(cls):
+    def __new__(cls, sensor_data: dict):
         if not hasattr(cls, 'inst'):
             cls.inst = super().__new__(cls)
             cls.inst._initialized = False
         return cls.inst 
     
-    def __init__(self):
+    def __init__(self, sensor_data: dict):
         if not self._initialized:
-            # TODO Create a thread/process to run the write function asynchronously??
-            self.queue = Queue()
+            self.queue = mp.Queue()
             self.inst._initialized = True
+            
+            with open(self.LOGGING_FILE_PATH, 'a', newline="") as csvfile:
+                # Write csv header
+                self.fieldnames = list(sensor_data.keys())
+                writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
+                writer.writeheader()
+
+            self.process = mp.Process(target=write, args=(self.LOGGING_FILE_PATH, self.queue, self.fieldnames), )
+            self.process.start()
+
+    def kill(self):
+        self.queue.put(None)
+        self.process.join()
+        self._initialized = False
+
         
-    def write(self):
-        # TODO Keep file open or maybe try not to recreate objects on each write??
-        # Batch writes in the queue to logging speed up? Very slow as is
-        data = self.queue.get(block=True)
-        df = pd.DataFrame([data]) 
-        df.to_csv(path_or_buf=self.LOGGING_FILE_PATH, mode='a', 
-                header=not path.exists(self.LOGGING_FILE_PATH), index=False)
+def write(path, queue, fieldnames):
+    # TODO Keep file open or maybe try not to recreate objects on each write??
+    # Batch writes in the queue to logging speed up? Very slow as is
+    with open(path, 'a', newline="") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        while True:
+            data = queue.get(block=True)
+            if data == None:
+                break
+
+            writer.writerow(data)
+            csvfile.flush()
+            os.fsync(csvfile.fileno())
 
 
 class SensorDataCsv(AbstractLoggingCSV):
@@ -72,3 +97,6 @@ class SensorDataCsv(AbstractLoggingCSV):
 
 class RoverDataCsv(AbstractLoggingCSV):
     LOGGING_FILE_PATH = "logs/rover_data_" + str(TelemetryLogger.get_timestamp()) + ".csv" 
+
+    
+

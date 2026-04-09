@@ -56,13 +56,13 @@ elif MODE == "drop":
     LANDING_ALTITUDE_THRESHOLD  = -1.0   #m
 
 elif MODE == "hand":
-    LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
-    LAUNCH_ALTITUDE_THRESHOLD   = 3.0   #m
-    DESCENT_ALTITUDE_THRESHOLD  = 5.0   #m
-    DESCENT_APOGEE_THRESHOLD    = 3.0   #m
+    LAUNCH_GFORCE_THRESHOLD     = 1.3   #G
+    LAUNCH_ALTITUDE_THRESHOLD   = 0.5   #m
+    DESCENT_ALTITUDE_THRESHOLD  = 1.2   #m
+    DESCENT_APOGEE_THRESHOLD    = 1   #m
     LANDING_GFORCE_THRESHOLD    = 0.2   #G
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
-    LANDING_ALTITUDE_THRESHOLD  = 3.0   #m
+    LANDING_ALTITUDE_THRESHOLD  = 0.5   #m
 
 elif MODE == "launch":
     LAUNCH_GFORCE_THRESHOLD     = 2.0   #G
@@ -126,8 +126,8 @@ sm = StateMachine(
     FLIGHT_TIMEOUT
 )
 
-# Initialize Logger
-log = TelemetryLogger()
+# Log variable
+log = None
 
 def check_power_loss():
     if os.path.exists(".running.txt"):
@@ -139,12 +139,16 @@ def check_power_loss():
         # Overwrite file with new logging path
         with open(".running.txt", "w") as file:
             file.write(log.LOGGING_FILE_PATH)
+            file.flush()
+            os.fsync(file.fileno())
 
         return (True, log_file)
     else:
         # If not, we are starting from blank, then make a new running file
         with open(".running.txt", "w") as file:
             file.write(log.LOGGING_FILE_PATH)
+            file.flush()
+            os.fsync(file.fileno())
         
         return (False, "")
 
@@ -196,6 +200,7 @@ def power_loss_recovery():
                 data["raw_velocity"] = float(row[6])
                 data["velocity"] = float(row[7])
                 data["apogee"] = float(row[8])
+                print(f"Recovery values: {data}")
 
 
 def initialize_sensors():
@@ -262,6 +267,9 @@ def set_zero_altitude():
     # bmp.set_sea_level_pressure(bmp.get_pressure())
 
 def main():
+    global log
+    log = TelemetryLogger(sensor_data=data)
+
     power_loss_recovery()
 
     initialize_sensors()
@@ -295,6 +303,8 @@ def main():
     #plot data here
     #run rover stuff here
     # Rover main loop needs to select plant target
+
+    log.kill()
 
     # On finish, remove running file
     if os.path.exists(".running.txt"):
