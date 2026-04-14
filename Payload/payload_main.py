@@ -34,7 +34,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
-MODE = "sim"
+MODE = "hand"
 
 #three type of thresholds: hand, sim, and launch
 #hand thresholds
@@ -57,8 +57,8 @@ elif MODE == "drop":
 
 elif MODE == "hand":
     LAUNCH_GFORCE_THRESHOLD     = 1.3   #G
-    LAUNCH_ALTITUDE_THRESHOLD   = 0.5   #m
-    DESCENT_ALTITUDE_THRESHOLD  = 1.2   #m
+    LAUNCH_ALTITUDE_THRESHOLD   = 0.1   #m
+    DESCENT_ALTITUDE_THRESHOLD  = 0.2   #m
     DESCENT_APOGEE_THRESHOLD    = 1   #m
     LANDING_GFORCE_THRESHOLD    = 0.2   #G
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
