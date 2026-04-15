@@ -98,7 +98,8 @@ data = {
     "altitude": 0,
     "raw_velocity": 0,
     "velocity": 0,
-    "apogee": 0
+    "apogee": 0,
+    "start_pressure": 0
     }
 
 
@@ -155,6 +156,7 @@ def check_power_loss():
 
 def power_loss_recovery():
     powerLoss, logFile = check_power_loss()
+    start_pressure = None
 
     if powerLoss:
         with open(logFile, newline='') as csvfile:
@@ -174,6 +176,7 @@ def power_loss_recovery():
             for row in csv.reader([first_row]):
                 print(row[0])
                 sm.recover(row[0])
+                start_pressure = row[9]
             
             csvfile.seek(0, os.SEEK_END)
             pos = csvfile.tell() - 1
@@ -201,6 +204,8 @@ def power_loss_recovery():
                 data["velocity"] = float(row[7])
                 data["apogee"] = float(row[8])
                 print(f"Recovery values: {data}")
+
+    return powerLoss, start_pressure
 
 
 def initialize_sensors():
@@ -248,14 +253,17 @@ def get_sensor_data():
         data["apogee"] = max(data["apogee"], data["altitude"])
 
 
-def set_zero_altitude():
+def set_zero_altitude(pressure = None):
     prev = bmp.get_pressure()
     while True:
         curr = bmp.get_pressure()
         if abs(curr - prev) < 5:
             break
         prev = curr
-    bmp.set_sea_level_pressure(bmp.get_pressure())
+
+    if pressure == None:
+        data["start_pressure"] = pressure = bmp.get_pressure()
+    bmp.set_sea_level_pressure(pressure)
 
     # for i in range(15):
     #     bmp.get_pressure()  
@@ -270,13 +278,12 @@ def main():
     global log
     log = TelemetryLogger(sensor_data=data)
 
-    power_loss_recovery()
-
     initialize_sensors()
-    if MODE == "sim":
-        pass
-    else:
-        set_zero_altitude()
+
+    power_loss, start_pressure = power_loss_recovery()
+    if MODE != "sim":
+        set_zero_altitude(start_pressure)
+        
 
     while data["state"] != "LANDING":
         # start_loop = time.perf_counter()

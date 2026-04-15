@@ -66,7 +66,7 @@ class AbstractLoggingCSV(ABC):
                 writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
                 writer.writeheader()
 
-            self.process = mp.Process(target=write, args=(self.LOGGING_FILE_PATH, self.queue, self.fieldnames), )
+            self.process = mp.Process(target=AbstractLoggingCSV.write, args=(self.LOGGING_FILE_PATH, self.queue, self.fieldnames), )
             self.process.start()
 
     def kill(self):
@@ -75,20 +75,18 @@ class AbstractLoggingCSV(ABC):
         self._initialized = False
 
         
-def write(path, queue, fieldnames):
-    # TODO Keep file open or maybe try not to recreate objects on each write??
-    # Batch writes in the queue to logging speed up? Very slow as is
-    with open(path, 'a', newline="") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    def write(path, queue, fieldnames):
+        with open(path, 'a', newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        while True:
-            data = queue.get(block=True)
-            if data == None:
-                break
+            while True:
+                data = queue.get(block=True)
+                if data == None:
+                    break
 
-            writer.writerow(data)
-            csvfile.flush()
-            os.fsync(csvfile.fileno())
+                writer.writerow(data)
+                csvfile.flush()
+                os.fsync(csvfile.fileno())
 
 
 class SensorDataCsv(AbstractLoggingCSV):
