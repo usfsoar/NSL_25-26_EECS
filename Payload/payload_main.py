@@ -87,6 +87,7 @@ STABLE_READINGS_FOR_LANDING = 10
 #timeout constants
 FLIGHT_TIMEOUT = 90000
 # ROVER_TIMEOUT = 900
+POWER_CYCLE_TIME = 45 # seconds
 
 #data storage
 data = {
@@ -156,7 +157,6 @@ def check_power_loss():
 
 def power_loss_recovery():
     powerLoss, logFile = check_power_loss()
-    start_pressure = None
 
     if powerLoss:
         with open(logFile, newline='') as csvfile:
@@ -166,6 +166,8 @@ def power_loss_recovery():
 
         with open(logFile, "rb") as csvfile:
             # Get start time:
+            start_time = None
+
             pos = csvfile.tell()
             while csvfile.read(1) != b'\n':
                 pos += 1
@@ -173,10 +175,9 @@ def power_loss_recovery():
             pos += 1
             csvfile.seek(pos)
             first_row = csvfile.readline().decode()
-            for row in csv.reader([first_row]):
-                print(row[0])
-                sm.recover(row[0])
-                start_pressure = row[9]
+            for col in csv.reader([first_row]):
+                data["timestamp"] = col[0] # Only getting previous start time
+                start_time = TelemetryLogger.string_to_sec(data["timestamp"])
             
             csvfile.seek(0, os.SEEK_END)
             pos = csvfile.tell() - 1
@@ -193,7 +194,14 @@ def power_loss_recovery():
             last_data = csvfile.readline().decode() # Last row of complete data
         
             for row in csv.reader([last_data]):
-                # data['time'] = row[0]
+                last_time = TelemetryLogger.string_to_sec(col[0])
+                current_time = TelemetryLogger.string_to_sec(TelemetryLogger.get_timestamp())
+                offset = current_time - last_time - POWER_CYCLE_TIME
+                start_time += offset
+
+                data["timestamp"] = TelemetryLogger.sec_to_string(start_time)
+                print(f"Starting time: {data["timestamp"]}")
+
                 print(f"Recovering from {logFile}")
                 data['state'] = row[state_index]
                 data["raw_g_force"] = float(row[2])
@@ -203,9 +211,15 @@ def power_loss_recovery():
                 data["raw_velocity"] = float(row[6])
                 data["velocity"] = float(row[7])
                 data["apogee"] = float(row[8])
+                data["start_pressure"] = float(col[9])
                 print(f"Recovery values: {data}")
+        
 
-    return powerLoss, start_pressure
+        # Recovery state machine with relative start time
+        sm.recover(data["timestamp"])
+        log.log_sensor(data=data)
+
+    return powerLoss
 
 
 def initialize_sensors():
@@ -253,7 +267,7 @@ def get_sensor_data():
         data["apogee"] = max(data["apogee"], data["altitude"])
 
 
-def set_zero_altitude(pressure = None):
+def set_zero_altitude(power_loss):
     prev = bmp.get_pressure()
     while True:
         curr = bmp.get_pressure()
@@ -261,9 +275,10 @@ def set_zero_altitude(pressure = None):
             break
         prev = curr
 
-    if pressure == None:
-        data["start_pressure"] = pressure = bmp.get_pressure()
-    bmp.set_sea_level_pressure(pressure)
+    if not power_loss:
+        data["start_pressure"] = bmp.get_pressure()
+
+    bmp.set_sea_level_pressure(data["start_pressure"])
 
     # for i in range(15):
     #     bmp.get_pressure()  
@@ -280,9 +295,9 @@ def main():
 
     initialize_sensors()
 
-    power_loss, start_pressure = power_loss_recovery()
+    power_loss = power_loss_recovery()
     if MODE != "sim":
-        set_zero_altitude(start_pressure)
+        set_zero_altitude(power_loss)
         
 
     while data["state"] != "LANDING":

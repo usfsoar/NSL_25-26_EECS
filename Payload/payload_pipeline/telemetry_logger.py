@@ -23,6 +23,18 @@ class TelemetryLogger:
         return datetime.now().strftime("%H:%M:%S.%f")[:15]
     
     @staticmethod
+    def string_to_sec(t):
+        t = datetime.strptime(t, "%H:%M:%S.%f").time()
+        return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1e6
+    
+    @staticmethod
+    def sec_to_string(sec):
+        hours = sec // 3600
+        minutes = (sec // 60) % 60
+        sec = sec - (hours * 3600) - (minutes * 60)
+        return f"{hours:02.0f}:{minutes:02.0f}:{sec:02.0f}.0"
+
+    @staticmethod
     def print_dictionary(data: dict):
         for label, data in data.items():        
             print(str(label) + ": " + str(data), end=", ")
