@@ -40,7 +40,7 @@ class StateMachine:
     def get_state(self):
         match self.current_state:
             case "READY":
-                if (self.g_force > self.launch_gforce_threshold) or (self.altitude > self.launch_altitude_threshold):
+                if (self.g_force > self.launch_gforce_threshold) and (self.altitude > self.launch_altitude_threshold):
                     self.counters += 1
                 else:
                     self.counters = 0

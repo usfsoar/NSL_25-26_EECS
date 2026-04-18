@@ -34,7 +34,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
-MODE = "hand"
+MODE = "launch"
 
 #three type of thresholds: hand, sim, and launch
 #hand thresholds
@@ -66,7 +66,7 @@ elif MODE == "hand":
 
 elif MODE == "launch":
     LAUNCH_GFORCE_THRESHOLD     = 2.0   #G
-    LAUNCH_ALTITUDE_THRESHOLD   = 15.0   #m
+    LAUNCH_ALTITUDE_THRESHOLD   = 30.0   #m
     DESCENT_ALTITUDE_THRESHOLD  = 10.0   #m
     DESCENT_APOGEE_THRESHOLD    = 500.0  #m
     LANDING_GFORCE_THRESHOLD    = 0.8   #G
@@ -100,7 +100,9 @@ data = {
     "raw_velocity": 0,
     "velocity": 0,
     "apogee": 0,
-    "start_pressure": 0
+    "start_pressure": 0,
+    "pressure": 0,
+    "temperature": 0
     }
 
 
@@ -265,6 +267,9 @@ def get_sensor_data():
         data["velocity"]  = ALPHA_VELOCITY * abs(data["raw_velocity"])  + (1 - ALPHA_VELOCITY) * data["velocity"]
 
         data["apogee"] = max(data["apogee"], data["altitude"])
+
+        data["pressure"] = bmp.get_pressure()
+        data["temperature"] = bmp.get_temperature()
 
 
 def set_zero_altitude(power_loss):
