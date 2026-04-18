@@ -3,10 +3,17 @@ from numba import njit
 
 
 ROCKET_MASS = 25.09 # mass of rocket in kg (55.32lb)
+SLEW_RATE = 62.5 # steps/s
 
-pressures = np.array([1,2,3])
-velocities = np.array([2,4,6])
-angles = np.array([0,15,30,45])
+pressures = np.array([0.81, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2])
+velocities = np.array([
+    85.75, 102.9, 120.05, 137.2, 154.35, 171.5, 188.65, 205.8, 
+    222.95, 240.1, 257.25, 274.4, 291.55, 308.7, 325.85, 343.0
+])
+angles = np.array([
+    0.0, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 
+    24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, 45.0
+])
 
 drag_table = np.load('drag_forces.npy')
 
@@ -44,36 +51,48 @@ def interpolate_drag(p,v,f):
     drag_force = c0 * (1-df) + c1 * df
     return drag_force
 
+@njit
+def step_to_angle(step):
+    pass
+
+
+@njit
+def get_drag(altitude, velocity, angle, air_density):
+        return interpolate_drag(air_density, velocity, angle)
+@njit
+def get_accel(a, v, angle, air_density):
+    drag = get_drag(a,v,angle, air_density)
+    a = -(drag / ROCKET_MASS) - 9.81
+    return a
+
+@njit
+def update(time,dt, altitude, velocity, step, target, air_density):
+    curr_step = step
+    while velocity > 0:
+        curr_angle = step_to_angle(curr_step)
+        v1, a1 = velocity, get_accel(altitude, velocity, curr_angle, air_density)
+        v2, a2 = velocity + a1 * dt/2, get_accel(altitude + v1*dt/2, v1, curr_angle, air_density)
+        v3, a3 = velocity + a2 * dt/2, get_accel(altitude + v2*dt/2, v2, curr_angle, air_density)
+        v4, a4 = velocity + a3 * dt, get_accel(altitude + v3*dt, v3, curr_angle, air_density)
+
+        altitude += dt/6 * (v1 + 2*v2 + 2*v3 + v4)
+        velocity += dt/6 * (a1 + 2*a2 + 2*a3 + a4)
+        if curr_step < target:
+            curr_step = min(curr_step + dt*SLEW_RATE, target)
+        elif curr_step > target:
+            curr_step = max(curr_step - dt*SLEW_RATE, target)
+        time += dt
+
+    return altitude
+
+
+
 class RungeKutta4:
     def __init__(self):
         self.dt = 0.1
-        self.launchP = None
-        self.launchT = None
-        self.lapseRateFactor = 0.0065 / self.launchT
 
-    def get_drag(self, altitude, velocity, angle):
-        curr_P = self.launchP * (1 - self.lapseRateFactor * altitude)**5.255
-        return interpolate_drag(curr_P, velocity, angle)
-    
-    def get_accel(self,a, v, angle):
-        drag = self.get_drag(a,v,angle)
-        a = -(drag / ROCKET_MASS) - 9.81
-        return a
-
-    @njit
-    def prediction(self, time, altitude, velocity, angle):
-        dt = self.dt
-        while velocity > 0:
-            v1, a1 = velocity, self.get_accel(altitude, velocity, angle)
-            v2, a2 = velocity + a1 * dt/2, self.get_accel(altitude + v1*dt/2, v1, angle)
-            v3, a3 = velocity + a2 * dt/2, self.get_accel(altitude + v2*dt/2, v2, angle)
-            v4, a4 = velocity + a3 * dt, self.get_accel(altitude + v3*dt, v3, angle)
-
-            altitude += dt/6 * (v1 + 2*v2 + 2*v3 + v4)
-            velocity += dt/6 * (a1 + 2*a2 + 2*a3 + a4)
-            time += dt
-
-        return altitude
+    def prediction(self, time, altitude, velocity, step, target, air_density):
+        return update(time, self.dt, altitude, velocity,step,target, air_density)
 
 if __name__ == '__main__':
-    pass
+    print(interpolate_drag(0.975, 210, 22.5))

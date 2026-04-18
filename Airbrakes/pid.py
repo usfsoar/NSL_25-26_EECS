@@ -6,7 +6,7 @@ import math
 import runge_kutta
 
 class PID:
-    def __init__(self, gainP, gainI, gainD, time=0, apogee=0, flapArea=0): #constructor
+    def __init__(self, gainP, gainI, gainD, air_density, time=0, apogee=0, flapArea=0, steps=0): #constructor
         self.time = time
        
         self.gainP = gainP
@@ -25,17 +25,19 @@ class PID:
         self.prevError = 0
         self.pidOutput = 0
 
-        self.rk4 = runge_kutta.RungeKutta4()
+        self.rk4 = runge_kutta.RungeKutta4(air_density)
+        self.steps = steps
 
-    def update(self, time, altitude, velocity, acceleration, dt):
+    def update(self, time, altitude, velocity, acceleration, air_density, dt):
         self.time = time
         self.acceleration = acceleration
         self.altitude = altitude
         self.velocity = velocity
+        self.air_density = air_density
         self.dt = dt
 
-    def error(self):
-        self.projHeight = self.rk4.prediction(self.time, self.altitude, self.velocity, self.acceleration)
+    def error(self,target):
+        self.projHeight = self.rk4.prediction(self.time, self.altitude, self.velocity, self.acceleration, self.steps, target, self.air_density)
         self.errorValue = self.apogee - self.projHeight #projHeight from runge_kutta
         return self.errorValue
 

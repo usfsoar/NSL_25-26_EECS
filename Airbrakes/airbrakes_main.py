@@ -11,10 +11,13 @@ import datetime
 import math
 import os
 import sys
+import traceback
 
 class NoneError(Exception):
     pass
 
+REBOOT_LOG = "reboot_count.txt"
+REBOOT_LIMIT = 3
 
 start_time = time.time() # start time of program
 elapsed_time = time.time() - start_time # time passed since start of program
@@ -28,25 +31,50 @@ try:
     motor = motor_control.Motor()
     # Create State Machine object
     states = state_machine.StateMachine()
+    bmpsensor.set_sea_level()
     # Create PID object
-    mypid = pid.PID(0.1,0.01,0.01)
+    mypid = pid.PID(0.1,0.01,0.01,bmpsensor.pressure(), bmpsensor.temperature())
     # Create Rocket Data object
     data = rocket_data.RocketData(
         'airbrakes' + str(datetime.datetime.now().strftime("%Y-%b-%d-%H-%M-%S")) + 
         '.csv', ['Time', 'Altitude', 'Velocity', 'Acceleration X', 'Acceleration Y',
-        'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error']
+        'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error', 'Pressure', 'Temp', 'Density', 'Current Step']
     )
     data.createFile()
-    bmpsensor.set_sea_level()
+    raise ValueError
+    
 except Exception as e:
-    print(f"Error in initializing classes {e}")
+    traceback.print_exc()
 
-    log_name = 'ab_error_' + str(datetime.datetime.now().strftime("%Y-%b-%d-%H-%M-%S")) + '.txt'
+    log_name = './ErrorLogs/ab_error_' + str(datetime.datetime.now().strftime("%Y-%b-%d-%H-%M-%S")) + '.txt'
 
     with open(log_name,'w') as f:
-        f.write(f"Restart triggered by error: {e}")
+        f.write(f"Restart triggered by error: {traceback.format_exc()}")
+    with open(REBOOT_LOG, "w") as f:
+        f.write("0")
+    
+    if os.path.exists(REBOOT_LOG):
+        with open(REBOOT_LOG, "r") as f:
+            try:
+                count = int(f.read().strip())
+            except ValueError:
+                count = 0
+    else:
+        count = 0
+
+    if count >= REBOOT_LIMIT:
+        print(f"CRITICAL: Reboot limit of {REBOOT_LIMIT} reached. Manual intervention required.")
+        # We exit here instead of rebooting to break the loop
+        sys.exit(1) 
+
+    with open(REBOOT_LOG, "w") as f:
+        f.write(str(count + 1))
+    
     time.sleep(5)
     os.system('sudo reboot')
+
+with open(REBOOT_LOG, "w") as f:
+        f.write("0")
 # Initial values
 
 target_apogee = 1.5 # Our target max height in meters
@@ -88,7 +116,18 @@ while True:
         time.sleep(extra_dt)
         dt = dt + time.time() - start_time - elapsed_time
         continue
-
+    try:
+        pressure = bmpsensor.pressure()
+    except:
+        pass
+    try:
+        temperature = bmpsensor.temperature()
+    except:
+        pass
+    try:
+        air_density = (pressure*100) / (287.058 * (temperature+273.15))
+    except:
+        air_density = 1
     # Update State Machine
     try:
         state = states.transition(altitude, velocity, accelerationZ, apogee)
@@ -101,12 +140,12 @@ while True:
                 motor.move_to(0)
             # When in active state -> run PID
             case 2:
-                mypid.update(elapsed_time, altitude, velocity, accelerationZ, dt)
-                error = mypid.error()
+                mypid.update(elapsed_time, altitude, velocity, accelerationZ, air_density, dt)
+                error = mypid.error(steps)
                 pid_output = mypid.pidSum()
                 predicted_apogee = mypid.projHeight
                 steps = int(mypid.motorInput(pid_output))
-                motor.move_to(steps)
+                motor.move_to(motor.max_step)
             # If rocket has passed target -> fully open airbrakes
             case 3:
                 motor.move_to(motor.max_step)
@@ -116,14 +155,8 @@ while True:
                 break
     except Exception as e:
         print(f"Error controlling airbrakes: {e}")
-    try:
-        pressure = bmpsensor.pressure()
-    except:
-        pressure = None
-    try:
-        temperature = bmpsensor.temperature()
-    except:
-        temperature = None     
+    
+       
     try:   
         # Save all data to CSV file
         samuel_johnson = {
@@ -138,10 +171,12 @@ while True:
             'Predicted Apogee' : [round(predicted_apogee,4)],
             'Error' : [round(error,4)],
             'Pressure': [round(pressure,4)],
-            'Temp' : [round(temperature,4)]
+            'Temp' : [round(temperature,4)],
+            'Air Density' : [round(air_density,4)],
+            'Current Step' : [round(motor.current_pos)]
         }
         data.writeFile(samuel_johnson)
-        print(f'Time: {elapsed_time}, Altitude: {altitude}, Velocity: {velocity}, Acceleration: {accelerationZ}, State: {state}, Steps: {steps}')
+        print(f'Time: {elapsed_time}, Altitude: {altitude}, Velocity: {velocity}, Acceleration: {accelerationZ}, State: {state}, Steps: {motor.current_pos}')
     except Exception as e:
         print(f"Error logging data: {e}")
     # Update values

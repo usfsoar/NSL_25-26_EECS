@@ -17,7 +17,7 @@ class Motor():
         self.dir.direction = Direction.OUTPUT
         self.step = DigitalInOut(board.D24)
         self.step.direction = Direction.OUTPUT
-        self.max_step = 6000
+        self.max_step = 7000
         print("Basic GPIO initialized")
 
     def move_to(self, target_fullsteps):
