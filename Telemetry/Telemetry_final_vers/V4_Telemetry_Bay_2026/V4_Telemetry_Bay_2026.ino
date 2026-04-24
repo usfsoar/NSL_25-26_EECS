@@ -490,7 +490,7 @@ void setup() {
 
   rfm96w.setSignalBandwidth(RFM_BW_HZ);
   rfm96w.setSpreadingFactor(RFM_SF);
-  rfm96w.setTxPower(20, false);
+  rfm96w.setTxPower(18, false);
   rfm96w.setModeRx();
 
   Serial.printf("Radio OK. Freq=%.3f MHz BW=%lu SF=%u\n", RFM96W_FREQ, (unsigned long)RFM_BW_HZ, (unsigned)RFM_SF);

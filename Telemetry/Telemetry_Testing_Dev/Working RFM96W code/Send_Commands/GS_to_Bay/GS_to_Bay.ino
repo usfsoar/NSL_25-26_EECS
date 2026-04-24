@@ -85,7 +85,7 @@ static bool startsWith(const char* s, const char* prefix) {
 }
 
 static bool validFreq433(float f) {
-  return (f >= 428.5f && f <= 431.5f) || (f >= 445.5f && f <= 449.0f);
+  return (f >= 420.6f && f <= 438.0f);
 }
 
 static void radioSendAscii(const char* msg) {
@@ -169,7 +169,7 @@ static void enqueueRadioCommand(String line) {
   if (line.startsWith("freq ")) {
     float f = line.substring(5).toFloat();
     if (!validFreq433(f)) {
-      Serial.println("Invalid freq. Try 428.5-431.5 or 445.5-449.0.");
+      Serial.println("Invalid freq. Try 420.6-438.0.");
       return;
     }
     if (freqTxn.state != TXN_IDLE && freqTxn.state != TXN_DONE && freqTxn.state != TXN_FAIL) {
