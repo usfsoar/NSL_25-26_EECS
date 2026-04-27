@@ -23,7 +23,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
-from payload_sensor.sr04 import DistanceSensor
+from payload_sensor.vl53l4cx import DistanceSensor
     
 from payload_rover.rover_control import RoverControl
 from payload_rover.motor_control import MotorControl
