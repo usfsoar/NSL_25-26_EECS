@@ -290,9 +290,10 @@ def parse_line(line: str):
         if ptype == 3 and len(fields) >= 4:
             return ('KALMAN', {
                 't': t, 'ts': ts,
-                'alt': float(fields[1]),
-                'vel': float(fields[2]),
-                'acc': float(fields[3]),
+                'state': int(fields[1]),
+                'alt': float(fields[2]),
+                'vel': float(fields[3]),
+                'acc': float(fields[4]),
             })
 
     except Exception:

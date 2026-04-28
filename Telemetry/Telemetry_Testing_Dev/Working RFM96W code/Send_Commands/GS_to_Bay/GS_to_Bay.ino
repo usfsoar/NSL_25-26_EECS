@@ -441,7 +441,7 @@ void setup() {
   sd.writeFile(IMU_FILEPATH, "time_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
   sd.writeFile(ALTIMETER_FILEPATH, "time_stamp,altitude,temperature,pressure\n");
   sd.writeFile(GPS_FILEPATH, "time_stamp,gps_data\n");
-  sd.writeFile(KALMAN_FILEPATH, "time_stamp,altitude,velocity,acceleration\n");
+  sd.writeFile(KALMAN_FILEPATH, "time_stamp, state, altitude,velocity,acceleration\n");
 
   while (!Serial && millis() < 1000) {}
 

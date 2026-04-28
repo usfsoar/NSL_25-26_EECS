@@ -25,6 +25,7 @@ struct gps_packet
 
 struct kalman_packet
 {
+	int kalman_state;
 	double kalman_altitude;
 	double kalman_velocity;
 	double kalman_acceleration;
@@ -71,7 +72,7 @@ void dataToString(SensorData sdata, char* msg) {
 			snprintf(msg, MAX_DATA, "%d %s,%s", sdata.type, sdata.timestamp, sdata.data.gps.nmea);
 			break;
 		case KALMAN:
-			snprintf(msg, MAX_DATA, "%d %s,%f,%f,%f", sdata.type, sdata.timestamp,
+			snprintf(msg, MAX_DATA, "%d %s, %d, %f,%f,%f", sdata.type, sdata.timestamp, sdata.data.kalman.kalman_state,
                     sdata.data.kalman.kalman_altitude, sdata.data.kalman.kalman_velocity, sdata.data.kalman.kalman_acceleration);
 			break;
         default:

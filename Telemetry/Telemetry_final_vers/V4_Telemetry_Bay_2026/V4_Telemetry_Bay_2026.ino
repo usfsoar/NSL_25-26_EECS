@@ -253,7 +253,7 @@ void write_sd_file_headers(SOAR_SD_CARD& sd) {
   sd.appendFile(IMU_FILEPATH, "\n\nInitializing\n\ntime_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
   sd.appendFile(ALTIMETER_FILEPATH, "\n\nInitializing\n\ntime_stamp,altitude,temperature,pressure\n");
   sd.appendFile(GPS_FILEPATH, "\n\nInitializing\n\ntime_stamp,gps_data\n");
-  sd.appendFile(KALMAN_FILEPATH, "\n\nInitializing\n\ntime_stamp,altitude,velocity,acceleration\n");
+  sd.appendFile(KALMAN_FILEPATH, "\n\nInitializing\n\ntime_stamp, state, altitude,velocity,acceleration\n");
 }
 
 void writeToBothCards(const char* filename, const char* data) {
@@ -297,8 +297,9 @@ void writeSensorDataToSD(SensorData& sensor_data) {
 
     case KALMAN:
       filename = KALMAN_FILEPATH;
-      len = snprintf(dataBuffer, sizeof(dataBuffer), "%s,%.6f,%.6f,%.6f\n",
+      len = snprintf(dataBuffer, sizeof(dataBuffer), "%s, %d, %.6f, %.6f, %.6f\n",
         sensor_data.timestamp,
+        sensor_data.data.kalman.kalman_state,
         sensor_data.data.kalman.kalman_altitude,
         sensor_data.data.kalman.kalman_velocity,
         sensor_data.data.kalman.kalman_acceleration);
@@ -434,7 +435,7 @@ static void updateKalman(const char* ts) {
   latest_kalman.data.kalman.kalman_altitude = kalman_altitude;
   latest_kalman.data.kalman.kalman_velocity = kalman_velocity;
   latest_kalman.data.kalman.kalman_acceleration = kalman_acceleration;
-
+  latest_kalman.data.kalman.kalman_state = stage;
   writeSensorDataToSD(latest_kalman);
   have_kalman = true;
 
