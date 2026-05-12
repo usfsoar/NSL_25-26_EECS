@@ -1,5 +1,5 @@
 /*
- * V3_Telemetry_Bay_2026.ino
+ * V4_Telemetry_Bay_2026.ino
  * 
  * Integrated Telemetry System for Teensy 4.1
  * Reads data from IMU (BNO085), Barometer (BMP581), and GPS sensors
@@ -159,6 +159,21 @@ static bool parseRebootCmd(const char* s, uint32_t& seqOut) {
   return true;
 }
 
+static bool parsePowerCmd(const char* s, uint32_t& seqOut, int& powerOut) {
+  // "POWER,<seq>"
+  if (!startsWith(s, "POWER,")) return false;
+  const char* p = s + 6;
+
+  char* end1 = nullptr;
+  unsigned long seq = strtoul(p, &end1, 10);
+  if (!end1 || *end1 != ',') return false;
+
+  int pow = (int)strtod(end1 + 1, nullptr);
+  seqOut = (uint32_t)seq;
+  powerOut = pow;
+  return true;
+}
+
 static bool parseAckTlm(const char* s, uint8_t& typeOut, uint32_t& baySeqOut, uint32_t& gsSeqOut) {
   // "ACKTLM,<type>,<bay_seq>,<gs_seq>"
   if (!startsWith(s, "ACKTLM,")) return false;
@@ -212,7 +227,7 @@ static void buildTlmPacketTrunc(uint8_t type, uint32_t seq, const char* payload,
   if (!payload) payload = "";
 
   // First print header without payload
-  int hn = snprintf(out, outSize, "TLM,%u,%lu,", (unsigned)type, (unsigned long)seq);
+  int hn = snprintf(out, outSize, "Callsign: KR4IJA | TLM,%u,%lu,", (unsigned)type, (unsigned long)seq);
   if (hn <= 0 || (size_t)hn >= outSize) {
     out[0] = '\0';
     return;
@@ -634,6 +649,7 @@ if (!telemetry_on) {
 
         uint32_t seq;
         float fNew;
+        int powerLevel;
 
         if (parseFreqCmd(s, seq, fNew)) {
           Serial.print("[Bay] RX ");
@@ -657,6 +673,22 @@ if (!telemetry_on) {
             setFreq(fNew);
             pauseTelemetry(QUIET_AFTER_SWITCH_MS);
           }
+        } 
+        else if (parsePowerCmd(s, seq, powerLevel)) {
+          Serial.print("[Bay] RX ");
+          Serial.println(s);
+
+          char ack[64];
+          snprintf(ack, sizeof(ack), "ACKPOWER,%lu,%d", (unsigned long)seq, powerLevel);
+          Serial.print("[Bay] TX ");
+          Serial.println(ack);
+          sendAscii(ack);
+
+          delay(50);
+          Serial.printf("[Bay] Setting power to %d\n", powerLevel);
+          rfm96w.setTxPower(powerLevel, false);
+          pauseTelemetry(QUIET_AFTER_SWITCH_MS);
+
         }
         else if (parsePingCmd(s, seq)) {
           Serial.print("[Bay] RX ");

@@ -134,7 +134,7 @@ static bool parseAckPing(const char* s, uint32_t& seqOut) {
 
 // Parse telemetry header: "TLM,<type>,<bay_seq>,..."
 static bool parseTlmHeader(const char* s, uint8_t& typeOut, uint32_t& baySeqOut, const char*& payloadOut) {
-  if (!startsWith(s, "TLM,")) return false;
+  if (!startsWith(s, "Callsign: KR4IJA | TLM,")) return false;
 
   const char* p = s + 4; // after "TLM,"
   char* end = nullptr;
@@ -204,6 +204,16 @@ static void enqueueRadioCommand(String line) {
     uint32_t seq = g_seq++;
     char msg[32];
     snprintf(msg, sizeof(msg), "REBOOT,%lu", (unsigned long)seq);
+    radioSendAscii(msg);
+    Serial.printf("[GS] Sent %s\n", msg);
+    return;
+  }
+
+  if (line.startsWith("power ")) {
+    float pow = line.substring(6).toInt();
+
+    char msg[32];
+    snprintf(msg, sizeof(msg), "POWER,%lu,%d", (unsigned long)seq, pow);
     radioSendAscii(msg);
     Serial.printf("[GS] Sent %s\n", msg);
     return;
