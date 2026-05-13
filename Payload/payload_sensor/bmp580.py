@@ -17,12 +17,19 @@ class BMP():
         pass
     
     
-    def initialize(self, address: int = 0x47, sea_level: float = 1013.25):
+    def initialize(self, alpha, address: int = 0x47, sea_level: float = 1013.25):
         """
         Input: I2C Address; Pressure at sea levelin hPa\n
         Output: None\n
         Note: Will throw an exception if the BMP sensor cannot be initialized
         """
+        self.alpha = alpha
+        self.prev = (0,0)
+        self.alt = (0,0)
+
+        self.pressure = 0
+        self.temperature = 0
+        
         for i in range(10):
             try:
                 self.i2c = busio.I2C(board.SCL, board.SDA)
@@ -44,6 +51,13 @@ class BMP():
                 continue
 
     
+    def recover(self):
+        print(f"Recovering BMP")
+        del self.sensor
+        del self.i2c
+        self.initialize(alpha=self.alpha, address=self.address)
+
+
     def set_sea_level_pressure(self, sea_level: float):
         """
         Input: Pressure at sea levelin hPa\n
@@ -57,14 +71,20 @@ class BMP():
         Input: None
         Output: Returns altitude in meters
         """
-        # TRY EXCEPT BLOCKS
         altitude = 0
+        self.prev = self.alt
         for i in range (8):
             try:
                 altitude = self.sensor.altitude
             except Exception as e:
-                print(e)
-        return altitude
+                print(f"BMP Altitude Exception: {e}")
+                # If we fail 6 times, recover before last times:
+                if i >= 5: 
+                    self.recover()
+
+        self.alt = ((self.alpha * altitude) + (1 - self.alpha)*self.prev[0], time.perf_counter())
+
+        return altitude, self.alt
     
 
     def get_vertical_velocity(self):
@@ -72,14 +92,12 @@ class BMP():
         Input: None
         Output: Returns vertical velocity in m/s
         """
-        # This velocity will be very noise dependent. Should implement filtering here or on the user's end
-        start_alt  = self.get_altitude()
-        start_t = time.time() # Possibly switch this to time.perf_counter()
-        time.sleep(0.2) # Max Sampling Rate of the BMP is 200 Hz (ie 200 ms)
-        end_alt = self.get_altitude()
-        delta_t = time.time() - start_t
+        for _ in range(2):
+            if time.perf_counter() - self.prev[1] > 1:
+                self.get_altitude()
         
-        return (end_alt - start_alt) / delta_t
+        delta_t = self.alt[1] - self.prev[1]
+        return (self.alt[0] - self.prev[0]) / delta_t
 
 
     def get_pressure(self):
@@ -92,8 +110,14 @@ class BMP():
             try:
                 pressure = self.sensor.pressure
             except Exception as e:
-                print(e)
-        return pressure
+                print(f"BMP Pressure Exception: {e}")
+                # If we fail 6 times, recover before last times:
+                if i >= 5: 
+                    self.recover()
+
+        self.pressure = (self.alpha * pressure) + (1 - self.alpha)*self.pressure
+
+        return pressure, self.pressure
 
 
     def get_temperature(self):
@@ -106,14 +130,19 @@ class BMP():
             try:
                 temperature = self.sensor.temperature
             except Exception as e:
-                print(e)
-        return temperature
+                print(f"BMP Temperature Exception: {e}")
+                # If we fail 6 times, recover before last times:
+                if i >= 5: 
+                    self.recover()
+
+        self.temperature = (self.alpha * temperature) + (1 - self.alpha)*self.temperature
+        return temperature, self.temperature
 
 
 if __name__ == '__main__':
     bmp = BMP()
     try:
-        bmp.initialize()
+        bmp.initialize(alpha=0.5)
     except Exception as e:
         print(e)
 
