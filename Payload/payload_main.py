@@ -26,7 +26,7 @@ from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 from payload_sensor.vl53l4cx import DistanceSensor
     
 from payload_rover.rover_control import RoverControl
-from payload_rover.motor_control import MotorControl
+from payload_rover.motors import MotorControl
 
 #----GLOBAL VARIABLES----
 #mode: launch, hand, sim

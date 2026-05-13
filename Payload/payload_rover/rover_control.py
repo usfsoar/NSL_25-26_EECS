@@ -1,5 +1,5 @@
 import time
-from payload_rover.motor_control import motors
+from payload_rover.motors import motors
 
 class RoverControl:
     def __init__(self, motors, tof, bno, timeout, exit_timeout):
@@ -42,8 +42,8 @@ class RoverControl:
             while (traveled < self.dist):
                 traveled += self.bno.get_velocity() * (time.time() - move_time)
                 error = self.dist - traveled
-                pwm = max(0, min(int(error * self.kp), 127))
-                self.motors.set_pwm(pwm, pwm)
+                pwm = max(25, min(int(error * self.kp), 127))
+                self.motors.set_speed(pwm)
                 if (self.detect_objects()):
                     self.run_detection()
                     #continue moving forward after detection
@@ -73,8 +73,8 @@ class RoverControl:
         while (traveled < distance):
             traveled += self.bno.get_velocity() * (time.time() - move_time)
             error = distance - traveled
-            pwm = max(0, min(int(error * kp), 127))
-            self.motors.set_pwm(pwm, pwm)
+            pwm = max(25, min(int(error * kp), 127))
+            self.motors.set_speed(pwm)
 
     #
     def calc_dist(self):
@@ -84,7 +84,7 @@ class RoverControl:
 
     def detect_objects(self):
         #use tof to detect objects in front of rover
-        if self.tof.get_distance() < self.detect_dist:
+        if (self.tof.get_distance() < self.detect_dist) or (plant_detetction):
             return True
         else:
             return False
