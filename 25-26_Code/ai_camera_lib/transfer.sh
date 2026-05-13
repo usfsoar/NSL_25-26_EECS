@@ -1,1 +1,0 @@
-scp -r . soar67@192.168.0.67:/home/soar67/ai_camera_shid/lib_testing
