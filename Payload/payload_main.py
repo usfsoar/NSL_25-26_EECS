@@ -2,19 +2,16 @@
 
 """
 TO DO:
--drop test thresholds?
+add motor dimensions from cad
 
+add p control for distance control
+-see if while loop will mess up multithreading
 
--clarify if sim and launch thresholds
--implement actual rocket thresolds
+add euler angle calculation for landing orientation and rover turning
 
--implement power loss backup
---may have to grab from csv file
+ndvi calculation and plant classification
 
--backup sensor data from alternate sensors
-
--Store non-ema data
---check intial data values. may have to set 1 for ema
+add kalman filter
 """
 
 #----IMPORTS----    
@@ -25,12 +22,15 @@ import time
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
+from payload_pipeline.telemetry_logger import TelemetryLogger
 
 from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
+from payload_sensor.vl53l4cx import DistanceSensor
     
-from payload_pipeline.telemetry_logger import TelemetryLogger
+from payload_rover.rover_control import RoverControl
+from payload_rover.motors import MotorControl
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
@@ -85,9 +85,15 @@ STABLE_READINGS = 3
 STABLE_READINGS_FOR_LANDING = 10
 
 #timeout constants
-FLIGHT_TIMEOUT = 90000
-# ROVER_TIMEOUT = 900
 POWER_CYCLE_TIME = 45 # seconds
+FLIGHT_TIMEOUT = 300
+ROVER_SCAN_TIMEOUT = 900
+ROVER_EXIT_TIMEOUT = 60
+
+#rover dimensions
+WHEEL_RADIUS = 0
+WHEEL_BASE = 0
+WHEEL_CIRCUM = 2 * 3.14 * WHEEL_RADIUS
 
 #data storage
 data = {
@@ -132,6 +138,9 @@ sm = StateMachine(
 
 # Log variable
 log = None
+tof = DistanceSensor()
+motors = MotorControl(pins=[1, 2, 3, 4])
+rover = RoverControl(motors, tof, ROVER_SCAN_TIMEOUT, ROVER_EXIT_TIMEOUT)
 
 def check_power_loss():
     if os.path.exists(".running.txt"):
@@ -224,6 +233,7 @@ def power_loss_recovery():
     return powerLoss
 
 
+#----FUNCTIONS----
 def initialize_sensors():
     if MODE == "sim":
         pass
@@ -292,6 +302,29 @@ def set_zero_altitude(power_loss):
     #     bmp.get_pressure()
     # bmp.set_sea_level_pressure(bmp.get_pressure())
 
+def get_landing_orientation():
+    #implement euler
+    #from adafruit import rvc
+    accel = bno.get_acceleration()
+    x = accel[0]
+    y = accel[1]
+    z = accel[2]
+    #ideal situation
+    # z = 9.81, x = 0, y = 0
+    if abs(z) > abs(x) and abs(z) > abs(y):
+        if z > 0:
+            return 1
+        else:
+            return 0
+    
+def get_landing_altitude():
+    alt = bmp.get_altitude()
+    #need to take account of change in elevation
+    if alt >= 1:
+        return 0
+    else:
+        return 1
+
 def main():
     global log
     log = TelemetryLogger(sensor_data=data)
@@ -324,6 +357,16 @@ def main():
 
         if MODE == "sim":
             time.sleep(0.04)
+    #end of loop
+
+    if (get_landing_orientation() == 0 or get_landing_altitude() == 0):
+        print("bad landing orientation or altitude")
+        return
+    
+    rover.exit_rover()
+    rover.do_scan_2()
+    
+
     
     #plot data here
     #run rover stuff here
