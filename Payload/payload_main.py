@@ -258,18 +258,16 @@ def get_sensor_data():
         data["raw_velocity"] = data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
     else:
-        data["raw_g_force"] = bno.get_g_force()
-        data["raw_altitude"] = bmp.get_altitude()
-        data["raw_velocity"] = bmp.get_vertical_velocity()
+        data["raw_acceleration"], data["acceleration"] = bno.get_acceleration()
+        data["raw_g_force"], data["g_force"] = bno.convert_gforce(data["raw_acceleration"]), bno.convert_gforce(data["acceleration"])
+        data["raw_velocity"], data["velocity"] = bmp.get_vertical_velocity()
+        data["raw_altitude"], data["altitude"] = bmp.get_altitude()
 
-        data["g_force"]   = ALPHA_GFORCE   * data["raw_g_force"]     + (1 - ALPHA_GFORCE)   * data["g_force"]
-        data["altitude"] = ALPHA_ALTITUDE  * data["raw_altitude"]         + (1 - ALPHA_ALTITUDE) * data["altitude"]
-        data["velocity"]  = ALPHA_VELOCITY * abs(data["raw_velocity"])  + (1 - ALPHA_VELOCITY) * data["velocity"]
 
         data["apogee"] = max(data["apogee"], data["altitude"])
 
-        data["pressure"] = bmp.get_pressure()
-        data["temperature"] = bmp.get_temperature()
+        data["pressure"], _ = bmp.get_pressure()
+        data["temperature"], _ = bmp.get_temperature()
 
 
 def set_zero_altitude(power_loss):
