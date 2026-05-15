@@ -2,19 +2,9 @@
 
 """
 TO DO:
--drop test thresholds?
-
-
--clarify if sim and launch thresholds
--implement actual rocket thresolds
-
--implement power loss backup
---may have to grab from csv file
-
 -backup sensor data from alternate sensors
 
--Store non-ema data
---check intial data values. may have to set 1 for ema
+-calibrate servo for rack and pinoin
 """
 
 #----IMPORTS----    
@@ -32,6 +22,8 @@ from payload_sensor.sensor_simulation import Sensor_Data_Simulator
     
 from payload_pipeline.telemetry_logger import TelemetryLogger
 
+from payload_rover.servo import ServoControl
+
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
 MODE = "launch"
@@ -46,6 +38,7 @@ if MODE == "sim":
     LANDING_GFORCE_THRESHOLD    = 0.2   #G  gs needed to call landing
     LANDING_VEL_THRESHOLD       = 0.8   #m/s velocity needed to call landing
     LANDING_ALTITUDE_THRESHOLD  = 3.0   #m height needed to call landing
+    
 elif MODE == "drop":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
     LAUNCH_ALTITUDE_THRESHOLD   = 0.75   #m
@@ -112,9 +105,11 @@ if MODE == "sim":
     bno = None
     bmp = None
     sim = Sensor_Data_Simulator()
+    servo = None
 else:
     bno = BNO()
     bmp = BMP()
+    servo = ServoControl()
     sim = None
     
 sm = StateMachine(
@@ -326,6 +321,11 @@ def main():
             time.sleep(0.04)
     
     #plot data here
+
+    #rack and pinion code
+    time.sleep(2)
+    servo.retract()
+
     #run rover stuff here
     # Rover main loop needs to select plant target
 
