@@ -32,6 +32,8 @@ from payload_sensor.vl53l4cx import DistanceSensor
 from payload_rover.rover_control import RoverControl
 from payload_rover.motors import MotorControl
 
+import rover_main
+
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
 MODE = "launch"
@@ -359,14 +361,28 @@ def main():
             time.sleep(0.04)
     #end of loop
 
+    # TODO** Check if reached due to power recovery
+        # Handle issues if needed
+
+    # Presumably not power recovered
     if (get_landing_orientation() == 0 or get_landing_altitude() == 0):
         print("bad landing orientation or altitude")
         return
     
-    rover.exit_rover()
-    rover.do_scan_2()
+
+    # Start processes
+    processes = list()
+    processes.append(rover_main.startRoverProcess()) # rover
+    processes.append(rover_main.startAIProcess()) # ai cam
+    processes.append(rover_main.startPlantProcess()) # plant processing   
+    
+    # wait on all 3 to finish
+    for p in processes:
+        p.join()
     
 
+    #rover.exit_rover()
+    #rover.do_scan_2()
     
     #plot data here
     #run rover stuff here

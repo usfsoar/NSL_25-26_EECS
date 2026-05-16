@@ -1,4 +1,4 @@
-from aicamlib.inference import Inference
+from aicam_lib.inference import Inference
 
 def boxFloatToInt(box: tuple[float, float, float, float]) -> tuple[int, int, int, int]:
     return (int(box[0]), int(box[1]), int(box[2]), int(box[3]))

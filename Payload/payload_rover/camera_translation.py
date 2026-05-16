@@ -1,4 +1,4 @@
-# from aicamlib.aicamera import AICamera
+# from aicam_lib.aicamera import AICamera
 
 import time
 import numpy as np
@@ -8,24 +8,28 @@ FOCAL_LENGTH_AI = 4.74
 SENSOR_SIZE = 6.287
 RESOLUTION_WIDTH = 2028
 RESOLUTION_HEIGHT = 1520
-FRAME_RATE = 30 
 # FOCAL_LENGTH_AI = (FOCAL_LENGTH_MM * RESOLUTION_WIDTH ) / SENSOR_SIZE # in pixels pixels
 DISTANCE_CAMERAS = 0.1 # Meters NEEDS TO BE CHANGED
-DELAY_TIME = 1 / (FRAME_RATE + 1)
 
-def target_distance_estimation():    
-    T_d0, d0 = recoverT_d()
 
-    time.sleep(DELAY_TIME)
+def getPlant(id, queue):
+    plantMap, frameNumber = queue.get()
+    if id not in plantMap:
+        raise Exception(f"Plant ID {id} no longer tracked")
+    return plantMap[id]
 
-    T_d1, d1 = recoverT_d()
+
+def target_distance_estimation(targetID, queue):    
+    T_d0, d0 = recoverT_d(targetID, queue)
+
+    T_d1, d1 = recoverT_d(targetID, queue)
 
     # Recover T^-1
     T_inversve = np.array([[(d0 + d1)/(T_d0[0] + T_d1[0]), 0],
                            [0, (d0 + d1)/(T_d0[1] + T_d1[1])]])
 
     # Get T(x)
-    box = getTargetPlant().box
+    box = getPlant(targetID, queue).box
     T_x = np.array([abs(box[2] - box[0]), # Horizontal Length
                        abs(box[3] - box[1])]) # Vertical Height
     
@@ -35,10 +39,11 @@ def target_distance_estimation():
     return (x[0] + x[1]) / 2
 
 
-def recoverT_d():
+def recoverT_d(targetID, queue):
     # Get bounding box at timestep t (Vector of height and width)
     # Retrieve targeted inference object (Something like get inference of targeted)
-    box = getTargetPlant().box
+    
+    box = getPlant(targetID, queue).box
     # box[0], box[1] # Top left
     # box[2], box[3] # Bottom right
     size_0 = np.array([abs(box[2] - box[0]), # Horizontal Length
@@ -46,11 +51,11 @@ def recoverT_d():
     vel0 = getCurrentVelocity() # Get velocity from BNO
     # Time how long we sleep
     start_time = time.perf_counter()
-    time.sleep(DELAY_TIME)
+    
 
     # Get bounding box at timestep t+1
     # Get updated inference from main loop
-    box = getTargetPlant().box
+    box = getPlant(targetID, queue).box
     size_1 = np.array([abs(box[2] - box[0]), # Horizontal Length
                        abs(box[3] - box[1])]) # Vertical Height
     vel1 = getCurrentVelocity() # Get Velocity from BNO

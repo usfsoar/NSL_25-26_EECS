@@ -1,4 +1,4 @@
-from aicamlib.camera import Camera
+from aicam_lib.camera import Camera
 
 class IRCamera(Camera):
     def __init__(self, size: tuple[int, int] = (640, 480)):
