@@ -4,12 +4,16 @@ import multiprocessing as mp
 import time
 import cv2
 import os
+import math
 
 #-----Soar Code-----
 import aicam_lib as ai
 import payload_rover.camera_translation as translation
+import payload_sensor.bno085 as bno085
 
 #-----Constants-----
+SIM = False
+
 AICAM_FRAME_RATE = 30
 FRAME_DELAY = 1 / AICAM_FRAME_RATE
 MODEL_PATH = "payload_rover/yolo_200epoch.pt"
@@ -18,6 +22,15 @@ MAX_DIST = 4 * 2028
 DISTANCE_THRESHOLD = 30 # TODO** SUBJECT TO CHANGE AND TESTING
 PLANT_CLASS = 6 # TODO** BASED ON AI CAMERA MODEL CLASSES
 
+RESOLUTION_WIDTH = 2028
+RESOLUTION_HEIGHT = 1520
+MAX_AREA = RESOLUTION_WIDTH * RESOLUTION_HEIGHT
+MAX_OFFSET = math.sqrt((RESOLUTION_WIDTH/2) ** 2 + (RESOLUTION_HEIGHT/2) ** 2)
+
+# Hyper-parameters TODO** TUNE THEM
+WEIGHT_AREA = 1
+WEIGHT_CONFIDENCE = 0.7
+WEIGHT_OFFSET = 1
 
 
 
@@ -100,6 +113,8 @@ def generateId():
 
 
 def idPlants(prevPlantMap, inferences):
+    # TODO** Make plant boxes store 2-3 frames before getting removed
+
     plantMap = dict()
 
     for inference in inferences:
@@ -128,7 +143,14 @@ def idPlants(prevPlantMap, inferences):
 
 def __aiMain(timeout, queue: mp.Queue): #queue is of size 1
     # Initialize AI camera
-    aicam = ai.AICamera(MODEL_PATH)
+    aicam = None
+    if SIM == True:
+        aicam # Webots AI camera
+    else:
+        aicam = ai.AICamera(MODEL_PATH)
+        imu = 
+
+
     # make aicam directory if not already there
     if not os.path.exists("aicam"):
             os.mkdir("aicam")
@@ -159,9 +181,12 @@ def __aiMain(timeout, queue: mp.Queue): #queue is of size 1
         if os.path.exists(f"{frameNumber - 240}.jpg"):
             # delete oldest frame
             os.remove(f"{frameNumber - 240}.jpg")
-        # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) # Might need to swap blue and red channels
-        cv2.imwrite(f"aicam/{frameNumber}.jpg", frame) # A lot of I/O overhead?
+        # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) # TODO** Might need to swap blue and red channels
+        cv2.imwrite(f"aicam/{frameNumber}.jpg", frame) # TODO** A lot of I/O overhead?
         frameNumber += 1
+
+        if len(plantMap) == 0:
+            continue
 
         # send id list, boxes, and frame number to plant process
         if queue.full():
@@ -170,17 +195,67 @@ def __aiMain(timeout, queue: mp.Queue): #queue is of size 1
         queue.put((plantMap, frameNumber))
         
 
-
 def startAIProcess(args):
     return startProcess(target=__aiMain, args=args, name="AICamProcess")
 
 
 
+
+
+def findArea(box):
+    height = box[1] - box[3]
+    length = box[0] - box[2]
+    return height * length
+
+
+def distToCenter(box):
+    # Find center of box
+    center_x = box[2] + (box[0] - box[2]) / 2
+    center_y = box[3] + (box[1] - box[3]) / 2
+
+    # Return euclid distance to center
+    return math.sqrt((center_x - RESOLUTION_WIDTH/2)**2 + (center_y - RESOLUTION_HEIGHT/2)**2)
+
+
+def selectPlant(plantMap, ignore: set):
+    # Want close to center (center of box to center of image? maybe offset downwards b/c rover is down low?)
+    # Want high confidence
+    # Want large (ie close and better readings)
+    targetId = -1
+    maxValue = float('-inf')
+
+    for id, plant in plantMap.items():
+        if id not in ignore:
+            # Normalize all to < 1
+            # maximize area / screen area
+            area = findArea(plant.box) / MAX_AREA
+            # maximize confidence
+            confidence = plant.confidence
+            # minimize distance from center of plant.box to center of pixels grid / corner to center
+            offset = distToCenter(plant.box) / MAX_OFFSET
+            
+            # maximize value
+            value = (WEIGHT_AREA * area) + (WEIGHT_CONFIDENCE * confidence) - (WEIGHT_OFFSET * offset)
+            if value > maxValue:
+                maxValue = value
+                targetId = id
+            
+            
+    return targetId
+
+
 def __plantMain(timeout, aiqueue: mp.Queue):
     # intitialize thermal camera
-    #thermalcam = 
+    thermalcam = None
+    if SIM == True:
+        # thermalcam = webots camera
+        pass
+    else:    
+        #thermalcam = THERMAL CAM CLASS
+        pass
+
     # initialize an ignore id list
-    ignore = list()
+    ignore = set()
     if not os.path.exists("plants"):
             os.mkdir("plants")
 
@@ -192,10 +267,9 @@ def __plantMain(timeout, aiqueue: mp.Queue):
         plantMap, frameNumber = aiqueue.get()
 
         # choose plant ID according to selection algorithm
-        # TODO**
         targetID = selectPlant(plantMap)
 
-        # send plant ID and relative position over pipe to rover control
+        # send plant ID and relative position over pipe to rover control (rover should at least slow)
         # TODO**
     
         try:
@@ -213,9 +287,12 @@ def __plantMain(timeout, aiqueue: mp.Queue):
 
         # Save ID + health + copy picture to readings
         # TODO**
+        # Copy f"{frameNumber}.jpg" to plant folder and rename to plant id
+        # store plant id, health, location? into csv file in plants folder
+
 
         # add ID to ignore list
-        ignore.append(targetID)
+        ignore.add(targetID)
 
         
 
@@ -223,15 +300,20 @@ def startPlantProcess(args):
     return startProcess(target=__plantMain, args=args, name="PlantProcess")
 
 
+def startWebots():
+    # Init webots rover specifics
+    global SIM
+    SIM = True
 
-if __name__ == "__main__":
-    # Init webots rover 
-     
+    timeout = time.time() + 240 # Stop after 4 minutes
+    aiToPlant = mp.Queue(maxsize=1)
+
+
     # Start processes
     processes = list()
-    processes.append(startRoverProcess()) # rover
-    processes.append(startAIProcess()) # ai cam
-    processes.append(startPlantProcess()) # plant processing   
+    processes.append(startRoverProcess((timeout))) # rover
+    processes.append(startAIProcess((timeout, aiToPlant))) # ai cam
+    processes.append(startPlantProcess((timeout, aiToPlant))) # plant processing   
     
     # wait on all 3 to finish
     for p in processes:
