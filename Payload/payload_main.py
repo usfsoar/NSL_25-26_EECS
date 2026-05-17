@@ -3,8 +3,10 @@
 """
 TO DO:
 -backup sensor data from alternate sensors
-
 -calibrate servo for rack and pinoin
+-add dual-sensor redundancy.
+--decide to just use one sensor of each and the other as backup
+--average values from both sensors
 """
 
 #----IMPORTS----    
