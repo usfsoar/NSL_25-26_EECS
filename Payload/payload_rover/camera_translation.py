@@ -12,6 +12,12 @@ RESOLUTION_HEIGHT = 1520
 DISTANCE_CAMERAS = 0.1 # Meters NEEDS TO BE CHANGED
 
 
+def getCurrentVelocity():
+    # if sim, use webots functions
+    # TODO**
+    return 0
+
+
 def getPlant(id, queue):
     plantMap, frameNumber = queue.get()
     if id not in plantMap:
@@ -19,7 +25,7 @@ def getPlant(id, queue):
     return plantMap[id]
 
 
-def target_distance_estimation(targetID, queue):    
+def target_distance_estimation(targetID, queue, bno):    
     T_d0, d0 = recoverT_d(targetID, queue)
 
     T_d1, d1 = recoverT_d(targetID, queue)
@@ -39,7 +45,7 @@ def target_distance_estimation(targetID, queue):
     return (x[0] + x[1]) / 2
 
 
-def recoverT_d(targetID, queue):
+def recoverT_d(targetID, queue, bno):
     # Get bounding box at timestep t (Vector of height and width)
     # Retrieve targeted inference object (Something like get inference of targeted)
     
@@ -48,7 +54,8 @@ def recoverT_d(targetID, queue):
     # box[2], box[3] # Bottom right
     size_0 = np.array([abs(box[2] - box[0]), # Horizontal Length
                        abs(box[3] - box[1])]) # Vertical Height
-    vel0 = getCurrentVelocity() # Get velocity from BNO
+    # Start distance measurement from BNO? If one measurement suffices then doesn't need its own thread. If not, needs a dedicated thread
+    vel0 = getCurrentVelocity() # Get velocity from BNO 
     # Time how long we sleep
     start_time = time.perf_counter()
     

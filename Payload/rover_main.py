@@ -7,9 +7,10 @@ import os
 import math
 
 #-----Soar Code-----
-import aicam_lib as ai
-import payload_rover.camera_translation as translation
-import payload_sensor.bno085 as bno085
+# import aicam_lib.aicamera as ai
+# import aicam_lib.webots_aicam as webots_ai
+# import payload_rover.camera_translation as translation
+# import payload_sensor.bno085 as bno085
 
 #-----Constants-----
 SIM = False
@@ -69,7 +70,7 @@ def startProcess(target, args, name):
     return None
 
 
-def __roverMain(timeout, ):
+def __roverMain(SIM, timeout, ):
     # Any sensors?
     # Initialize rover
 
@@ -141,15 +142,13 @@ def idPlants(prevPlantMap, inferences):
     return plantMap
 
 
-def __aiMain(timeout, queue: mp.Queue): #queue is of size 1
+def __aiMain(SIM: bool, timeout, queue: mp.Queue):
     # Initialize AI camera
     aicam = None
     if SIM == True:
-        aicam # Webots AI camera
+        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, robot=SIM, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
     else:
-        aicam = ai.AICamera(MODEL_PATH)
-        imu = 
-
+        aicam = ai.AICamera(network=MODEL_PATH, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
 
     # make aicam directory if not already there
     if not os.path.exists("aicam"):
@@ -244,7 +243,7 @@ def selectPlant(plantMap, ignore: set):
     return targetId
 
 
-def __plantMain(timeout, aiqueue: mp.Queue):
+def __plantMain(SIM, timeout, aiqueue: mp.Queue):
     # intitialize thermal camera
     thermalcam = None
     if SIM == True:
@@ -282,17 +281,19 @@ def __plantMain(timeout, aiqueue: mp.Queue):
         # calculate offset
         disparity = translation.get_ircamera_offset(distance)
 
+        print(f"Plant detected: {targetID}, distance: {distance}")
+
         # Retrieve pixels from thermal 
         # TODO**
 
         # Save ID + health + copy picture to readings
         # TODO**
-        # Copy f"{frameNumber}.jpg" to plant folder and rename to plant id
+        # Copy f"{frameNumber}.jpg" will need to draw plant on it too to plant folder and rename to plant id
         # store plant id, health, location? into csv file in plants folder
 
 
         # add ID to ignore list
-        ignore.add(targetID)
+        # ignore.add(targetID)
 
         
 
@@ -301,6 +302,8 @@ def startPlantProcess(args):
 
 
 def startWebots():
+    print("here")
+
     # Init webots rover specifics
     global SIM
     SIM = True
@@ -308,13 +311,14 @@ def startWebots():
     timeout = time.time() + 240 # Stop after 4 minutes
     aiToPlant = mp.Queue(maxsize=1)
 
+    print("here")
 
     # Start processes
     processes = list()
-    processes.append(startRoverProcess((timeout))) # rover
-    processes.append(startAIProcess((timeout, aiToPlant))) # ai cam
-    processes.append(startPlantProcess((timeout, aiToPlant))) # plant processing   
+    processes.append(startRoverProcess((SIM, timeout))) # rover
+    processes.append(startAIProcess((SIM, timeout, aiToPlant))) # ai cam
+    processes.append(startPlantProcess((SIM, timeout, aiToPlant))) # plant processing   
     
     # wait on all 3 to finish
-    for p in processes:
-        p.join()
+    # for p in processes:
+        # p.join()

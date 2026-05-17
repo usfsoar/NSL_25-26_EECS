@@ -4,13 +4,17 @@
 import cv2
 from controller import Robot, Camera
 from ultralytics import YOLO
+import sys
+sys.path.append('../../../')
+print("HERE")
+import rover_main
+print("HERE AFTER")
 
-import 
-
-captureCounter = 0
+import time
 
 
-model = YOLO("../../../payload_rover/yolo_200epoch.pt")
+
+# model = YOLO("../../../payload_rover/yolo_200epoch.pt")
 TIME_STEP = 64
 robot = Robot()
 ds = []
@@ -31,12 +35,18 @@ for i in range(4):
     wheels[i].setPosition(float('inf'))
     wheels[i].setVelocity(0.0)
 avoidObstacleCounter = 0
+
+print("Controller Before")
+rover_main.startWebots()
+
+print("Here")
+
+prev_time = 0
 while robot.step(TIME_STEP) != -1:
-    if captureCounter % 25 == 0:
+    t = time.time()
+    if t - prev_time >= (1/30):
+        prev_time = t
         Camera.saveImage(aicamdv, "testingyolo.png", 100)
-        results = model("testingyolo.png")
-        img = cv2.imread("testingyolo.png")
-        results = model.predict(source = img, save = True, save_txt = True, show_boxes = True)
         
     leftSpeed = 1.0
     rightSpeed = 1.0
@@ -53,6 +63,5 @@ while robot.step(TIME_STEP) != -1:
     wheels[1].setVelocity(rightSpeed)
     wheels[2].setVelocity(leftSpeed)
     wheels[3].setVelocity(rightSpeed)
-    captureCounter+=1
        
     
