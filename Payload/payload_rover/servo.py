@@ -16,8 +16,17 @@ class ServoControl:
     def lock(self):
         self.servo.value = self.min
 
+    def test(self, val=.75):
+        self.servo.value = val
+
 if __name__ == '__main__':
     servo = ServoControl()
+
+    # servo.initialize(pin=14)
+    # servo.test()
+    # time.sleep(2)
+    # servo.test(.9)
+    # time.sleep(2)
 
     servo.initialize(18, 0, 100)
     time.sleep(2)

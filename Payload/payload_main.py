@@ -1,20 +1,17 @@
+#!/usr/bin/env python3
+
 """
 TO DO:
 add motor dimensions from cad
-
-add p control for distance control
--see if while loop will mess up multithreading
-
 add euler angle calculation for landing orientation and rover turning
-
 ndvi calculation and plant classification
-
-add kalman filter
 """
 
 #----IMPORTS----    
 #import libraries
-
+import os
+import csv
+import time
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
@@ -27,6 +24,8 @@ from payload_sensor.vl53l4cx import DistanceSensor
     
 from payload_rover.rover_control import RoverControl
 from payload_rover.motors import MotorControl
+from payload_rover.servo import ServoControl
+
 
 #----GLOBAL VARIABLES----
 #mode: launch, hand, sim
@@ -42,17 +41,28 @@ if MODE == "sim":
     LANDING_GFORCE_THRESHOLD    = 0.2   #G  gs needed to call landing
     LANDING_VEL_THRESHOLD       = 0.8   #m/s velocity needed to call landing
     LANDING_ALTITUDE_THRESHOLD  = 3.0   #m height needed to call landing
-elif MODE == "hand":
+    
+elif MODE == "drop":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
-    LAUNCH_ALTITUDE_THRESHOLD   = 1.0   #m
-    DESCENT_ALTITUDE_THRESHOLD  = 0.5   #m
-    DESCENT_APOGEE_THRESHOLD    = 2.0   #m
+    LAUNCH_ALTITUDE_THRESHOLD   = 0.75   #m
+    DESCENT_ALTITUDE_THRESHOLD  = .1   #m
+    DESCENT_APOGEE_THRESHOLD    = 1.5   #m
     LANDING_GFORCE_THRESHOLD    = 0.2   #G
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
-    LANDING_ALTITUDE_THRESHOLD  = 3.0   #m
+    LANDING_ALTITUDE_THRESHOLD  = -1.0   #m
+
+elif MODE == "hand":
+    LAUNCH_GFORCE_THRESHOLD     = 1.3   #G
+    LAUNCH_ALTITUDE_THRESHOLD   = 0.1   #m
+    DESCENT_ALTITUDE_THRESHOLD  = 0.2   #m
+    DESCENT_APOGEE_THRESHOLD    = 1   #m
+    LANDING_GFORCE_THRESHOLD    = 0.2   #G
+    LANDING_VEL_THRESHOLD       = 0.8   #m/s
+    LANDING_ALTITUDE_THRESHOLD  = 0.5   #m
+
 elif MODE == "launch":
     LAUNCH_GFORCE_THRESHOLD     = 2.0   #G
-    LAUNCH_ALTITUDE_THRESHOLD   = 15.0   #m
+    LAUNCH_ALTITUDE_THRESHOLD   = 30.0   #m
     DESCENT_ALTITUDE_THRESHOLD  = 10.0   #m
     DESCENT_APOGEE_THRESHOLD    = 500.0  #m
     LANDING_GFORCE_THRESHOLD    = 0.8   #G
@@ -71,18 +81,18 @@ STABLE_READINGS = 3
 STABLE_READINGS_FOR_LANDING = 10
 
 #timeout constants
-FLIGHT_TIMEOUT = 300
+FLIGHT_TIMEOUT = 90000
 ROVER_SCAN_TIMEOUT = 900
 ROVER_EXIT_TIMEOUT = 60
+POWER_CYCLE_TIME = 45 # seconds
 
-#rover dimensions
-WHEEL_RADIUS = 0
-WHEEL_BASE = 0
-WHEEL_CIRCUM = 2 * 3.14 * WHEEL_RADIUS
+# #rover dimensions
+# WHEEL_RADIUS = 0
+# WHEEL_BASE = 0
+# WHEEL_CIRCUM = 2 * 3.14 * WHEEL_RADIUS
 
 #data storage
 data = {
-    "time": 0,
     "timestamp": 0,
     "state": "READY",
     "raw_g_force": 0,
@@ -91,7 +101,10 @@ data = {
     "altitude": 0,
     "raw_velocity": 0,
     "velocity": 0,
-    "apogee": 0
+    "apogee": 0,
+    "start_pressure": 0,
+    "pressure": 0,
+    "temperature": 0
     }
 
 
@@ -101,9 +114,11 @@ if MODE == "sim":
     bno = None
     bmp = None
     sim = Sensor_Data_Simulator()
+    servo = None
 else:
     bno = BNO()
     bmp = BMP()
+    servo = ServoControl()
     sim = None
     
 sm = StateMachine(
@@ -119,14 +134,107 @@ sm = StateMachine(
     FLIGHT_TIMEOUT
 )
 
+# Log variable
+log = None
+
 # Initialize Logger
-log = TelemetryLogger()
+# log = TelemetryLogger()
 tof = DistanceSensor()
 motors = MotorControl(pins=[1, 2, 3, 4])
 rover = RoverControl(motors, tof, ROVER_SCAN_TIMEOUT, ROVER_EXIT_TIMEOUT)
 
 
 #----FUNCTIONS----
+def check_power_loss():
+    if os.path.exists(".running.txt"):
+        # Check if running file is there
+        # If it is, then we lost power
+        with open(".running.txt", "r") as file:
+            log_file = file.readline()
+
+        # Overwrite file with new logging path
+        with open(".running.txt", "w") as file:
+            file.write(log.LOGGING_FILE_PATH)
+            file.flush()
+            os.fsync(file.fileno())
+
+        return (True, log_file)
+    else:
+        # If not, we are starting from blank, then make a new running file
+        with open(".running.txt", "w") as file:
+            file.write(log.LOGGING_FILE_PATH)
+            file.flush()
+            os.fsync(file.fileno())
+        
+        return (False, "")
+
+
+def power_loss_recovery():
+    powerLoss, logFile = check_power_loss()
+
+    if powerLoss:
+        with open(logFile, newline='') as csvfile:
+            rows = csv.reader(csvfile)
+            mappings = next(rows)
+            state_index = mappings.index('state')
+
+        with open(logFile, "rb") as csvfile:
+            # Get start time:
+            start_time = None
+
+            pos = csvfile.tell()
+            while csvfile.read(1) != b'\n':
+                pos += 1
+                csvfile.seek(pos)
+            pos += 1
+            csvfile.seek(pos)
+            first_row = csvfile.readline().decode()
+            for col in csv.reader([first_row]):
+                data["timestamp"] = col[0] # Only getting previous start time
+                start_time = TelemetryLogger.string_to_sec(data["timestamp"])
+            
+            csvfile.seek(0, os.SEEK_END)
+            pos = csvfile.tell() - 1
+
+            newline_count = 0
+            while pos > 0:
+                csvfile.seek(pos)
+                if csvfile.read(1) == b"\n":
+                    newline_count += 1
+                    if newline_count >= 2:
+                        break
+                pos -= 1
+
+            last_data = csvfile.readline().decode() # Last row of complete data
+        
+            for row in csv.reader([last_data]):
+                last_time = TelemetryLogger.string_to_sec(col[0])
+                current_time = TelemetryLogger.string_to_sec(TelemetryLogger.get_timestamp())
+                offset = current_time - last_time - POWER_CYCLE_TIME
+                start_time += offset
+
+                data["timestamp"] = TelemetryLogger.sec_to_string(start_time)
+                print(f"Starting time: {data["timestamp"]}")
+
+                print(f"Recovering from {logFile}")
+                data['state'] = row[state_index]
+                data["raw_g_force"] = float(row[2])
+                data["g_force"] = float(row[3])
+                data["raw_altitude"] = float(row[4])
+                data["altitude"] = float(row[5])
+                data["raw_velocity"] = float(row[6])
+                data["velocity"] = float(row[7])
+                data["apogee"] = float(row[8])
+                data["start_pressure"] = float(col[9])
+                print(f"Recovery values: {data}")
+        
+
+        # Recovery state machine with relative start time
+        sm.recover(data["timestamp"])
+        log.log_sensor(data=data)
+
+    return powerLoss
+
 def initialize_sensors():
     if MODE == "sim":
         pass
@@ -152,6 +260,8 @@ def validate_data():
         data["velocity"] = 0
 
 def get_sensor_data():
+    data["timestamp"] = TelemetryLogger.get_timestamp()
+
     if MODE == "sim":
         sim.updateValues()
         data["raw_g_force"] = data["g_force"] = abs(sim.getAccel()) / 9.81
@@ -159,34 +269,29 @@ def get_sensor_data():
         data["raw_velocity"] = data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
     else:
-        data["raw_g_force"] = bno.get_g_force()
-        data["raw_altitude"] = bmp.get_altitude()
-        data["raw_velocity"] = bmp.get_vertical_velocity()
+        data["raw_acceleration"], data["acceleration"] = bno.get_acceleration()
+        data["raw_g_force"], data["g_force"] = bno.convert_gforce(data["raw_acceleration"]), bno.convert_gforce(data["acceleration"])
+        data["raw_velocity"], data["velocity"] = bmp.get_vertical_velocity()
+        data["raw_altitude"], data["altitude"] = bmp.get_altitude()
 
-        data["g_force"]   = ALPHA_GFORCE   * data["raw_g_force"]     + (1 - ALPHA_GFORCE)   * data["g_force"]
-        data["altitude"] = ALPHA_ALTITUDE  * data["raw_altitude"]         + (1 - ALPHA_ALTITUDE) * data["altitude"]
-        data["velocity"]  = ALPHA_VELOCITY * abs(data["raw_velocity"])  + (1 - ALPHA_VELOCITY) * data["velocity"]
 
         data["apogee"] = max(data["apogee"], data["altitude"])
 
+        data["pressure"], _ = bmp.get_pressure()
+        data["temperature"], _ = bmp.get_temperature()
 
-def set_zero_altitude():
+def set_zero_altitude(power_loss):
     prev = bmp.get_pressure()
     while True:
         curr = bmp.get_pressure()
         if abs(curr - prev) < 5:
             break
         prev = curr
-    bmp.set_sea_level_pressure(bmp.get_pressure())
 
-    # for i in range(15):
-    #     bmp.get_pressure()  
-    # bmp.set_sea_level_pressure(bmp.get_pressure())
+    if not power_loss:
+        data["start_pressure"] = bmp.get_pressure()
 
-    # for i in range(5):
-    #     time.sleep(0.5)
-    #     bmp.get_pressure()
-    # bmp.set_sea_level_pressure(bmp.get_pressure())
+    bmp.set_sea_level_pressure(data["start_pressure"])
 
 def get_landing_orientation():
     #implement euler
@@ -212,18 +317,22 @@ def get_landing_altitude():
         return 1
 
 def main():
+    global log
+    log = TelemetryLogger(sensor_data=data)
+
     initialize_sensors()
-    if MODE == "sim":
-        pass
-    else:
-        set_zero_altitude()
+
+    power_loss = power_loss_recovery()
+    if MODE != "sim":
+        set_zero_altitude(power_loss)
+        
 
     while data["state"] != "LANDING":
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
-        data["time"], data["state"] = sm.update(
-            data["time"],
+        data["state"] = sm.update(
+            data["timestamp"],
             data["state"],
             data["g_force"],
             data["altitude"],
@@ -232,28 +341,32 @@ def main():
         )
         
         # Log data to file: (Time, Current State, G-Force, Altitute, Velocity, Apogee)
-        log.log_sensor(data={"time": TelemetryLogger.get_timestamp(), "state": data["state"], 
-                             "raw_g_force": data["raw_g_force"], "g_force": data["g_force"], 
-                             "raw_altitude": data["raw_altitude"], "altitude": data["altitude"], 
-                             "raw_velocity": data["raw_velocity"], "velocity": data["velocity"], 
-                             "apogee": data["apogee"]})
+        log.log_sensor(data=data)
         
+
         # loop_time = time.perf_counter() - start_loop
 
-        #time.sleep(0.1)
+        if MODE == "sim":
+            time.sleep(0.04)
     #end of loop
 
+    time.sleep(2)
     if (get_landing_orientation() == 0 or get_landing_altitude() == 0):
         print("bad landing orientation or altitude")
         return
+
+    #rack and pinion code
+    time.sleep(2)
+    servo.retract()
     
+    #rover actions
     rover.exit_rover()
     rover.do_scan_2()
     
-
-    
-    #plot data here
-    #run rover stuff here
+    log.kill()
+    # On finish, remove running file
+    if os.path.exists(".running.txt"):
+        os.remove(".running.txt")
 
         
 if __name__ == '__main__':
