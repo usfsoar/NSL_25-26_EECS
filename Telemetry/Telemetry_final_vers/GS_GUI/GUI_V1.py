@@ -212,7 +212,7 @@ STORE = TelemetryStore()
 # Parser
 # ──────────────────────────────────────────────────────────────────────────────
 _TLM_RE     = re.compile(r'\[TLM\s+\w+\].*?Data:\s*(.+)', re.IGNORECASE)
-_TLM_HDR_RE = re.compile(r'^TLM,\d+,\d+,(.+)$')
+_TLM_HDR_RE = re.compile(r'^(?:Callsign:[^|]+\s*\|\s*)?TLM,\d+,\d+,(.+)$')
 
 def _ts_to_sec(ts: str) -> float:
     """HH:MM:SS.mmm → float seconds since midnight."""

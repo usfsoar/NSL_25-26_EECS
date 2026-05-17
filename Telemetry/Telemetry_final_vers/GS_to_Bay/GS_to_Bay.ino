@@ -136,7 +136,7 @@ static bool parseAckPing(const char* s, uint32_t& seqOut) {
 static bool parseTlmHeader(const char* s, uint8_t& typeOut, uint32_t& baySeqOut, const char*& payloadOut) {
   if (!startsWith(s, "Callsign: KR4IJA | TLM,")) return false;
 
-  const char* p = s + 4; // after "TLM,"
+  const char* p = s + 23; // after "TLM,"
   char* end = nullptr;
 
   unsigned long t = strtoul(p, &end, 10);
@@ -210,10 +210,10 @@ static void enqueueRadioCommand(String line) {
   }
 
   if (line.startsWith("power ")) {
-    float pow = line.substring(6).toInt();
-
+    int power = line.substring(6).toInt();
+    uint32_t seq = g_seq++;
     char msg[32];
-    snprintf(msg, sizeof(msg), "POWER,%lu,%d", (unsigned long)seq, pow);
+    snprintf(msg, sizeof(msg), "POWER,%lu,%d", (unsigned long)seq, power);
     radioSendAscii(msg);
     Serial.printf("[GS] Sent %s\n", msg);
     return;
