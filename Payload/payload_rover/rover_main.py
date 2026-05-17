@@ -7,14 +7,12 @@ import os
 import math
 
 #-----Soar Code-----
-# import aicam_lib.aicamera as ai
-# import aicam_lib.webots_aicam as webots_ai
-# import payload_rover.camera_translation as translation
-# import payload_sensor.bno085 as bno085
+import aicam_lib.aicamera as ai
+import aicam_lib.webots_aicam as webots_ai
+import payload_rover.camera_translation as translation
+import payload_sensor.bno085 as bno085
 
 #-----Constants-----
-SIM = False
-
 AICAM_FRAME_RATE = 30
 FRAME_DELAY = 1 / AICAM_FRAME_RATE
 MODEL_PATH = "payload_rover/yolo_200epoch.pt"
@@ -34,20 +32,26 @@ WEIGHT_CONFIDENCE = 0.7
 WEIGHT_OFFSET = 1
 
 
+import multiprocessing
+print(__file__, multiprocessing.current_process().name)
 
-def startProcess(target, args, name):
+
+def startProcess(target, args, name, ctx):
+    # Use the 'spawn' start method to avoid inheriting Webots' controller
     for _ in range(8):
         try:
-            # Create process
-            p = mp.Process(
+            # Create process using spawn context
+            p = ctx.Process(
                 target=target,
                 args=args,
-                daemon=False,         
+                daemon=False,
                 name=name
             )
 
             # Start process
+            print("before start")
             p.start()
+            print("after start")
 
             # Verify it actually started
             if not p.is_alive():
@@ -66,11 +70,11 @@ def startProcess(target, args, name):
 
         except Exception as e:
             print(f"Failed to start rover process: {e}")
-    
+
     return None
 
 
-def __roverMain(SIM, timeout, ):
+def __roverMain(SIM, timeout):
     # Any sensors?
     # Initialize rover
 
@@ -94,8 +98,8 @@ def __roverMain(SIM, timeout, ):
         
         
 
-def startRoverProcess(args):
-    return startProcess(target=__roverMain, args=args, name="RoverProcess")
+def startRoverProcess(args, ctx):
+    return startProcess(target=__roverMain, args=args, name="RoverProcess", ctx=ctx)
 
 
 
@@ -109,6 +113,7 @@ def getBoxDistance(box1, box2):
 
 prevId = 0
 def generateId():
+    global prevId
     prevId += 1
     return prevId
 
@@ -142,11 +147,11 @@ def idPlants(prevPlantMap, inferences):
     return plantMap
 
 
-def __aiMain(SIM: bool, timeout, queue: mp.Queue):
+def __aiMain(SIM: bool, timeout, MODEL_PATH):#, queue: mp.Queue):
     # Initialize AI camera
     aicam = None
     if SIM == True:
-        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, robot=SIM, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
+        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
     else:
         aicam = ai.AICamera(network=MODEL_PATH, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
 
@@ -188,14 +193,14 @@ def __aiMain(SIM: bool, timeout, queue: mp.Queue):
             continue
 
         # send id list, boxes, and frame number to plant process
-        if queue.full():
-            queue.get()
+        # if queue.full():
+            # queue.get()
         
-        queue.put((plantMap, frameNumber))
+        # queue.put((plantMap, frameNumber))
         
 
-def startAIProcess(args):
-    return startProcess(target=__aiMain, args=args, name="AICamProcess")
+def startAIProcess(args, ctx):
+    return startProcess(target=__aiMain, args=args, name="AICamProcess", ctx=ctx)
 
 
 
@@ -302,22 +307,21 @@ def startPlantProcess(args):
 
 
 def startWebots():
-    print("here")
-
     # Init webots rover specifics
-    global SIM
     SIM = True
 
-    timeout = time.time() + 240 # Stop after 4 minutes
-    aiToPlant = mp.Queue(maxsize=1)
+    global MODEL_PATH
+    MODEL_PATH = "../../../payload_rover/yolo_200epoch.pt"
 
-    print("here")
+    timeout = time.time() + 240 # Stop after 4 minutes
+    ctx = mp.get_context('spawn')
+    aiToPlant = ctx.Queue(maxsize=1)
 
     # Start processes
     processes = list()
-    processes.append(startRoverProcess((SIM, timeout))) # rover
-    processes.append(startAIProcess((SIM, timeout, aiToPlant))) # ai cam
-    processes.append(startPlantProcess((SIM, timeout, aiToPlant))) # plant processing   
+    # processes.append(startRoverProcess((SIM, timeout))) # rover
+    processes.append(startAIProcess((SIM, timeout, MODEL_PATH), ctx)) # ai cam
+    # processes.append(startPlantProcess((SIM, timeout, aiToPlant))) # plant processing   
     
     # wait on all 3 to finish
     # for p in processes:

@@ -13,8 +13,8 @@ class WebotsAICamera():
         self._previous_output = [[], [], []]
 
     def getInference(self):
-        results = self.model("testingyolo.png")
         img = cv2.imread("testingyolo.png")
+
         results = self.model.predict(source=img, save=False, save_txt=False, show_boxes=False, verbose=False)
 
         result = results[0]

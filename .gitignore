@@ -24,3 +24,4 @@ desktop.ini
 
 # Ignore log files
 Payload/logs/*.csv
+Payload/webots/controllers/bot_with_model/aicam/
