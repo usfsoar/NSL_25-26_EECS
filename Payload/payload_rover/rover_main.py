@@ -49,9 +49,7 @@ def startProcess(target, args, name, ctx):
             )
 
             # Start process
-            print("before start")
             p.start()
-            print("after start")
 
             # Verify it actually started
             if not p.is_alive():
@@ -150,8 +148,9 @@ def idPlants(prevPlantMap, inferences):
 def __aiMain(SIM: bool, timeout, MODEL_PATH):#, queue: mp.Queue):
     # Initialize AI camera
     aicam = None
-    if SIM == True:
-        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
+    if SIM is not None:
+        shm, lock = SIM
+        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
     else:
         aicam = ai.AICamera(network=MODEL_PATH, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
 
@@ -177,16 +176,16 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH):#, queue: mp.Queue):
         # get frame and list of inferences
         prev_start = time.time()
         inferences, frame = aicam.getInference()
+        print(f"DBG - AICam inferences: {inferences}")
 
         # map each plant to id's (using previous)
         plantMap = idPlants(plantMap, inferences)
 
         # save frame to file with frame number name (remove oldest frame if > 240 images)
-        if os.path.exists(f"{frameNumber - 240}.jpg"):
+        if os.path.exists(f"aicam/{frameNumber - 240}.jpg"):
             # delete oldest frame
-            os.remove(f"{frameNumber - 240}.jpg")
-        # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) # TODO** Might need to swap blue and red channels
-        cv2.imwrite(f"aicam/{frameNumber}.jpg", frame) # TODO** A lot of I/O overhead?
+            os.remove(f"aicam/{frameNumber - 240}.jpg")
+        cv2.imwrite(f"aicam/{frameNumber}.jpg", frame) # TODO** A lot of I/O overhead? Maybe save in shared memory
         frameNumber += 1
 
         if len(plantMap) == 0:
@@ -251,7 +250,7 @@ def selectPlant(plantMap, ignore: set):
 def __plantMain(SIM, timeout, aiqueue: mp.Queue):
     # intitialize thermal camera
     thermalcam = None
-    if SIM == True:
+    if SIM is None:
         # thermalcam = webots camera
         pass
     else:    
@@ -306,10 +305,8 @@ def startPlantProcess(args):
     return startProcess(target=__plantMain, args=args, name="PlantProcess")
 
 
-def startWebots():
+def startWebots(aicamshm):
     # Init webots rover specifics
-    SIM = True
-
     global MODEL_PATH
     MODEL_PATH = "../../../payload_rover/yolo_200epoch.pt"
 
@@ -320,7 +317,7 @@ def startWebots():
     # Start processes
     processes = list()
     # processes.append(startRoverProcess((SIM, timeout))) # rover
-    processes.append(startAIProcess((SIM, timeout, MODEL_PATH), ctx)) # ai cam
+    processes.append(startAIProcess((aicamshm, timeout, MODEL_PATH), ctx)) # ai cam
     # processes.append(startPlantProcess((SIM, timeout, aiToPlant))) # plant processing   
     
     # wait on all 3 to finish

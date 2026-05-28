@@ -5,16 +5,26 @@ from aicam_lib.post_processing import boxFloatToInt
 
 import cv2
 from ultralytics import YOLO
+import os
+import multiprocessing as mp
+import numpy as np
 
 class WebotsAICamera():
-    def __init__(self, network: str, size: tuple[int, int] = (640, 480)):
+    def __init__(self, network: str, shm_name, lock, size: tuple[int, int] = (640, 640)):
         self.model = YOLO(model=network)
+        self.SHAPE = (640, 640, 3)
+
+        self.shm = mp.shared_memory.SharedMemory(name=shm_name)
+        self.frame = np.ndarray(self.SHAPE, dtype=np.uint8, buffer=self.shm.buf)
+        self.lock = lock
 
         self._previous_output = [[], [], []]
 
     def getInference(self):
-        img = cv2.imread("testingyolo.png")
+        with self.lock:
+            img = self.frame.copy()
 
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         results = self.model.predict(source=img, save=False, save_txt=False, show_boxes=False, verbose=False)
 
         result = results[0]
@@ -22,7 +32,7 @@ class WebotsAICamera():
         scores = result.boxes.conf.cpu().numpy()
         classes = result.boxes.cls.cpu().numpy()
 
-        # Match your old IMX500 inference format
+        # Match IMX500 inference format
         outputs = [boxes, scores, classes]
 
         inferences = [Inference(boxFloatToInt(outputs[0][i]), outputs[1][i], int(outputs[2][i])) for i in range(len(outputs[0]))]
