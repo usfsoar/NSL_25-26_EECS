@@ -28,7 +28,7 @@ class INA():
                 break
             except Exception as e:
                 if i == 9:
-                    raise Exception(f"Error initializing I2C for INA260: {e}")
+                    raise print(f"Error initializing I2C for INA260: {e}")
                 continue
         
         for i in range(10):
@@ -37,7 +37,7 @@ class INA():
                 break
             except Exception as e:
                 if i == 9:
-                    raise Exception(f"Error initializing INA260: {e}")
+                    raise print(f"Error initializing INA260: {e}")
                 continue
 
     def get_current_ma(self):
