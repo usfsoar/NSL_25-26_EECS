@@ -22,8 +22,23 @@ class INA():
             address (int): I2C address of the INA260.
                            Default is 0x40.
         """
-        i2c = busio.I2C(board.SCL, board.SDA)
-        self._sensor = INA260(i2c, address=address)
+        for i in range(10):
+            try:
+                self.i2c = busio.I2C(board.SCL, board.SDA)
+                break
+            except Exception as e:
+                if i == 9:
+                    raise Exception(f"Error initializing I2C for INA260: {e}")
+                continue
+        
+        for i in range(10):
+            try:
+                self._sensor = adafruit_ina260.INA260(self.i2c, address=address)
+                break
+            except Exception as e:
+                if i == 9:
+                    raise Exception(f"Error initializing INA260: {e}")
+                continue
 
     def get_current_ma(self):
         """
@@ -42,9 +57,20 @@ class INA():
         """
         return self._sensor.current / 1000.0
     
+    def is_stall(self):
+        return self.get_current_a() > 5
+    
+    def stall_triple_check(self):
+        for i in range(5):
+            if not self.is_stall():
+                return False
+            time.sleep(0.5)
+        return True
+
 if __name__ == '__main__':
     ina = INA()
     while True:
         print(f"Current: {ina.get_current_ma()} mA")
         print(f"Current: {ina.get_current_a()} A")
+        print(f"Is Stall: {ina.is_stall()}")
         time.sleep(0.5)

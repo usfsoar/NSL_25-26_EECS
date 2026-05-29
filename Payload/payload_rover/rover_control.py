@@ -1,5 +1,5 @@
 import time
-from payload_rover.motors import motors
+import asyncio
 
 class RoverControl:
     def __init__(self, motors, tof, bno, timeout, exit_timeout):
@@ -51,6 +51,41 @@ class RoverControl:
             
             self.motors.turn_right()
 
+    async def detection_loop(self):
+        #does distance measurement, classification, ndvi, save frame
+        while time.time() - self.start_time < self.timeout:
+            await self.save_frame()
+
+            if await self.detect_objects():
+                await self.run_detection()
+            
+            await asyncio.sleep(0.05)
+
+    async def control_loop(self):
+        #p control loop and driving
+        while time.time() - self.start_time < self.timeout:
+            traveled = 0
+            move_time = time.time()
+            await self.calc_dist()
+
+            while (traveled < self.dist):
+                traveled += self.bno.get_velocity() * (time.time() - move_time)
+                error = self.dist - traveled
+                pwm = max(25, min(int(error * self.kp), 127))
+                await self.motors.set_speed(pwm)
+                await asyncio.sleep(0.05)
+            
+            await self.motors.turn_right()
+            await asyncio.sleep(1)
+
+    async def scan_loop(self):
+        self.start_time = time.time()
+
+        try:
+            await asyncio.gather(self.detection_loop(), self.control_loop())
+        except asyncio.CancelledError:
+            await self.motors.set_speed(0)
+
     #if object, classify and ndvi, send and save data, go around        
     def run_detection(self):
             if (self.detect_objects()):
@@ -84,7 +119,7 @@ class RoverControl:
 
     def detect_objects(self):
         #use tof to detect objects in front of rover
-        if (self.tof.get_distance() < self.detect_dist): # or (plant_detetction):
+        if (self.tof.get_distance() < self.detect_dist) or (plant_detetction):
             return True
         else:
             return False

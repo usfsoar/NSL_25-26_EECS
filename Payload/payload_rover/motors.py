@@ -60,6 +60,34 @@ class DriveController:
         self.back_right_motor.set_speed(speed)
         self.front_left_motor.set_speed(speed)
         self.front_right_motor.set_speed(speed)
+
+    def move_forward(self, speed=100):
+        self.back_left_motor.set_direction(True)
+        self.back_right_motor.set_direction(False)
+        self.front_left_motor.set_direction(True)
+        self.front_right_motor.set_direction(False)
+        self.set_speed(speed)
+
+    def move_backward(self, speed=100):
+        self.back_left_motor.set_direction(False)
+        self.back_right_motor.set_direction(True)
+        self.front_left_motor.set_direction(False)
+        self.front_right_motor.set_direction(True)
+        self.set_speed(speed)
+
+    def spin_left(self, speed=100):
+        self.back_left_motor.set_direction(False)
+        self.back_right_motor.set_direction(False)
+        self.front_left_motor.set_direction(False)
+        self.front_right_motor.set_direction(False)
+        self.set_speed(speed)
+
+    def spin_right(self, speed=100):
+        self.back_left_motor.set_direction(True)
+        self.back_right_motor.set_direction(True)
+        self.front_left_motor.set_direction(True)
+        self.front_right_motor.set_direction(True)
+        self.set_speed(speed)
     
     async def move_forward_timed(self, time, speed=100):
         await asyncio.gather(

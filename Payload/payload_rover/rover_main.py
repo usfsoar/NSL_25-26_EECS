@@ -10,7 +10,22 @@ import math
 import aicam_lib.aicamera as ai
 import aicam_lib.webots_aicam as webots_ai
 import payload_rover.camera_translation as translation
-import payload_sensor.bno085 as bno085
+
+import payload_sensor.bno085 as BNO
+import payload_sensor.ina260 as INA
+
+from payload_rover.motors import Motor, DriveController
+
+
+bno = BNO()
+back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
+back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
+front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
+front_right_motor = Motor(wheel_diameter=0.1, pwm_channel=3, direction_pin=10, output_pin=-1)
+
+motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
+
+ina = INA()
 
 #-----Constants-----
 AICAM_FRAME_RATE = 30
@@ -75,10 +90,51 @@ def startProcess(target, args, name, ctx):
 def __roverMain(SIM, timeout):
     # Any sensors?
     # Initialize rover
+    move_dist = 0
+    kp = 0.5
+    dist_increment = 1 #meter
+
+    motor_stall = 0
 
     while True:
         if time.time() > timeout:
-            break
+            traveled = 0
+            move_time = time.time()
+            move_dist = move_dist + dist_increment
+
+            while (traveled < move_dist):
+                traveled += bno.get_velocity() * (time.time() - move_time)
+                error = move_dist - traveled
+                speed = max(25, min(int(error * kp), 100))
+                
+                if ina.is_stall():
+                    motors.stop()
+                    time.sleep(3)
+
+                    curr = time.time()
+                    while time.time() - curr < 10:
+                        motors.move_backward(speed=100)
+                        
+                    time.sleep(3)
+                        
+                    while time.time() - curr < 3:
+                        motors.move_backward(speed=50)
+                        if ina.is_stall():
+                            motors.stop()
+                            break
+                        else:
+                            motors.spin_right(speed=75)
+                            continue
+                    
+
+                        
+                motors.move_forward(speed)
+                time.sleep(0.05)
+            
+            motors.spin_right(speed=75)
+            
+
+        
 
         # check if obstacle function
             # call obstacle avoidance function
@@ -94,7 +150,7 @@ def __roverMain(SIM, timeout):
         # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
         # Once handled, then go back to holding and wait again
         
-        
+
 
 def startRoverProcess(args, ctx):
     return startProcess(target=__roverMain, args=args, name="RoverProcess", ctx=ctx)
