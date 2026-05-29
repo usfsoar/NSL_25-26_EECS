@@ -84,7 +84,7 @@ class RoverControl:
 
     def detect_objects(self):
         #use tof to detect objects in front of rover
-        if (self.tof.get_distance() < self.detect_dist) or (plant_detetction):
+        if (self.tof.get_distance() < self.detect_dist): # or (plant_detetction):
             return True
         else:
             return False
