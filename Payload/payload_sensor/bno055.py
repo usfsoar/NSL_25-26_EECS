@@ -2,15 +2,16 @@
 # API Reference: https://docs.circuitpython.org/projects/bno055/en/latest/api.html#
 
 import adafruit_bno055
-from abstract_bno import abstract_BNO
 import board
 import busio
 import time
 import math
 
+import payload_sensor.abstract_bno as abstract_bno
+
 # todo: Class getters should probably have exceptions and bad data handled
 
-class BNO055(abstract_BNO):
+class BNO055(abstract_bno.abstract_BNO):
     """
     Wrapper class for interating with the BNO055 IMU Sensor
     """

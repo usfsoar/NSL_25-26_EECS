@@ -2,7 +2,6 @@
 # API Reference: https://docs.circuitpython.org/projects/bno08x/en/latest/
 
 from adafruit_bno08x.i2c import BNO08X_I2C
-from abstract_bno import abstract_BNO
 import adafruit_bno08x
 import board
 import busio
@@ -18,11 +17,13 @@ from adafruit_bno08x import (
    # BNO_REPORT_GRAVITY
 )
 
+import payload_sensor.abstract_bno as abstract_bno
+
 RECOVERY_WAIT = 0.05
 
 # todo: Class getters should probably have exceptions and bad data handled
 
-class BNO085(abstract_BNO):
+class BNO085(abstract_bno.abstract_BNO):
     """
     Wrapper class for interating with the BNO055 IMU Sensor
     """
