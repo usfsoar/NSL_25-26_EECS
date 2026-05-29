@@ -43,50 +43,64 @@ class Motor:
 
 
 class DriveController:
-    def __init__(self, left_motor: Motor, right_motor: Motor):
-        self.left_motor = left_motor
-        self.right_motor = right_motor
+    def __init__(self, back_left: Motor, back_right: Motor, front_left: Motor, front_right: Motor):
+        self.back_left_motor = back_left
+        self.back_right_motor = back_right
+        self.front_left_motor = front_left
+        self.front_right_motor = front_right
 
     def stop(self):
-        self.left_motor.set_speed(0)
-        self.right_motor.set_speed(0)
+        self.back_left_motor.set_speed(0)
+        self.back_right_motor.set_speed(0)
+        self.front_left_motor.set_speed(0)
+        self.front_right_motor.set_speed(0)
 
     def set_speed(self, speed):
-        self.left_motor.set_speed(speed)
-        self.right_motor.set_speed(speed)
+        self.back_left_motor.set_speed(speed)
+        self.back_right_motor.set_speed(speed)
+        self.front_left_motor.set_speed(speed)
+        self.front_right_motor.set_speed(speed)
     
     async def move_forward_timed(self, time, speed=100):
         await asyncio.gather(
-            self.left_motor.move_clockwise_time(time, speed),
-            self.right_motor.move_counterclockwise_time(time, speed)
+            self.back_left_motor.move_clockwise_time(time, speed),
+            self.back_right_motor.move_counterclockwise_time(time, speed),
+            self.front_left_motor.move_clockwise_time(time, speed),
+            self.front_right_motor.move_counterclockwise_time(time, speed)
         )
 
     async def move_backward_timed(self, time, speed=100):
         await asyncio.gather(
-            self.left_motor.move_counterclockwise_time(time, speed),
-            self.right_motor.move_clockwise_time(time, speed)
+            self.back_left_motor.move_counterclockwise_time(time, speed),
+            self.back_right_motor.move_clockwise_time(time, speed),
+            self.front_left_motor.move_counterclockwise_time(time, speed),
+            self.front_right_motor.move_clockwise_time(time, speed)
         )
 
     async def spin_left_timed(self, time, speed=100):
         await asyncio.gather(
-            self.left_motor.move_counterclockwise_time(time, speed),
-            self.right_motor.move_counterclockwise_time(time, speed)
+            self.back_left_motor.move_counterclockwise_time(time, speed),
+            self.back_right_motor.move_counterclockwise_time(time, speed),
+            self.front_left_motor.move_counterclockwise_time(time, speed),
+            self.front_right_motor.move_counterclockwise_time(time, speed)
         )
 
     async def spin_right_timed(self, time, speed=100):
         await asyncio.gather(
-            self.left_motor.move_clockwise_time(time, speed),
-            self.right_motor.move_clockwise_time(time, speed)
+            self.back_left_motor.move_clockwise_time(time, speed),
+            self.back_right_motor.move_clockwise_time(time, speed),
+            self.front_left_motor.move_clockwise_time(time, speed),
+            self.front_right_motor.move_clockwise_time(time, speed)
         )
 
     # async def move_forward(self, distance):
     #     await asyncio.gather(
-    #         self.left_motor.move_clockwise_time(distance),
-    #         self.right_motor.move_counterclockwise_time(distance)
+    #         self.back_left_motor.move_clockwise_time(distance),
+    #         self.back_right_motor.move_counterclockwise_time(distance)
     #     )
 
     # async def move_backward(self, distance):
     #     await asyncio.gather(
-    #         self.left_motor.move_counterclockwise_time(distance),
-    #         self.right_motor.move_clockwise_time(distance)
+    #         self.back_left_motor.move_counterclockwise_time(distance),
+    #         self.back_right_motor.move_clockwise_time(distance)
     #     )
