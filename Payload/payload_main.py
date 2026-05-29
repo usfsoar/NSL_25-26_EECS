@@ -25,14 +25,14 @@ from payload_pipeline.state_machine import StateMachine
 from payload_pipeline.telemetry_logger import TelemetryLogger
 
 from payload_sensor.bmp580 import BMP
-from payload_sensor.bno085 import BNO
+from payload_sensor.bno085 import BNO085
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 from payload_sensor.vl53l4cx import DistanceSensor
     
 from payload_rover.rover_control import RoverControl
 from payload_rover.motors import MotorControl
 
-import rover_main
+import payload_rover.rover_main
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
@@ -121,7 +121,7 @@ if MODE == "sim":
     bmp = None
     sim = Sensor_Data_Simulator()
 else:
-    bno = BNO()
+    bno = BNO085()
     bmp = BMP()
     sim = None
     

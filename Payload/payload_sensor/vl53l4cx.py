@@ -88,7 +88,7 @@ class VL53L4CX:
         self._i2c = i2c
         model_id, module_type, mask_rev = self.model_info
         if model_id != 0xEB or module_type != 0xAA or mask_rev != 0x10:
-            raise RuntimeError("Wrong sensor ID or type!")
+            print("[VL53L4CX] Wrong sensor ID or type!")
         self._sensor_init()
         self._timing_budget = None
         self.timing_budget = 50
@@ -261,9 +261,9 @@ class VL53L4CX:
         if mode == 2:
             reg_vals = TB_LONG_DIST
         if reg_vals is None:
-            raise RuntimeError("Unknown distance mode.")
+            print("[VL53L4CX] Unknown distance mode.")
         if val not in reg_vals:
-            raise ValueError("Invalid timing budget.")
+            print("[VL53L4CX] Invalid timing budget.")
         self._write_register(_RANGE_CONFIG__TIMEOUT_MACROP_A_HI, reg_vals[val][0])
         self._write_register(_RANGE_CONFIG__TIMEOUT_MACROP_B_HI, reg_vals[val][1])
         self._timing_budget = val
@@ -303,7 +303,7 @@ class VL53L4CX:
             self._write_register(_SD_CONFIG__WOI_SD0, b"\x0f\x0d")
             self._write_register(_SD_CONFIG__INITIAL_PHASE_SD0, b"\x0e\x0e")
         else:
-            raise ValueError("Unsupported mode.")
+            print("[VL53L4CX] Unsupported mode.")
         self.timing_budget = self._timing_budget
 
     @property

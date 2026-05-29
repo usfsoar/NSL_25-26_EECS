@@ -68,14 +68,14 @@ def startProcess(target, args, name, ctx):
 
             # Verify it actually started
             if not p.is_alive():
-                raise RuntimeError(
+                print(
                     f"Process failed to start (exitcode={p.exitcode})"
                 )
 
             time.sleep(0.1)
 
             if p.exitcode is not None:
-                raise RuntimeError(
+                print(
                     f"Rover process exited immediately with code {p.exitcode}"
                 )
 
@@ -201,7 +201,7 @@ def idPlants(prevPlantMap, inferences):
     return plantMap
 
 
-def __aiMain(SIM: bool, timeout, MODEL_PATH):#, queue: mp.Queue):
+def __aiMain(SIM: bool, timeout, MODEL_PATH, queue: mp.Queue):
     # Initialize AI camera
     aicam = None
     if SIM is not None:
@@ -373,7 +373,7 @@ def startWebots(aicamshm):
     # Start processes
     processes = list()
     # processes.append(startRoverProcess((SIM, timeout))) # rover
-    processes.append(startAIProcess((aicamshm, timeout, MODEL_PATH), ctx)) # ai cam
+    processes.append(startAIProcess((aicamshm, timeout, MODEL_PATH, aiToPlant), ctx)) # ai cam
     # processes.append(startPlantProcess((SIM, timeout, aiToPlant))) # plant processing   
     
     # wait on all 3 to finish

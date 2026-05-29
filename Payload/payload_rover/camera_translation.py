@@ -21,7 +21,7 @@ def getCurrentVelocity():
 def getPlant(id, queue):
     plantMap, frameNumber = queue.get()
     if id not in plantMap:
-        raise Exception(f"Plant ID {id} no longer tracked")
+        print(f"Plant ID {id} no longer tracked")
     return plantMap[id]
 
 
