@@ -24,18 +24,14 @@ class STEMMA():
                 self.i2c = busio.I2C(board.SCL, board.SDA)
                 break
             except Exception as e:
-                if i == 9:
-                    raise Exception(f"Error initializing I2C for PCA: {e}")
-                continue
+                print(f"Error initializing I2C for PCA: {e}")
         
         for i in range(10):
             try:
                 self.sensor = Seesaw(self.i2c, addr=address)
                 break
             except Exception as e:
-                if i == 9:
-                    raise Exception(f"Error initializing PCA: {e}")
-                continue
+                print(f"Error initializing PCA: {e}")
     
 
     def get_moisture(self):

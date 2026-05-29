@@ -23,18 +23,14 @@ class PCA():
                 self.i2c = busio.I2C(board.SCL, board.SDA)
                 break
             except Exception as e:
-                if i == 9:
-                    raise Exception(f"Error initializing I2C for PCA: {e}")
-                continue
+                print(f"Error initializing I2C for PCA: {e}")
         
         for i in range(10):
             try:
                 self.sensor = adafruit_pca9685.PCA9685(self.i2c, address=address)
                 break
             except Exception as e:
-                if i == 9:
-                    raise Exception(f"Error initializing PCA: {e}")
-                continue
+                print(f"Error initializing PCA: {e}")
         
         return adafruit_pca9685.channels[0], adafruit_pca9685.channels[4]
 

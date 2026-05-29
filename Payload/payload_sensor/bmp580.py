@@ -35,9 +35,7 @@ class BMP():
                 self.i2c = busio.I2C(board.SCL, board.SDA)
                 break
             except Exception as e:
-                if i == 9:
-                    raise Exception(f"Error initializing I2C for BMP: {e}")
-                continue
+                print(f"Error initializing I2C for BMP: {e}")
         
         for i in range(10):
             try:
@@ -46,9 +44,7 @@ class BMP():
                 self.set_sea_level_pressure(sea_level)
                 break
             except Exception as e:
-                if i == 9:
-                    raise Exception(f"Error initializing BMP: {e}")
-                continue
+                print(f"Error initializing BMP: {e}")
 
     
     def recover(self):
