@@ -19,7 +19,6 @@ def main():
     from ultralytics import YOLO
     import time
 
-
     # model = YOLO("../../../payload_rover/yolo_200epoch.pt")
     TIME_STEP = 1
     robot = Robot()
@@ -42,12 +41,17 @@ def main():
         wheels[i].setVelocity(0.0)
     avoidObstacleCounter = 0
 
+    # AI Cam Shared Memory
     SHAPE = (640, 640, 3)
     shm = mp.shared_memory.SharedMemory( create=True,
         size=np.zeros(SHAPE, dtype=np.uint8).nbytes)
     lock = mp.Lock()
     frame = np.ndarray(SHAPE, dtype=np.uint8, buffer=shm.buf)
-    rover_main.startWebots((shm.name, lock))
+
+    # AI to Plant Process Message Queue
+    aiToPlantQueue = mp.Queue(maxsize=1)
+
+    processes = rover_main.startWebots((shm.name, lock), None, aiToPlantQueue)
 
     prev_time = 0
     while robot.step(TIME_STEP) != -1:
@@ -79,6 +83,8 @@ def main():
         
     shm.close()
     shm.unlink()
+    for p in processes:
+        p.join()
 
    
 if mp.current_process().name == "MainProcess":

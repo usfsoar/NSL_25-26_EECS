@@ -21,7 +21,9 @@ def getCurrentVelocity():
 def getPlant(id, queue):
     plantMap, frameNumber = queue.get()
     if id not in plantMap:
-        print(f"Plant ID {id} no longer tracked")
+        raise(f"Plant ID {id} no longer tracked")
+    # If plant hasn't moved, wait until a frame that has 
+        # Put all in infinite loop until not equal to break
     return plantMap[id]
 
 

@@ -5,10 +5,12 @@ import time
 import cv2
 import os
 import math
+import sys
 
 #-----Soar Code-----
 import aicam_lib.aicamera as ai
 import aicam_lib.webots_aicam as webots_ai
+import aicam_lib.rendering as rendering
 import payload_rover.camera_translation as translation
 
 import payload_sensor.bno085 as BNO
@@ -47,16 +49,27 @@ WEIGHT_CONFIDENCE = 0.7
 WEIGHT_OFFSET = 1
 
 
-import multiprocessing
-print(__file__, multiprocessing.current_process().name)
+print(__file__, mp.current_process().name)
 
 
-def startProcess(target, args, name, ctx):
+"""
+Prints the current function prepended to debug message
+"""
+def printDBG(*args, **kwargs):
+    caller = sys._getframe(1).f_code.co_name
+    print(f"[{caller}] -", *args, **kwargs)
+
+    with open(f"webots.log", "a") as file:
+        print(f"[{caller}]", *args, **kwargs, file=file)
+
+
+
+def startProcess(target, args, name):
     # Use the 'spawn' start method to avoid inheriting Webots' controller
     for _ in range(8):
         try:
             # Create process using spawn context
-            p = ctx.Process(
+            p = mp.Process(
                 target=target,
                 args=args,
                 daemon=False,
@@ -68,21 +81,22 @@ def startProcess(target, args, name, ctx):
 
             # Verify it actually started
             if not p.is_alive():
-                print(
+                printDBG(
                     f"Process failed to start (exitcode={p.exitcode})"
                 )
 
             time.sleep(0.1)
 
             if p.exitcode is not None:
-                print(
+                printDBG(
                     f"Rover process exited immediately with code {p.exitcode}"
                 )
 
+            printDBG(f"Successfully started process {name}")
             return p
 
         except Exception as e:
-            print(f"Failed to start rover process: {e}")
+            printDBG(f"Failed to start rover process: {e}")
 
     return None
 
@@ -152,8 +166,8 @@ def __roverMain(SIM, timeout):
         
 
 
-def startRoverProcess(args, ctx):
-    return startProcess(target=__roverMain, args=args, name="RoverProcess", ctx=ctx)
+def startRoverProcess(args):
+    return startProcess(target=__roverMain, args=args, name="RoverProcess")
 
 
 
@@ -201,7 +215,7 @@ def idPlants(prevPlantMap, inferences):
     return plantMap
 
 
-def __aiMain(SIM: bool, timeout, MODEL_PATH, queue: mp.Queue):
+def __aiMain(SIM: bool, timeout, MODEL_PATH, queue):
     # Initialize AI camera
     aicam = None
     if SIM is not None:
@@ -232,15 +246,31 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH, queue: mp.Queue):
         # get frame and list of inferences
         prev_start = time.time()
         inferences, frame = aicam.getInference()
-        print(f"DBG - AICam inferences: {inferences}")
+        
+        if len(inferences) >= 1:
+            printDBG(f"Made the following inferences in frame {frameNumber}")
+        for inf in inferences:
+            printDBG(inf.to_string()) 
 
         # map each plant to id's (using previous)
         plantMap = idPlants(plantMap, inferences)
+
+        for id, inf in plantMap.items():
+            rendering.drawBox(frame, box=inf.box)
+            rendering.drawText(frame, 
+                               text=f"ID: {id}, Label: {inf.label_class}, Confidence: {inf.confidence}", 
+                               position=(inf.box[0], inf.box[1]),
+                               size=1,
+                               color=(0, 0, 255),
+                               thickness=2)
+
 
         # save frame to file with frame number name (remove oldest frame if > 240 images)
         if os.path.exists(f"aicam/{frameNumber - 240}.jpg"):
             # delete oldest frame
             os.remove(f"aicam/{frameNumber - 240}.jpg")
+        # TODO** Conver this to shared memory for sure. Just use a lock and shared memory array. Not too bad
+        # Maybe just save all frames if space permits. Then we can reconstruct a video of what the rover saw????
         cv2.imwrite(f"aicam/{frameNumber}.jpg", frame) # TODO** A lot of I/O overhead? Maybe save in shared memory
         frameNumber += 1
 
@@ -248,14 +278,14 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH, queue: mp.Queue):
             continue
 
         # send id list, boxes, and frame number to plant process
-        # if queue.full():
-            # queue.get()
+        if queue.full():
+            queue.get()
         
-        # queue.put((plantMap, frameNumber))
+        queue.put((plantMap, frameNumber))
         
 
-def startAIProcess(args, ctx):
-    return startProcess(target=__aiMain, args=args, name="AICamProcess", ctx=ctx)
+def startAIProcess(args):
+    return startProcess(target=__aiMain, args=args, name="AICamProcess")
 
 
 
@@ -306,7 +336,7 @@ def selectPlant(plantMap, ignore: set):
 def __plantMain(SIM, timeout, aiqueue: mp.Queue):
     # intitialize thermal camera
     thermalcam = None
-    if SIM is None:
+    if SIM is not None:
         # thermalcam = webots camera
         pass
     else:    
@@ -326,7 +356,9 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue):
         plantMap, frameNumber = aiqueue.get()
 
         # choose plant ID according to selection algorithm
-        targetID = selectPlant(plantMap)
+        targetID = selectPlant(plantMap, ignore)
+
+        printDBG(f"Target ID: {targetID}")
 
         # send plant ID and relative position over pipe to rover control (rover should at least slow)
         # TODO**
@@ -335,13 +367,13 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue):
             # call distance approximation on plant id
             distance = translation.target_distance_estimation(targetID, aiqueue)
         except Exception as e:
-            print(e)
+            printDBG(str(e))
             continue
     
         # calculate offset
         disparity = translation.get_ircamera_offset(distance)
 
-        print(f"Plant detected: {targetID}, distance: {distance}")
+        printDBG(f"Plant detected: {targetID}, distance: {distance}")
 
         # Retrieve pixels from thermal 
         # TODO**
@@ -361,21 +393,25 @@ def startPlantProcess(args):
     return startProcess(target=__plantMain, args=args, name="PlantProcess")
 
 
-def startWebots(aicamshm):
+def startWebots(aicamshm, thermshm, aiToPlantQueue):
     # Init webots rover specifics
     global MODEL_PATH
     MODEL_PATH = "../../../payload_rover/yolo_200epoch.pt"
 
-    timeout = time.time() + 240 # Stop after 4 minutes
-    ctx = mp.get_context('spawn')
-    aiToPlant = ctx.Queue(maxsize=1)
+    timeout = time.time() + 240 # Stop after 4 minutes)
+
+    printDBG("Before process creation")
 
     # Start processes
     processes = list()
     # processes.append(startRoverProcess((SIM, timeout))) # rover
-    processes.append(startAIProcess((aicamshm, timeout, MODEL_PATH, aiToPlant), ctx)) # ai cam
-    # processes.append(startPlantProcess((SIM, timeout, aiToPlant))) # plant processing   
+    processes.append(startAIProcess((aicamshm, timeout, MODEL_PATH, aiToPlantQueue))) # ai cam
+    processes.append(startPlantProcess((thermshm, timeout, aiToPlantQueue))) # plant processing   
     
-    # wait on all 3 to finish
-    # for p in processes:
-        # p.join()
+    printDBG("After process creation")
+    
+    return processes
+
+
+if __name__ == "__main__":
+    startWebots(None, None, mp.Queue(maxsize=1))
