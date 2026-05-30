@@ -246,7 +246,7 @@ def initialize_sensors():
             print(error)
 
         try: 
-            bno.initialize()
+            bno.initialize(ALPHA_GFORCE)
         except Exception as error:
             print(error)
 

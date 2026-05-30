@@ -19,17 +19,9 @@ import payload_sensor.ina260 as INA
 from payload_rover.motors import Motor, DriveController
 
 
-bno = BNO()
-back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
-back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
-front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
-front_right_motor = Motor(wheel_diameter=0.1, pwm_channel=3, direction_pin=10, output_pin=-1)
-
-motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
-
-ina = INA()
-
 #-----Constants-----
+ALPHA_GFORCE = 0.8
+
 AICAM_FRAME_RATE = 30
 FRAME_DELAY = 1 / AICAM_FRAME_RATE
 MODEL_PATH = "payload_rover/yolo_200epoch.pt"
@@ -103,6 +95,24 @@ def startProcess(target, args, name):
 
 def __roverMain(SIM, timeout):
     # Any sensors?
+    bno = None
+    back_left_motor, back_right_motor, front_left_motor, front_right_motor = None
+    motors = None
+    ina = None
+    if SIM is not None:
+        pass
+    else:
+        bno = BNO.BNO085()
+        bno.initialize(ALPHA_GFORCE)
+        back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
+        back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
+        front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
+        front_right_motor = Motor(wheel_diameter=0.1, pwm_channel=3, direction_pin=10, output_pin=-1)
+
+        motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
+
+        ina = INA()
+
     # Initialize rover
     move_dist = 0
     kp = 0.5
@@ -239,6 +249,7 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH, queue):
 
         # Ensure we don't get an old frame
         iter_time = time.time() - prev_start
+        # printDBG(f"Loop executed in {iter_time}") # Executes in 0.06-0.11. Want 0.033
         if FRAME_DELAY > iter_time:
             delay_time = round(FRAME_DELAY - iter_time + 0.002, 3)
             time.sleep(delay_time)
