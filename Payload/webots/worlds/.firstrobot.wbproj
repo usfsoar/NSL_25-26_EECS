@@ -9,5 +9,5 @@ orthographicViewHeight: 2.71055
 textFiles: -1
 globalOptionalRendering: LightPositions::CameraFrustums::LidarPointClouds::LidarRaysPaths::DistanceSensorRays
 consoles: Console:All:All
-renderingDevicePerspectives: robot:aicam;1;0.269737;0;0
+renderingDevicePerspectives: robot:aicam;1;0.0936884;0;0
 renderingDevicePerspectives: robot:ircam;1;0.253742;0;0

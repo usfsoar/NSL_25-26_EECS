@@ -8,16 +8,16 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.3535704414914927 -0.037320640588587084 0.9346631011704529 3.3382782749522364
-  position 4.382633754659163 1.1054754664060278 6.4868753037644264
+  orientation -0.27697343974031186 0.268484657047388 0.9226059302912409 1.6822559330591937
+  position 0.5479085230682803 -3.8432998709269204 6.207076648394013
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 Robot {
-  translation 0.15 -1.2 4
-  rotation 0 0 1 1.5708
+  translation 0.33 -0.2 3.31
+  rotation 0 -0.026325976945026194 0.9996534114071184 1.642486371911517
   children [
     DEF CAM_AI Camera {
       translation 0.1485 0.01 -0.012525
@@ -291,6 +291,53 @@ DEF PLANT Solid {
     }
   ]
   name "solid(1)"
+}
+DEF PLANT Solid {
+  translation 0.27 0.6 3.13
+  rotation 1 0 0 1.5707996938995747
+  children [
+    Transform {
+      translation 0 0 0.15
+      scale 0.001 0.001 0.001
+      children [
+        Shape {
+          appearance Fabric {
+            colorOverride 0.5 1 0.4
+          }
+          geometry Mesh {
+            url [
+              "../plant.obj"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(6)"
+}
+DEF PLANT Solid {
+  translation 0.4 0.6 3.13
+  rotation 1 1.2589800000000001e-08 -9.58976e-09 1.5708
+  children [
+    Transform {
+      translation 0 0 0.15
+      rotation 0 0.4472135954999579 0.8944271909999159 0
+      scale 0.002 0.003 0.003
+      children [
+        Shape {
+          appearance Fabric {
+            colorOverride 0.5 1 0.4
+          }
+          geometry Mesh {
+            url [
+              "../plant.obj"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(5)"
 }
 DEF PLANT Solid {
   translation 0.2 0.9 3.15

@@ -190,6 +190,9 @@ class Plant():
         self.last_seen = last_seen
 
 
+# TODO** Take into account the centers of the boxes
+# Boxes centered on same thing are probably looking at the same thing
+# Take into account time since last seen too??? More time since last seen, farther distance could've moved
 def getBoxDistance(box1, box2):
     dist = 0
     for i in range(4):
@@ -230,11 +233,13 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
         for id, oldPlant in plantMap.items():
             dist = getBoxDistance(inference.box, oldPlant.inference.box)
             if dist < DISTANCE_THRESHOLD and dist < minDist:
-                bestId = id
+                bestId = -2
 
         if bestId == -1:
             id = generateId()
             plantMap[id] = Plant(inference, 0)
+        elif bestId == -2:
+            continue
         else:
             # Remove item at id from old list
             p = prevPlantMap.pop(bestId)
