@@ -50,7 +50,7 @@ class TOF():
     def __init__(self):
         pass
 
-    def initialize(self, address):
+    def initialize(self, ):
         for i in range(10):
             try:
                 self.i2c = board.I2C()

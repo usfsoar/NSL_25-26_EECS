@@ -27,6 +27,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO085
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
+from payload_sensor.servo import ServoControl
 
 from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess
 
@@ -120,6 +121,7 @@ else:
     bno = BNO085()
     bmp = BMP()
     sim = None
+    servo = ServoControl()
     
 sm = StateMachine(
     LAUNCH_GFORCE_THRESHOLD,
@@ -321,6 +323,7 @@ def main():
         
 
     while data["state"] != "LANDING":
+        servo.lock()
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
@@ -347,10 +350,14 @@ def main():
         # Handle issues if needed
 
     # Presumably not power recovered
+    time.sleep(10)
     if (get_landing_orientation() == 0 or get_landing_altitude() == 0):
         print("bad landing orientation or altitude")
         return
-    
+
+    #Servo Retract
+    servo.retract()
+    time.sleep(5)
 
     # Start processes
     processes = list()
