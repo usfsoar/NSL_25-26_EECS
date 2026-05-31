@@ -19,6 +19,8 @@ add kalman filter
 import os
 import csv
 import time
+import multiprocessing as mp
+import numpy as np
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
@@ -28,7 +30,7 @@ from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO085
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 
-from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess
+from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, NUM_FIELDS
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
@@ -234,7 +236,7 @@ def initialize_sensors():
         pass
     else:
         try:
-            bmp.initialize()
+            bmp.initialize(ALPHA_ALTITUDE)
         except Exception as error:
             print(error)
 
@@ -351,6 +353,9 @@ def main():
         print("bad landing orientation or altitude")
         return
     
+
+    sensor_shm = mp.shared_memory.SharedMemory(create=True,
+        size=np.zeros(NUM_FIELDS, dtype=np.uint64).nbytes)
 
     # Start processes
     processes = list()
