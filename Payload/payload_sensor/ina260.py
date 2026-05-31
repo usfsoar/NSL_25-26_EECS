@@ -68,16 +68,6 @@ class INA():
             print(f"[INA260] Error retrieving current: {e}")
         return current
     
-    def is_stall(self):
-        return self.get_current_a() > 5
-    
-    def stall_triple_check(self):
-        for i in range(5):
-            if not self.is_stall():
-                return False
-            time.sleep(0.5)
-        return True
-
 if __name__ == '__main__':
     ina = INA()
     while True:

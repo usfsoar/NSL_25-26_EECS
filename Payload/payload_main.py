@@ -27,12 +27,8 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO085
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
-from payload_sensor.vl53l4cx import DistanceSensor
-    
-from payload_rover.rover_control import RoverControl
-from payload_rover.motors import MotorControl
 
-import payload_rover.rover_main
+from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
@@ -140,9 +136,6 @@ sm = StateMachine(
 
 # Log variable
 log = None
-tof = DistanceSensor()
-motors = MotorControl(pins=[1, 2, 3, 4])
-rover = RoverControl(motors, tof, ROVER_SCAN_TIMEOUT, ROVER_EXIT_TIMEOUT)
 
 def check_power_loss():
     if os.path.exists(".running.txt"):
@@ -275,12 +268,10 @@ def get_sensor_data():
         data["raw_velocity"], data["velocity"] = bmp.get_vertical_velocity()
         data["raw_altitude"], data["altitude"] = bmp.get_altitude()
 
-
         data["apogee"] = max(data["apogee"], data["altitude"])
 
         data["pressure"], _ = bmp.get_pressure()
         data["temperature"], _ = bmp.get_temperature()
-
 
 def set_zero_altitude(power_loss):
     prev = bmp.get_pressure()
@@ -294,15 +285,6 @@ def set_zero_altitude(power_loss):
         data["start_pressure"] = bmp.get_pressure()
 
     bmp.set_sea_level_pressure(data["start_pressure"])
-
-    # for i in range(15):
-    #     bmp.get_pressure()  
-    # bmp.set_sea_level_pressure(bmp.get_pressure())
-
-    # for i in range(5):
-    #     time.sleep(0.5)
-    #     bmp.get_pressure()
-    # bmp.set_sea_level_pressure(bmp.get_pressure())
 
 def get_landing_orientation():
     #implement euler
@@ -372,9 +354,9 @@ def main():
 
     # Start processes
     processes = list()
-    processes.append(rover_main.startRoverProcess()) # rover
-    processes.append(rover_main.startAIProcess()) # ai cam
-    processes.append(rover_main.startPlantProcess()) # plant processing   
+    processes.append(startRoverProcess()) # rover
+    processes.append(startAIProcess()) # ai cam
+    processes.append(startPlantProcess()) # plant processing   
     
     # wait on all 3 to finish
     for p in processes:

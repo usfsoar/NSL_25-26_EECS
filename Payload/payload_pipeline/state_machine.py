@@ -6,6 +6,7 @@ class StateMachine:
                  descent_apogee_threshold, descent_altitude_threshold, landing_vel_threshold, 
                  landing_gforce_threshold, landing_altitude_threshold,
                  stable_readings, stable_readings_for_landing, timeout):
+        
         self.launch_gforce_threshold = launch_gforce_threshold
         self.launch_altitude_threshold = launch_altitude_threshold
         self.descent_apogee_threshold = descent_apogee_threshold
@@ -17,7 +18,11 @@ class StateMachine:
         self.stable_readings_for_landing = stable_readings_for_landing
         self.timeout = timeout
 
-        self.counters = 0
+        self.ready_counters = 0
+        self.launched_counters = 0
+        self.descent_counters = 0
+        self.landing_counters = 0
+
         self.start_time = 0
         self.current_time = 0
 
@@ -41,14 +46,14 @@ class StateMachine:
         match self.current_state:
             case "READY":
                 if (self.g_force > self.launch_gforce_threshold) and (self.altitude > self.launch_altitude_threshold):
-                    self.counters += 1
+                    self.ready_counters += 1
                 else:
-                    self.counters = 0
+                    self.ready_counters = 0
 
-                if self.counters >= self.stable_readings:
+                if self.ready_counters >= self.stable_readings:
                     self.current_state = "LAUNCHED"
                     self.start_time = self.time
-                    self.counters = 0
+                    self.ready_counters = 0
                 
             case "LAUNCHED":
                 self.current_time = self.time - self.start_time
@@ -57,13 +62,13 @@ class StateMachine:
                     return
 
                 if (self.apogee > self.descent_apogee_threshold) and (self.altitude < (self.apogee - self.descent_altitude_threshold)):
-                    self.counters += 1
+                    self.launched_counters += 1
                 else:
-                    self.counters = 0
+                    self.launched_counters = 0
                 
-                if self.counters >= self.stable_readings:
+                if self.launched_counters >= self.stable_readings:
                     self.current_state = "DESCENT"
-                    self.counters = 0
+                    self.launched_counters = 0
 
             case "DESCENT":
                 self.current_time = self.time - self.start_time
@@ -71,33 +76,14 @@ class StateMachine:
                     self.current_state  = "LANDING"
                     return
                 
-                if (abs(self.velocity) < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
-                    self.counters += 1
+                if (abs(self.velocity) < self.landing_vel_threshold) and (abs(self.g_force - 1.0) < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
+                    self.landing_counters += 1
                 else:
-                    self.counters = 0
+                    self.landing_counters = 0
 
-                if self.counters >= self.stable_readings_for_landing:
+                if self.landing_counters >= self.stable_readings_for_landing:
                     self.current_state = "LANDING"
-                    self.counters = 0
+                    self.landing_counters = 0
 
             case "LANDING":
                 self.current_state = "LANDING"
-                
-        # match self.current_state:
-        #     case "READY":
-        #         if (self.g_force > self.launch_gforce_threshold) or (self.altitude > self.launch_altitude_threshold):
-        #             self.current_state = "LAUNCHED"
-        #         else:
-        #             self.current_state = "READY"
-        #     case "LAUNCHED":
-        #         if (self.apogee > self.descent_apogee_threshold) and (self.altitude < (self.apogee - self.descent_altitude_threshold)):
-        #             self.current_state = "DESCENT"
-        #         else:
-        #             self.current_state = "LAUNCHED"
-        #     case "DESCENT":
-        #         if (abs(self.velocity) < self.landing_vel_threshold) and (self.g_force - 1.0 < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
-        #             self.current_state = "LANDING"
-        #         else:
-        #             self.current_state = "DESCENT"
-        #     case "LANDING":
-        #         self.current_state = "LANDING"

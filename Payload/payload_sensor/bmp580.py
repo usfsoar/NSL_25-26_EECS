@@ -24,6 +24,7 @@ class BMP():
         Note: Will throw an exception if the BMP sensor cannot be initialized
         """
         self.alpha = alpha
+        self.address = address
         self.prev = (0,0)
         self.alt = (0,0)
 
@@ -80,8 +81,7 @@ class BMP():
 
         self.alt = ((self.alpha * altitude) + (1 - self.alpha)*self.prev[0], time.perf_counter())
 
-        return altitude, self.alt
-    
+        return altitude, self.alt    
 
     def get_vertical_velocity(self):
         """
