@@ -27,8 +27,9 @@ FRAME_DELAY = 1 / AICAM_FRAME_RATE
 MODEL_PATH = "payload_rover/yolo_200epoch.pt"
 
 MAX_DIST = 4 * 2028
-DISTANCE_THRESHOLD = 160 # TODO** SUBJECT TO CHANGE AND TESTING
-PLANT_CLASS = 6 # TODO** BASED ON AI CAMERA MODEL CLASSES
+BOTTOM_CORRECTION = 70 # TODO** TUNE
+DISTANCE_THRESHOLD = 220 # TODO** SUBJECT TO CHANGE AND TESTING
+PLANT_CLASSES = set([6, 8]) # TODO**
 MAX_UNMATCHED_TIME = 30 # TODO** TUNE 
 
 RESOLUTION_WIDTH = 2028
@@ -192,7 +193,11 @@ class Plant():
 def getBoxDistance(box1, box2):
     dist = 0
     for i in range(4):
-        dist = max(abs(box1[i] - box2[i]), dist)
+        d = abs(box1[i] - box2[i])
+        if i == 3:
+            d -= BOTTOM_CORRECTION
+        
+        dist = max(d, dist)
 
     return dist
 
@@ -208,8 +213,8 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
 
     for inference in inferences:
         # Disregard any inferences that aren't plants
-        if inference.label_class != PLANT_CLASS:
-            continue
+        # if inference.label_class not in PLANT_CLASS:
+        #     continue
 
         bestId = -1
         minDist = MAX_DIST
@@ -220,7 +225,13 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
                 # Choose best under threshold
                 bestId = id 
                 minDist = dist
-                
+        
+        # Check if this box has already been accounted for by a previous id
+        for id, oldPlant in plantMap.items():
+            dist = getBoxDistance(inference.box, oldPlant.inference.box)
+            if dist < DISTANCE_THRESHOLD and dist < minDist:
+                bestId = id
+
         if bestId == -1:
             id = generateId()
             plantMap[id] = Plant(inference, 0)
@@ -274,16 +285,18 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH, queue):
         prev_start = time.time()
         inferences, frame = aicam.getInference()
         
-        if len(inferences) >= 1:
-            printDBG(f"Made the following inferences in frame {frameNumber}")
-        for inf in inferences:
-            printDBG("\t", inf.to_string()) 
-
         # map each plant to id's (using previous)
         plantMap = idPlants(plantMap, inferences)
 
+
+        if len(inferences) >= 1:
+            printDBG(f"Have the following plant inferences in frame {frameNumber}")
+            for id, plant in plantMap.items():
+                if plant.last_seen == 0:
+                    printDBG("\t", f"ID: {id},", plant.inference.to_string()) 
+
         for id, plant in plantMap.items():
-            if plant.last_seen > 10:
+            if plant.last_seen > 15:
                 continue
             inf = plant.inference
             color = None
