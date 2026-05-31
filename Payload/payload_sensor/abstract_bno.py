@@ -1,16 +1,8 @@
-# Abstract class for the BNO085 IMU Sensor
+# Abstract class for the BNO IMU Sensors
 
 import time
 import math
 
-from adafruit_bno08x import (
-    BNO_REPORT_ACCELEROMETER
-  #  BNO_REPORT_GYROSCOPE,
-   # BNO_REPORT_MAGNETOMETER,
-   # BNO_REPORT_ROTATION_VECTOR,
-   # BNO_REPORT_LINEAR_ACCELERATION,
-   # BNO_REPORT_GRAVITY
-)
 
 RECOVERY_WAIT = 0.05
 
