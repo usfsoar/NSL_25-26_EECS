@@ -105,11 +105,15 @@ def startProcess(target, args, name):
 
 def __roverMain(SIM, timeout):
     # Any sensors?
+    bno = None
     back_left_motor, back_right_motor, front_left_motor, front_right_motor = None
     motors = None
+    ina = None
     if SIM is not None:
         pass
     else:
+        bno = BNO.BNO085()
+        bno.initialize(ALPHA_GFORCE)
         back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
         back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
         front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
@@ -117,7 +121,13 @@ def __roverMain(SIM, timeout):
 
         motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
 
-    # Initialize rover
+        ina = INA()
+
+    #Exit CubeSat
+    motors.move_forward(speed=100)
+    time.sleep(3)
+
+    # Initialize grid pattern
     move_dist = 0
     kp = 0.5
     dist_increment = 1 #meter
@@ -135,24 +145,24 @@ def __roverMain(SIM, timeout):
                 error = move_dist - traveled
                 speed = max(25, min(int(error * kp), 100))
                 
-                if ina.is_stall():
-                    motors.stop()
-                    time.sleep(3)
+                # if ina.is_stall():
+                #     motors.stop()
+                #     time.sleep(3)
 
-                    curr = time.time()
-                    while time.time() - curr < 10:
-                        motors.move_backward(speed=100)
+                #     curr = time.time()
+                #     while time.time() - curr < 10:
+                #         motors.move_backward(speed=100)
                         
-                    time.sleep(3)
+                #     time.sleep(3)
                         
-                    while time.time() - curr < 3:
-                        motors.move_backward(speed=50)
-                        if ina.is_stall():
-                            motors.stop()
-                            break
-                        else:
-                            motors.spin_right(speed=75)
-                            continue
+                #     while time.time() - curr < 3:
+                #         motors.move_backward(speed=50)
+                #         if ina.is_stall():
+                #             motors.stop()
+                #             break
+                #         else:
+                #             motors.spin_right(speed=75)
+                #             continue
                     
 
                         
@@ -161,9 +171,6 @@ def __roverMain(SIM, timeout):
             
             motors.spin_right(speed=75)
             
-
-        
-
         # check if obstacle function
             # call obstacle avoidance function
             # continue
@@ -177,8 +184,6 @@ def __roverMain(SIM, timeout):
 
         # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
         # Once handled, then go back to holding and wait again
-        
-
 
 def startRoverProcess(args):
     return startProcess(target=__roverMain, args=args, name="RoverProcess")
