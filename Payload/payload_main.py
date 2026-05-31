@@ -291,8 +291,6 @@ def set_zero_altitude(power_loss):
     bmp.set_sea_level_pressure(data["start_pressure"])
 
 def get_landing_orientation():
-    #implement euler
-    #from adafruit import rvc
     accel = bno.get_acceleration()
     x = accel[0]
     y = accel[1]
