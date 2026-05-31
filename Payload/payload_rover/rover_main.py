@@ -6,7 +6,6 @@ import cv2
 import os
 import math
 import sys
-import numpy as np
 
 #-----Soar Code-----
 import aicam_lib.aicamera as ai
@@ -15,18 +14,13 @@ import aicam_lib.rendering as rendering
 import payload_rover.camera_translation as translation
 
 import payload_sensor.bno085 as BNO
-import payload_sensor.bmp580 as BMP
 import payload_sensor.ina260 as INA
-import payload_sensor.tofvl53 as TOF
 
 from payload_rover.motors import Motor, DriveController
 
 
 #-----Constants-----
-NUM_FIELDS = 5
-
-ALPHA_BNO = 0.8
-ALPHA_BMP = 0.8
+ALPHA_GFORCE = 0.8
 
 AICAM_FRAME_RATE = 30
 FRAME_DELAY = 1 / AICAM_FRAME_RATE
@@ -105,11 +99,15 @@ def startProcess(target, args, name):
 
 def __roverMain(SIM, timeout):
     # Any sensors?
+    bno = None
     back_left_motor, back_right_motor, front_left_motor, front_right_motor = None
     motors = None
+    ina = None
     if SIM is not None:
         pass
     else:
+        bno = BNO.BNO085()
+        bno.initialize(ALPHA_GFORCE)
         back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
         back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
         front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
@@ -117,7 +115,13 @@ def __roverMain(SIM, timeout):
 
         motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
 
-    # Initialize rover
+        ina = INA()
+
+    #Exit CubeSat
+    motors.move_forward(speed=100)
+    time.sleep(3)
+
+    # Initialize grid pattern
     move_dist = 0
     kp = 0.5
     dist_increment = 1 #meter
@@ -135,24 +139,24 @@ def __roverMain(SIM, timeout):
                 error = move_dist - traveled
                 speed = max(25, min(int(error * kp), 100))
                 
-                if ina.is_stall():
-                    motors.stop()
-                    time.sleep(3)
+                # if ina.is_stall():
+                #     motors.stop()
+                #     time.sleep(3)
 
-                    curr = time.time()
-                    while time.time() - curr < 10:
-                        motors.move_backward(speed=100)
+                #     curr = time.time()
+                #     while time.time() - curr < 10:
+                #         motors.move_backward(speed=100)
                         
-                    time.sleep(3)
+                #     time.sleep(3)
                         
-                    while time.time() - curr < 3:
-                        motors.move_backward(speed=50)
-                        if ina.is_stall():
-                            motors.stop()
-                            break
-                        else:
-                            motors.spin_right(speed=75)
-                            continue
+                #     while time.time() - curr < 3:
+                #         motors.move_backward(speed=50)
+                #         if ina.is_stall():
+                #             motors.stop()
+                #             break
+                #         else:
+                #             motors.spin_right(speed=75)
+                #             continue
                     
 
                         
@@ -177,7 +181,6 @@ def __roverMain(SIM, timeout):
 
         # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
         # Once handled, then go back to holding and wait again
-        
 
 
 def startRoverProcess(args):
@@ -448,86 +451,6 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue):
 
 def startPlantProcess(args):
     return startProcess(target=__plantMain, args=args, name="PlantProcess")
-
-
-
-
-
-def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
-    # Init shared memory
-    sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
-    data = np.ndarray(NUM_FIELDS, 
-                      dtype=[('velocity', np.float64)
-                             ('lin_accel', np.float64), 
-                             ('temperature', np.float64),
-                             ('current', np.float64),
-                             ('distance', np.float64)], 
-                      buffer=sensor_shm.buf)
-    
-    local_data = np.ndarray(NUM_FIELDS, 
-                            dtype=[('velocity', np.float64)
-                                   ('lin_accel', np.float64), 
-                                   ('temperature', np.float64),
-                                   ('current', np.float64),
-                                   ('distance', np.float64)], 
-                            buffer=sensor_shm.buf)
-
-
-    # Create all I2C dependent sensors
-    bno = BNO.BNO085()
-    bno.initialize(ALPHA_BNO)
-
-    bmp = BMP.BMP()
-    bmp.initialize(ALPHA_BMP)
-
-    ina = INA.INA()
-
-    tof = TOF.TOF()
-    tof.initialize()
-    
-    # Init velocity calculation
-    local_data['velocity'] = 0
-    prev_lin_accel = bno.get_linear_acceleration()
-    prev_time = time.perf_counter()
-
-    while True:
-        if time.time() > timeout:
-            break
-
-        # read all relevant sensor info into local variables
-        read_time = time.perf_counter()
-        local_data['lin_accel'] = bno.get_linear_acceleration()
-        local_data['temperature'] = bmp.get_temperature()
-        local_data['current'] = ina.get_current_a()
-        local_data['distance'] = tof.get_distance()
-
-        # attempt to read from queue for reset velocity bias to 0
-        stopped = False
-        try: 
-            stopped = roverQueue.get(block=False)
-        except Exception as e:
-            pass # Not stopped sunce no message in queue
-
-        # calculate current velocity
-        if stopped:
-            local_data['velocity'] = 0
-
-        delta_t = read_time - prev_time
-        delta_v = ((local_data['lin_accel'] + prev_lin_accel) / 2) * delta_t
-        local_data['velocity'] = delta_v + local_data['velocity']
-
-        # save all these into shared memory at once
-        data[:] = local_data[:]
-
-        prev_lin_accel = local_data['lin_accel']
-        prev_time = read_time
-
-
-
-
-def startSensorProcess(args):
-    return startProcess(target=__SensorMain, args=args, name="SensorProcess")
-
 
 
 def startWebots(aicamshm, thermshm, aiToPlantQueue):
