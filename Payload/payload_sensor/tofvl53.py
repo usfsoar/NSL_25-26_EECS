@@ -70,9 +70,8 @@ class TOF():
         self.sensor.start_ranging()
     
     def get_distance(self):
-        distance = self.sensor.distance
         self.sensor.clear_interrupt()
-        return distance
+        return self.sensor.distance
 
 if __name__ == "__main__":
     tof = TOF()
