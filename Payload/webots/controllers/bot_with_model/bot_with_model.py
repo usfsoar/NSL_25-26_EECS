@@ -42,7 +42,7 @@ def main():
     avoidObstacleCounter = 0
 
     # AI Cam Shared Memory
-    SHAPE = (640, 640, 3)
+    SHAPE = (1520, 2028, 3)
     shm = mp.shared_memory.SharedMemory( create=True,
         size=np.zeros(SHAPE, dtype=np.uint8).nbytes)
     lock = mp.Lock()
@@ -60,7 +60,7 @@ def main():
             prev_time = t
             # Camera.saveImage(aicamdv, "testingyolo.png", 100)
             raw = Camera.getImage(aicamdv)
-            img = np.frombuffer(raw, dtype=np.uint8).reshape((640, 640, 4))
+            img = np.frombuffer(raw, dtype=np.uint8).reshape((1520, 2028, 4))
             img = img[:, :, :3][:, :, ::-1]
             with lock:
                 frame[:] = img[:]

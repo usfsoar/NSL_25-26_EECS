@@ -41,8 +41,9 @@ Robot {
         }
       ]
       name "aicam"
-      width 640
-      height 640
+      fieldOfView 1.15192
+      width 2028
+      height 1520
     }
     DEF CAM_IR Camera {
       translation 0.1485 -0.008875 -0.012525
@@ -320,7 +321,7 @@ Solid {
   translation 0 2 3.3
   rotation 0 0 1 -0.9162996938995747
   children [
-    Transform {
+    Pose {
       translation 0.8 -0.1 0
       rotation 0 0 1 1.7016996938995748
       children [
@@ -340,7 +341,7 @@ Solid {
   translation 0 1.3 3.3
   rotation 0 0 1 0.9163003061004252
   children [
-    Transform {
+    Pose {
       rotation 0 0 1 1.7016996938995748
       children [
         Shape {

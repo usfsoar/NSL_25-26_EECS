@@ -27,8 +27,9 @@ FRAME_DELAY = 1 / AICAM_FRAME_RATE
 MODEL_PATH = "payload_rover/yolo_200epoch.pt"
 
 MAX_DIST = 4 * 2028
-DISTANCE_THRESHOLD = 30 # TODO** SUBJECT TO CHANGE AND TESTING
+DISTANCE_THRESHOLD = 160 # TODO** SUBJECT TO CHANGE AND TESTING
 PLANT_CLASS = 6 # TODO** BASED ON AI CAMERA MODEL CLASSES
+MAX_UNMATCHED_TIME = 30 # TODO** TUNE 
 
 RESOLUTION_WIDTH = 2028
 RESOLUTION_HEIGHT = 1520
@@ -36,9 +37,11 @@ MAX_AREA = RESOLUTION_WIDTH * RESOLUTION_HEIGHT
 MAX_OFFSET = math.sqrt((RESOLUTION_WIDTH/2) ** 2 + (RESOLUTION_HEIGHT/2) ** 2)
 
 # Hyper-parameters TODO** TUNE THEM
+ACCEPTABLE_LAST_SEEN = 1
 WEIGHT_AREA = 1
 WEIGHT_CONFIDENCE = 0.7
 WEIGHT_OFFSET = 1
+
 
 
 print(__file__, mp.current_process().name)
@@ -180,6 +183,10 @@ def startRoverProcess(args):
     return startProcess(target=__roverMain, args=args, name="RoverProcess")
 
 
+class Plant():
+    def __init__(self, inference, last_seen: int):
+        self.inference = inference
+        self.last_seen = last_seen
 
 
 def getBoxDistance(box1, box2):
@@ -196,9 +203,7 @@ def generateId():
     return prevId
 
 
-def idPlants(prevPlantMap, inferences):
-    # TODO** Make plant boxes store 2-3 frames before getting removed
-
+def idPlants(prevPlantMap: dict[Plant], inferences):
     plantMap = dict()
 
     for inference in inferences:
@@ -210,7 +215,7 @@ def idPlants(prevPlantMap, inferences):
         minDist = MAX_DIST
         # Find closest previous label
         for id, oldPlant in prevPlantMap.items():
-            dist = getBoxDistance(inference.box, oldPlant.box)
+            dist = getBoxDistance(inference.box, oldPlant.inference.box)
             if dist < DISTANCE_THRESHOLD and dist < minDist:
                 # Choose best under threshold
                 bestId = id 
@@ -218,9 +223,20 @@ def idPlants(prevPlantMap, inferences):
                 
         if bestId == -1:
             id = generateId()
-            plantMap[id] = inference
+            plantMap[id] = Plant(inference, 0)
         else:
-            plantMap[bestId] = inference
+            # Remove item at id from old list
+            p = prevPlantMap.pop(bestId)
+            p.inference = inference
+            p.last_seen = 0
+            plantMap[bestId] = p
+            
+
+    # All those in old list still will be put back into queue with - 1 timeout
+    for id, unmatched in prevPlantMap.items():
+        if unmatched.last_seen < MAX_UNMATCHED_TIME: # If unmatched for full wait, then remove id
+            unmatched.last_seen +=1
+            plantMap[id] = unmatched
 
     return plantMap
 
@@ -261,28 +277,36 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH, queue):
         if len(inferences) >= 1:
             printDBG(f"Made the following inferences in frame {frameNumber}")
         for inf in inferences:
-            printDBG(inf.to_string()) 
+            printDBG("\t", inf.to_string()) 
 
         # map each plant to id's (using previous)
         plantMap = idPlants(plantMap, inferences)
 
-        for id, inf in plantMap.items():
-            rendering.drawBox(frame, box=inf.box)
+        for id, plant in plantMap.items():
+            if plant.last_seen > 10:
+                continue
+            inf = plant.inference
+            color = None
+            if plant.last_seen == 0:
+                color = (0,255,0)
+            else:
+                color = (0,0,255)
+            rendering.drawBox(frame, box=inf.box, color=color)
             rendering.drawText(frame, 
-                               text=f"ID: {id}, Label: {inf.label_class}, Confidence: {inf.confidence}", 
+                               text=f"ID: {id}, Conf: {inf.confidence}", 
                                position=(inf.box[0], inf.box[1]),
                                size=1,
-                               color=(0, 0, 255),
+                               color=color,
                                thickness=2)
 
 
-        # save frame to file with frame number name (remove oldest frame if > 240 images)
-        if os.path.exists(f"aicam/{frameNumber - 240}.jpg"):
+        # save frame to file with frame number name (remove oldest frame if > 600 images)
+        if os.path.exists(f"aicam/{(frameNumber - 600):05d}.jpg"):
             # delete oldest frame
-            os.remove(f"aicam/{frameNumber - 240}.jpg")
+            os.remove(f"aicam/{(frameNumber - 600):05d}.jpg")
         # TODO** Conver this to shared memory for sure. Just use a lock and shared memory array. Not too bad
         # Maybe just save all frames if space permits. Then we can reconstruct a video of what the rover saw????
-        cv2.imwrite(f"aicam/{frameNumber}.jpg", frame) # TODO** A lot of I/O overhead? Maybe save in shared memory
+        cv2.imwrite(f"aicam/{frameNumber:05d}.jpg", frame) # TODO** A lot of I/O overhead? Maybe save in shared memory
         frameNumber += 1
 
         if len(plantMap) == 0:
@@ -325,14 +349,15 @@ def selectPlant(plantMap, ignore: set):
     maxValue = float('-inf')
 
     for id, plant in plantMap.items():
-        if id not in ignore:
+        inf = plant.inference
+        if id not in ignore and plant.last_seen <= ACCEPTABLE_LAST_SEEN:
             # Normalize all to < 1
             # maximize area / screen area
-            area = findArea(plant.box) / MAX_AREA
+            area = findArea(inf.box) / MAX_AREA
             # maximize confidence
-            confidence = plant.confidence
+            confidence = inf.confidence
             # minimize distance from center of plant.box to center of pixels grid / corner to center
-            offset = distToCenter(plant.box) / MAX_OFFSET
+            offset = distToCenter(inf.box) / MAX_OFFSET
             
             # maximize value
             value = (WEIGHT_AREA * area) + (WEIGHT_CONFIDENCE * confidence) - (WEIGHT_OFFSET * offset)
@@ -369,22 +394,25 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue):
         # choose plant ID according to selection algorithm
         targetID = selectPlant(plantMap, ignore)
 
+        if targetID == -1:
+            continue
+
         printDBG(f"Target ID: {targetID}")
 
         # send plant ID and relative position over pipe to rover control (rover should at least slow)
         # TODO**
     
-        try:
-            # call distance approximation on plant id
-            distance = translation.target_distance_estimation(targetID, aiqueue)
-        except Exception as e:
-            printDBG(str(e))
-            continue
+        # try:
+        #     # call distance approximation on plant id
+        #     distance = translation.target_distance_estimation(targetID, aiqueue)
+        # except Exception as e:
+        #     printDBG(str(e))
+        #     continue
     
         # calculate offset
-        disparity = translation.get_ircamera_offset(distance)
+        # disparity = translation.get_ircamera_offset(distance)
 
-        printDBG(f"Plant detected: {targetID}, distance: {distance}")
+        # printDBG(f"Plant detected: {targetID}, distance: {distance}")
 
         # Retrieve pixels from thermal 
         # TODO**

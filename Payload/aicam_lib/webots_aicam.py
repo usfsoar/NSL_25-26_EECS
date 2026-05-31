@@ -12,7 +12,7 @@ import numpy as np
 class WebotsAICamera():
     def __init__(self, network: str, shm_name, lock, size: tuple[int, int] = (640, 640)):
         self.model = YOLO(model=network)
-        self.SHAPE = (640, 640, 3)
+        self.SHAPE = (1520, 2028, 3)
 
         self.shm = mp.shared_memory.SharedMemory(name=shm_name)
         self.frame = np.ndarray(self.SHAPE, dtype=np.uint8, buffer=self.shm.buf)

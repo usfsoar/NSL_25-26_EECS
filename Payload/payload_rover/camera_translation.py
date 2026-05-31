@@ -19,15 +19,16 @@ def getCurrentVelocity():
 
 
 def getPlant(id, queue):
-    plantMap, frameNumber = queue.get()
-    if id not in plantMap:
-        raise(f"Plant ID {id} no longer tracked")
-    # If plant hasn't moved, wait until a frame that has 
-        # Put all in infinite loop until not equal to break
-    return plantMap[id]
+    while True:
+        plantMap, frameNumber = queue.get()
+        if id not in plantMap:
+            raise(f"Plant ID {id} no longer tracked")
+        if plantMap[id].last_seen == 0:
+            break
+    return plantMap[id].inference
 
 
-def target_distance_estimation(targetID, queue, bno):    
+def target_distance_estimation(targetID, queue):    
     T_d0, d0 = recoverT_d(targetID, queue)
 
     T_d1, d1 = recoverT_d(targetID, queue)
@@ -47,7 +48,7 @@ def target_distance_estimation(targetID, queue, bno):
     return (x[0] + x[1]) / 2
 
 
-def recoverT_d(targetID, queue, bno):
+def recoverT_d(targetID, queue):
     # Get bounding box at timestep t (Vector of height and width)
     # Retrieve targeted inference object (Something like get inference of targeted)
     
