@@ -8,7 +8,7 @@ Parses GS serial lines of the form:
     [TLM ALT] bay_seq=X gs_seq=Y Data: 1 HH:MM:SS.mmm,alt,temp,pressure
     [TLM IMU] bay_seq=X gs_seq=Y Data: 0 HH:MM:SS.mmm,ax,...,wz
     [TLM GPS] bay_seq=X gs_seq=Y Data: 2 HH:MM:SS.mmm,nmea...
-    [TLM KAL] bay_seq=X gs_seq=Y Data: 3 HH:MM:SS.mmm,alt,vel,acc
+    [TLM KAL] bay_seq=X gs_seq=Y Data: 3 HH:MM:SS.mmm, state, alt,vel,acc
     RSSI: -XX
 
 Commands sent to GS (which forwards over radio to Bay):
@@ -178,6 +178,7 @@ class TelemetryStore:
 
         # Kalman
         self.kal_t   = deque(maxlen=n)
+        self.kal_state = deque(maxlen=n)
         self.kal_alt = deque(maxlen=n)
         self.kal_vel = deque(maxlen=n)
         self.kal_acc = deque(maxlen=n)
@@ -468,8 +469,8 @@ class SOARGroundStation(QMainWindow):
         # Baud
         h.addWidget(QLabel("Baud"))
         self.baud_cb = QComboBox()
-        self.baud_cb.addItems(["9600", "19200", "38400", "57600", "115200", "230400"])
-        self.baud_cb.setCurrentText("115200")
+        self.baud_cb.addItems(["9600", "19200", "38400", "57600", "115200", "230400", "460800", "921600"])
+        self.baud_cb.setCurrentText("921600")
         self.baud_cb.setMinimumWidth(90)
         h.addWidget(self.baud_cb)
 
@@ -496,6 +497,12 @@ class SOARGroundStation(QMainWindow):
         self.rssi_lbl = QLabel("--- dBm")
         self.rssi_lbl.setStyleSheet(f"color: {PALETTE['yellow']}; font-weight: bold; min-width: 70px;")
         h.addWidget(self.rssi_lbl)
+        
+        # RSSI
+        h.addWidget(QLabel("State"))
+        self.state_lbl = QLabel("---")
+        self.state_lbl.setStyleSheet(f"color: {PALETTE['green']}; font-weight: bold; min-width: 70px;")
+        h.addWidget(self.state_lbl)
 
         h.addWidget(self._vdiv())
 
@@ -721,7 +728,6 @@ class SOARGroundStation(QMainWindow):
             color = PALETTE['green'] if v > -95 else PALETTE['yellow'] if v > -110 else PALETTE['red']
             self.rssi_lbl.setText(f"{v} dBm")
             self.rssi_lbl.setStyleSheet(f"color:{color}; font-weight:bold;")
-
         elif kind == 'ALT':
             STORE.alt_t.append(payload['t'])
             STORE.alt_altitude.append(payload['altitude'])
@@ -738,7 +744,9 @@ class SOARGroundStation(QMainWindow):
             STORE.kal_alt.append(payload['alt'])
             STORE.kal_vel.append(payload['vel'])
             STORE.kal_acc.append(payload['acc'])
+            self.state_lbl.setText(str(payload['state']))
             STORE.latest.update({
+                'state': payload['state'],
                 'kal_alt': payload['alt'],
                 'kal_vel': payload['vel'],
                 'kal_acc': payload['acc'],

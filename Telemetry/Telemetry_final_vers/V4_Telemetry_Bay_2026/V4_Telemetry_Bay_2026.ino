@@ -38,9 +38,9 @@ SOAR_BNO085 imu;                  // Wire
 RH_RF95 rfm96w(RFM96W_CS, RFM96W_INT);
 
 // ------------------- Radio params -------------------
-static float RFM96W_FREQ = 430.0f;
-static const uint32_t RFM_BW_HZ = 60000;
-static const uint8_t  RFM_SF    = 9;
+static float RFM96W_FREQ = 421.62f;
+static const uint32_t RFM_BW_HZ = 62500;
+static const uint8_t  RFM_SF    = 7;
 bool telemetry_on = false;
 const char initial_msg[100] = "Callsign: KR4IJA | Team: 24 | Beginning Transmissions \n";
 
@@ -86,6 +86,8 @@ static float    lastFreqNew = 0.0f;
 // ------------------- Telemetry ACK protocol state -------------------
 static uint32_t bay_seq = 1;        // Bay telemetry sequence (independent)
 static uint32_t last_gs_seq = 0;    // last GS ACK seq seen (independent)
+static const uint32_t TELEMETRY_PERIOD_MS = 62;
+static uint32_t lastTelemetryMs = 0;
 
 static bool waitingAck = false;
 static uint8_t  inflight_type = 0;
@@ -93,7 +95,9 @@ static uint32_t inflight_seq  = 0;
 static uint32_t ack_deadline_ms = 0;
 
 // No resend requested:
-static const uint32_t ACK_TIMEOUT_MS = 1500;
+static const uint32_t ACK_TIMEOUT_MS = 250;
+static const uint32_t SD_FLUSH_PERIOD_MS = 250;
+static uint32_t lastSdFlushMs = 0;
 
 // Store payload for inflight packet (for logging/debug; not resending)
 static char inflight_payload[RH_RF95_MAX_MESSAGE_LEN + 1];
@@ -242,8 +246,8 @@ static void buildTlmPacketTrunc(uint8_t type, uint32_t seq, const char* payload,
 static void startTelemetryTxn(uint8_t type, const char* payload) {
   inflight_type = type;
   inflight_seq  = bay_seq;
-  waitingAck = true;
-  ack_deadline_ms = millis() + ACK_TIMEOUT_MS;
+  // waitingAck = true;
+  // ack_deadline_ms = millis() + ACK_TIMEOUT_MS;
 
   // store payload for debug
   strncpy(inflight_payload, payload ? payload : "", sizeof(inflight_payload) - 1);
@@ -324,6 +328,20 @@ void writeSensorDataToSD(SensorData& sensor_data) {
   if (filename && len > 0 && (size_t)len < sizeof(dataBuffer)) {
     writeToBothCards(filename, dataBuffer);
   }
+}
+static void flushLatestDataToSD()
+{
+    if (have_imu)
+        writeSensorDataToSD(latest_imu);
+
+    if (have_alt)
+        writeSensorDataToSD(latest_alt);
+
+    if (have_gps)
+        writeSensorDataToSD(latest_gps);
+
+    if (have_kalman)
+        writeSensorDataToSD(latest_kalman);
 }
 
 // ------------------- Sensor update functions (scheduled) -------------------
@@ -466,7 +484,7 @@ static void updateKalman(const char* ts) {
 
 // ------------------- Setup -------------------
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(2000000);
   while (!Serial && millis() < 3000) {}
   delay(200);
 
@@ -506,7 +524,7 @@ void setup() {
 
   rfm96w.setSignalBandwidth(RFM_BW_HZ);
   rfm96w.setSpreadingFactor(RFM_SF);
-  rfm96w.setTxPower(18, false);
+  rfm96w.setTxPower(20, false);
   rfm96w.setModeRx();
 
   Serial.printf("Radio OK. Freq=%.3f MHz BW=%lu SF=%u\n", RFM96W_FREQ, (unsigned long)RFM_BW_HZ, (unsigned)RFM_SF);
@@ -584,7 +602,11 @@ void loop() {
 
     if (rfm96w.recv(buf, &len)) {
         buf[len] = 0; // Null terminate to treat as string
+        const char* s = (const char*)buf;
         
+        uint32_t seq;
+        float fNew;
+        int powerLevel;
         // Use your existing startsWith helper for consistency
         if (buf[0] == '1') {
             telemetry_on = true;
@@ -593,6 +615,77 @@ void loop() {
             delay(50);
             rfm96w.waitPacketSent();
         } 
+
+        if (parseFreqCmd(s, seq, fNew)) {
+          Serial.print("[Bay] RX ");
+          Serial.println(s);
+
+          // ACK on old freq
+          char ack[64];
+          snprintf(ack, sizeof(ack), "ACKFREQ,%lu,%.3f", (unsigned long)seq, fNew);
+          Serial.print("[Bay] TX ");
+          Serial.println(ack);
+          sendAscii(ack);
+
+          if (seq == lastFreqSeq && fNew == lastFreqNew) {
+            Serial.println("[Bay] Duplicate FREQ seq; ACK re-sent, not switching again.");
+          } else {
+            lastFreqSeq = seq;
+            lastFreqNew = fNew;
+
+            delay(50);
+            Serial.printf("[Bay] Switching to %.3f\n", fNew);
+            setFreq(fNew);
+            pauseTelemetry(QUIET_AFTER_SWITCH_MS);
+          }
+        } 
+        else if (parsePowerCmd(s, seq, powerLevel)) {
+          Serial.print("[Bay] RX ");
+          Serial.println(s);
+
+          char ack[64];
+          snprintf(ack, sizeof(ack), "ACKPOWER,%lu,%d", (unsigned long)seq, powerLevel);
+          Serial.print("[Bay] TX ");
+          Serial.println(ack);
+          sendAscii(ack);
+
+          delay(50);
+          Serial.printf("[Bay] Setting power to %d\n", powerLevel);
+          rfm96w.setTxPower(powerLevel, false);
+          pauseTelemetry(QUIET_AFTER_SWITCH_MS);
+
+        }
+        else if (parsePingCmd(s, seq)) {
+          Serial.print("[Bay] RX ");
+          Serial.println(s);
+
+          char ack[32];
+          snprintf(ack, sizeof(ack), "ACKPING,%lu", (unsigned long)seq);
+          Serial.print("[Bay] TX ");
+          Serial.println(ack);
+          sendAscii(ack);
+          pauseTelemetry(100);
+        }
+        else if (parseRebootCmd(s, seq)) {
+          Serial.print("[Bay] RX ");
+          Serial.println(s);
+
+          char ack[40];
+          snprintf(ack, sizeof(ack), "ACKREBOOT,%lu", (unsigned long)seq);
+          Serial.print("[Bay] TX ");
+          Serial.println(ack);
+          sendAscii(ack);
+
+          delay(200);
+          Serial.println("[Bay] Rebooting...");
+          teensyReboot();
+        } else if (buf[0] == '0') {
+            telemetry_on = false;
+            Serial.println("Telemetry: DISABLED");
+        } else {
+          Serial.print("[Bay] RX unknown: ");
+          Serial.println(s);
+        }
     }
 }
 
@@ -603,7 +696,6 @@ if (!telemetry_on) {
         Serial.println("System is on standby");
         lastPrint = millis();
     }
-    
     // IMPORTANT: Keep feeding the watchdog even in standby!
     wdt.feed(); 
     return; // Exit loop() early to skip sensor/TX logic
@@ -624,23 +716,23 @@ if (!telemetry_on) {
         Serial.print("[Bay] RX ");
         Serial.println(s);
 
-        if (waitingAck && aType == inflight_type && aBaySeq == inflight_seq) {
-          waitingAck = false;
+        // if (waitingAck && aType == inflight_type && aBaySeq == inflight_seq) {
+        //   waitingAck = false;
 
-          if (last_gs_seq != 0 && aGsSeq != last_gs_seq + 1) {
-            Serial.printf("[Bay] NOTE: GS seq jump %lu -> %lu (ACK loss or GS restart)\n",
-                          (unsigned long)last_gs_seq, (unsigned long)aGsSeq);
-          }
-          last_gs_seq = aGsSeq;
+        //   if (last_gs_seq != 0 && aGsSeq != last_gs_seq + 1) {
+        //     Serial.printf("[Bay] NOTE: GS seq jump %lu -> %lu (ACK loss or GS restart)\n",
+        //                   (unsigned long)last_gs_seq, (unsigned long)aGsSeq);
+        //   }
+        //   last_gs_seq = aGsSeq;
 
-          Serial.printf("[Bay] ACKED type=%u bay_seq=%lu gs_seq=%lu ✅\n",
-                        (unsigned)aType, (unsigned long)aBaySeq, (unsigned long)aGsSeq);
+        //   Serial.printf("[Bay] ACKED type=%u bay_seq=%lu gs_seq=%lu ✅\n",
+        //                 (unsigned)aType, (unsigned long)aBaySeq, (unsigned long)aGsSeq);
 
-          bay_seq++; // advance only on ACK
-          pauseTelemetry(5);
-        } else {
-          Serial.println("[Bay] ACKTLM ignored (not matching inflight).");
-        }
+        //   bay_seq++; // advance only on ACK
+        //   pauseTelemetry(5);
+        // } else {
+        //   Serial.println("[Bay] ACKTLM ignored (not matching inflight).");
+        // }
         // Do not treat ACK as command
       }
       else {
@@ -726,21 +818,21 @@ if (!telemetry_on) {
   }
 
   // --------- B) If waiting for ACK, handle timeout (NO resend) ----------
-  if (waitingAck) {
-    if ((int32_t)(millis() - ack_deadline_ms) > 0) {
-      Serial.printf("[Bay] ACK TIMEOUT type=%u bay_seq=%lu (no resend)\n",
-                    (unsigned)inflight_type, (unsigned long)inflight_seq);
+  // if (waitingAck) {
+  //   if ((int32_t)(millis() - ack_deadline_ms) > 0) {
+  //     Serial.printf("[Bay] ACK TIMEOUT type=%u bay_seq=%lu (no resend)\n",
+  //                   (unsigned)inflight_type, (unsigned long)inflight_seq);
 
-      // Mark as lost and move on (prevents deadlock)
-      waitingAck = false;
-      bay_seq++;
-      pauseTelemetry(2);
-    } else {
-      // Keep loop responsive while waiting
-      delay(1);
-      return;
-    }
-  }
+  //     // Mark as lost and move on (prevents deadlock)
+  //     waitingAck = false;
+  //     bay_seq++;
+  //     pauseTelemetry(2);
+  //   } else {
+  //     // Keep loop responsive while waiting
+  //     delay(1);
+  //     return;
+  //   }
+  // }
 
   // --------- C) Respect quiet window ----------
   if ((int32_t)(millis() - quietUntilMs) < 0) {
@@ -780,12 +872,17 @@ if (!telemetry_on) {
     updateKalman(ts);
   }
 
+//   if ((uint32_t)(nowMs - lastSdFlushMs) >= SD_FLUSH_PERIOD_MS)
+// {
+//     lastSdFlushMs = nowMs;
+//     flushLatestDataToSD();
+// }
   // --------- F) Transmit one packet (round-robin), then wait for ACK ----------
-  if ((uint32_t)(nowMs - lastTxMs) < TX_GAP_MS) {
-    // keep loop light
-    delay(1);
+if ((uint32_t)(nowMs - lastTelemetryMs) < TELEMETRY_PERIOD_MS) {
     return;
-  }
+}
+
+lastTelemetryMs = nowMs;
 
   // Choose next type that we actually have data for
   for (int i = 0; i < 4; i++) {
@@ -814,6 +911,7 @@ if (!telemetry_on) {
 
     // Send + start waiting
     startTelemetryTxn(t, msg);
+    bay_seq++;
     break;
   }
 

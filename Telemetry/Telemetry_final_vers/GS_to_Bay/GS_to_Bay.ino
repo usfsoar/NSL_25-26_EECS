@@ -22,9 +22,9 @@
 #define RFM96W_INT  D3
 
 // ---------- Radio settings (MUST match Bay) ----------
-static float currentFreqMHz = 430.0f;
-static const uint32_t RFM_BW_HZ = 60000;
-static const uint8_t  RFM_SF    = 9;
+static float currentFreqMHz = 421.62f;
+static const uint32_t RFM_BW_HZ = 62500;
+static const uint8_t  RFM_SF    = 7;
 
 // ---------- Sequences ----------
 static uint32_t g_seq = 1;     // command transaction seq (FREQ/PING/REBOOT)
@@ -256,7 +256,7 @@ void RadioTask(void *pv) {
 
         if (parseTlmHeader(s, type, baySeq, payload)) {
           // ACK ASAP (don’t wait on SD writes)
-          sendAckTlm(type, baySeq);
+          // sendAckTlm(type, baySeq);
 
           // Log payload (not the TLM header)
           // You can choose whether to store full s or just payload.
@@ -298,7 +298,7 @@ void RadioTask(void *pv) {
           Serial.printf("[RadioTask] RX: %s\n", s);
         }
       }
-
+      gs_seq++;
       rfm96w.setModeRx();
     }
 
@@ -434,7 +434,7 @@ void setup() {
   pinMode(RFM96W_RST, OUTPUT);
   digitalWrite(RFM96W_RST, HIGH);
 
-  Serial.begin(115200);
+  Serial.begin(921600);
 
   if (!sd.begin()) {
     Serial.println("SD init failed; continuing without logging.");
