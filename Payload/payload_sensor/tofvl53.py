@@ -11,7 +11,7 @@ import time
 
 import board
 
-import vl53l4cx
+import payload_sensor.vl53l4cx as vl53l4cx
 
 # i2c = board.I2C()  # uses board.SCL and board.SDA
 # #i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller

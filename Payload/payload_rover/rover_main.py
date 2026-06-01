@@ -66,7 +66,7 @@ def printDBG(*args, **kwargs):
 
 
 
-def startProcess(target, args, name):
+def startProcess(target: function, args: tuple, name: str):
     # Use the 'spawn' start method to avoid inheriting Webots' controller
     for _ in range(8):
         try:
@@ -103,25 +103,29 @@ def startProcess(target, args, name):
     return None
 
 
-def __roverMain(SIM, timeout):
-    # Any sensors?
-    bno = None
+def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
+    # Setup sensor shared memory
+    sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
+    sensor_data = np.ndarray(NUM_FIELDS, 
+                      dtype=[('velocity', np.float64),
+                             ('lin_accel', np.float64), 
+                             ('temperature', np.float64),
+                             ('current', np.float64),
+                             ('distance', np.float64)], 
+                      buffer=sensor_shm.buf)
+
+    # Setup sensors
     back_left_motor, back_right_motor, front_left_motor, front_right_motor = None
     motors = None
-    ina = None
     if SIM is not None:
         pass
     else:
-        bno = BNO.BNO085()
-        bno.initialize(ALPHA_GFORCE)
         back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
         back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
         front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
         front_right_motor = Motor(wheel_diameter=0.1, pwm_channel=3, direction_pin=10, output_pin=-1)
 
         motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
-
-        ina = INA()
 
     #Exit CubeSat
     motors.move_forward(speed=100)
@@ -141,7 +145,20 @@ def __roverMain(SIM, timeout):
             move_dist = move_dist + dist_increment
 
             while (traveled < move_dist):
-                traveled += bno.get_velocity() * (time.time() - move_time)
+
+                # MOVE THIS!!!!!
+                # I can send plant id, pixel coordinates on screen, confidence, or label
+                plantDetected = False
+                try:
+                    plantDetected = plantQueue.get(block=False) # Must have block=False if you don't want to wait for something to arrive in the queue
+                    # Also have the timeout options which will block for a time given
+                except Exception as e:
+                    pass # Queue will throw empty exception if nothing is in there
+                if plantDetected:
+                    # TODO**
+                    pass
+
+                traveled += sensor_data['velocity'] * (time.time() - move_time)
                 error = move_dist - traveled
                 speed = max(25, min(int(error * kp), 100))
                 
@@ -185,7 +202,7 @@ def __roverMain(SIM, timeout):
         # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
         # Once handled, then go back to holding and wait again
 
-def startRoverProcess(args):
+def startRoverProcess(args: tuple):
     return startProcess(target=__roverMain, args=args, name="RoverProcess")
 
 
@@ -262,7 +279,7 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
     return plantMap
 
 
-def __aiMain(SIM: bool, timeout, MODEL_PATH, queue):
+def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
     # Initialize AI camera
     aicam = None
     if SIM is not None:
@@ -342,7 +359,7 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH, queue):
         queue.put((plantMap, frameNumber))
         
 
-def startAIProcess(args):
+def startAIProcess(args: tuple):
     return startProcess(target=__aiMain, args=args, name="AICamProcess")
 
 
@@ -392,7 +409,17 @@ def selectPlant(plantMap, ignore: set):
     return targetId
 
 
-def __plantMain(SIM, timeout, aiqueue: mp.Queue):
+def __plantMain(SIM, timeout, aiqueue: mp.Queue, sensor_shm_name):#, roverqueue: mp.Queue):
+    # Setup sensor shared memory
+    sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
+    sensor_data = np.ndarray(NUM_FIELDS, 
+                      dtype=[('velocity', np.float64),
+                             ('lin_accel', np.float64), 
+                             ('temperature', np.float64),
+                             ('current', np.float64),
+                             ('distance', np.float64)], 
+                      buffer=sensor_shm.buf)
+    
     # intitialize thermal camera
     thermalcam = None
     if SIM is not None:
@@ -423,14 +450,21 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue):
         printDBG(f"Target ID: {targetID}")
 
         # send plant ID and relative position over pipe to rover control (rover should at least slow)
+        # roverqueue.
         # TODO**
     
-        # try:
-        #     # call distance approximation on plant id
-        #     distance = translation.target_distance_estimation(targetID, aiqueue)
-        # except Exception as e:
-        #     printDBG(str(e))
-        #     continue
+        distance = 0
+        try:
+            # call distance approximation on plant id
+            distance = translation.target_distance_estimation(targetID, aiqueue, sensor_data)
+        except Exception as e:
+            import traceback
+            traceback.print_exception(e)
+            # printDBG("Exception:", str(e))
+            continue
+
+        printDBG("Managed to estimate a distance")
+        printDBG(f"Estimated distance to {targetID}: {distance}")
     
         # calculate offset
         # disparity = translation.get_ircamera_offset(distance)
@@ -451,9 +485,8 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue):
 
         
 
-def startPlantProcess(args):
+def startPlantProcess(args: tuple):
     return startProcess(target=__plantMain, args=args, name="PlantProcess")
-
 
 
 
@@ -462,7 +495,7 @@ def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
     # Init shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
     data = np.ndarray(NUM_FIELDS, 
-                      dtype=[('velocity', np.float64)
+                      dtype=[('velocity', np.float64),
                              ('lin_accel', np.float64), 
                              ('temperature', np.float64),
                              ('current', np.float64),
@@ -470,12 +503,11 @@ def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
                       buffer=sensor_shm.buf)
     
     local_data = np.ndarray(NUM_FIELDS, 
-                            dtype=[('velocity', np.float64)
+                            dtype=[('velocity', np.float64),
                                    ('lin_accel', np.float64), 
                                    ('temperature', np.float64),
                                    ('current', np.float64),
-                                   ('distance', np.float64)], 
-                            buffer=sensor_shm.buf)
+                                   ('distance', np.float64)])
 
 
     # Create all I2C dependent sensors
@@ -535,7 +567,7 @@ def startSensorProcess(args):
 
 
 
-def startWebots(aicamshm, thermshm, aiToPlantQueue):
+def startWebots(aicamshm, thermshm, aiToPlantQueue, sensor_shm):
     # Init webots rover specifics
     global MODEL_PATH
     MODEL_PATH = "../../../payload_rover/yolo_200epoch.pt"
@@ -548,7 +580,7 @@ def startWebots(aicamshm, thermshm, aiToPlantQueue):
     processes = list()
     # processes.append(startRoverProcess((SIM, timeout))) # rover
     processes.append(startAIProcess((aicamshm, timeout, MODEL_PATH, aiToPlantQueue))) # ai cam
-    processes.append(startPlantProcess((thermshm, timeout, aiToPlantQueue))) # plant processing   
+    processes.append(startPlantProcess((thermshm, timeout, aiToPlantQueue, sensor_shm))) # plant processing   
     
     printDBG("After process creation")
     

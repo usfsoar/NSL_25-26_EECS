@@ -10,32 +10,31 @@ RESOLUTION_WIDTH = 2028
 RESOLUTION_HEIGHT = 1520
 # FOCAL_LENGTH_AI = (FOCAL_LENGTH_MM * RESOLUTION_WIDTH ) / SENSOR_SIZE # in pixels pixels
 DISTANCE_CAMERAS = 0.1 # Meters NEEDS TO BE CHANGED
-
-
-def getCurrentVelocity():
-    # if sim, use webots functions
-    # TODO**
-    return 0
+MAX_TIMEOUT = 15
 
 
 def getPlant(id, queue):
     while True:
         plantMap, frameNumber = queue.get()
-        if id not in plantMap:
-            raise(f"Plant ID {id} no longer tracked")
+        if id not in plantMap or plantMap[id].last_seen > MAX_TIMEOUT:
+            raise Exception(f"Plant ID {id} no longer tracked")
         if plantMap[id].last_seen == 0:
             break
     return plantMap[id].inference
 
 
-def target_distance_estimation(targetID, queue):    
-    T_d0, d0 = recoverT_d(targetID, queue)
+def target_distance_estimation(targetID, queue, sensor_data):    
+    T_d0, d0 = recoverT_d(targetID, queue, sensor_data)
 
-    T_d1, d1 = recoverT_d(targetID, queue)
+    T_d1, d1 = recoverT_d(targetID, queue, sensor_data)
+
+    print(f"Distance Estimation: {T_d0}, {d0}, {T_d1}, {d1}")
 
     # Recover T^-1
-    T_inversve = np.array([[(d0 + d1)/(T_d0[0] + T_d1[0]), 0],
-                           [0, (d0 + d1)/(T_d0[1] + T_d1[1])]])
+    T_inversve = np.array([
+                          [(d0 + d1)/(T_d0[0] + T_d1[0]), 0],
+                          [0, (d0 + d1)/(T_d0[1] + T_d1[1])]
+                          ])
 
     # Get T(x)
     box = getPlant(targetID, queue).box
@@ -48,7 +47,7 @@ def target_distance_estimation(targetID, queue):
     return (x[0] + x[1]) / 2
 
 
-def recoverT_d(targetID, queue):
+def recoverT_d(targetID, queue, sensor_data):
     # Get bounding box at timestep t (Vector of height and width)
     # Retrieve targeted inference object (Something like get inference of targeted)
     
@@ -58,7 +57,7 @@ def recoverT_d(targetID, queue):
     size_0 = np.array([abs(box[2] - box[0]), # Horizontal Length
                        abs(box[3] - box[1])]) # Vertical Height
     # Start distance measurement from BNO? If one measurement suffices then doesn't need its own thread. If not, needs a dedicated thread
-    vel0 = getCurrentVelocity() # Get velocity from BNO 
+    vel0 = sensor_data['velocity'] # Get velocity from BNO 
     # Time how long we sleep
     start_time = time.perf_counter()
     
@@ -68,7 +67,7 @@ def recoverT_d(targetID, queue):
     box = getPlant(targetID, queue).box
     size_1 = np.array([abs(box[2] - box[0]), # Horizontal Length
                        abs(box[3] - box[1])]) # Vertical Height
-    vel1 = getCurrentVelocity() # Get Velocity from BNO
+    vel1 = sensor_data['velocity'] # Get Velocity from BNO
     elapsed = time.perf_counter() - start_time
     # Get distance traveled 
     d = elapsed * ((vel1 + vel0) / 2)

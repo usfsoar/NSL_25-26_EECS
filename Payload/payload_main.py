@@ -359,8 +359,8 @@ def main():
     servo.retract()
     time.sleep(5)
 
-    sensor_shm = mp.shared_memory.SharedMemory(create=True,
-        size=np.zeros(NUM_FIELDS, dtype=np.uint64).nbytes)
+    sensor_shm = mp.shared_memory.SharedMemory(create=True, 
+        size=np.zeros(NUM_FIELDS, dtype=[('velocity', np.float64), ('lin_accel', np.float64), ('temperature', np.float64), ('current', np.float64), ('distance', np.float64)]).nbytes)
 
     # Start processes
     processes = list()
@@ -372,6 +372,8 @@ def main():
     for p in processes:
         p.join()
     
+    sensor_shm.close()
+    sensor_shm.unlink()
 
     #rover.exit_rover()
     #rover.do_scan_2()
