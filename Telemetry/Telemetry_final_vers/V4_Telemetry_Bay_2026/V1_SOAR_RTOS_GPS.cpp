@@ -9,11 +9,11 @@ void SOAR_RTOS_GPS::setup() {
   } else {
     Serial.println("Failed to Initialize");
   }
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_GGAONLY);
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
-  GPS.sendCommand(PGCMD_ANTENNA);
-  delay(1000);
-  GPS.println(PMTK_Q_RELEASE); // Request firmware version
+    GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_GGAONLY);
+    GPS.sendCommand(PMTK_SET_NMEA_UPDATE_10HZ); // 10 Hz update rate
+    GPS.sendCommand(PGCMD_ANTENNA);
+    delay(1000);
+    GPS.println(PMTK_Q_RELEASE); // Request firmware version
 }
 
 void SOAR_RTOS_GPS::GET_NMEA(char* nmea) {

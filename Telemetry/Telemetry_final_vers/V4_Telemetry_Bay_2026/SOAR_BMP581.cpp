@@ -5,13 +5,12 @@ BMP581Sensor::BMP581Sensor() : bmp_fail(0) {}
     //   fail_checkpoint(0)      // no failure timestamp yet
 
 
-bool BMP581Sensor::begin() { // Communicate with sensor, used bool to check if successfull.  
+void BMP581Sensor::begin() { // Communicate with sensor, used bool to check if successfull.  
     Serial.println("Initializing BMP581 sensor..."); //combine bool with print to have both debug messages and return value.
     if (!this->bmp.begin(BMP5XX_ALTERNATIVE_ADDRESS, &Wire2)) {
         bmp_fail++; //keep track of how many failures happened since boot.(Check Serial Monitor)
         fail_checkpoint = millis(); // records the time (ms) when the last failure happened. (Check Serial Monitor)
         Serial.println("ERROR: Could not find a valid BMP581 sensor, check wiring!");
-        return false;
     }
     Serial.println("BMP581 initialized successfully.");
 
@@ -19,9 +18,7 @@ bool BMP581Sensor::begin() { // Communicate with sensor, used bool to check if s
     this->bmp.setTemperatureOversampling(BMP5XX_OVERSAMPLING_8X);
     this->bmp.setPressureOversampling(BMP5XX_OVERSAMPLING_16X);
     this->bmp.setIIRFilterCoeff(BMP5XX_IIR_FILTER_COEFF_3);
-    this->bmp.setOutputDataRate(BMP5XX_ODR_50_HZ);
-    
-    return true;
+    this->bmp.setOutputDataRate(BMP5XX_ODR_240_HZ);
 }
 
 float BMP581Sensor ::get_last_altitude_reading(){ //retries initialization if the barometer is unresponsive. Need for launch?

@@ -17,22 +17,22 @@ SOAR_BNO085::SOAR_BNO085() : bno08x(-1) {
 // choose sensor outputs
 void SOAR_BNO085::setReports(void) {
   Serial.println("Setting desired reports");
-  if (!bno08x.enableReport(SH2_ACCELEROMETER)) {
+  if (!bno08x.enableReport(SH2_ACCELEROMETER, 2500)) {
     Serial.println("Could not enable accelerometer");
   }
-  if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED)) {
+  if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 2500)) {
     Serial.println("Could not enable gyroscope");
   }
   if (!bno08x.enableReport(SH2_MAGNETIC_FIELD_CALIBRATED)) {
     Serial.println("Could not enable magnetic field calibrated");
   }
-  if (!bno08x.enableReport(SH2_LINEAR_ACCELERATION)) {
+  if (!bno08x.enableReport(SH2_LINEAR_ACCELERATION, 2500)) {
     Serial.println("Could not enable linear acceleration");
   }
-  if (!bno08x.enableReport(SH2_GRAVITY)) {
+  if (!bno08x.enableReport(SH2_GRAVITY, 2500)) {
     Serial.println("Could not enable gravity vector");
   }
-  if (!bno08x.enableReport(SH2_ROTATION_VECTOR)) {
+  if (!bno08x.enableReport(SH2_ROTATION_VECTOR, 2500)) {
     Serial.println("Could not enable rotation vector");
   }
 }

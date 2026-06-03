@@ -9,7 +9,7 @@
 class BMP581Sensor {
   public:
     BMP581Sensor();             // constructor
-    bool begin();               // sets up sensor, returns true if success
+    void begin();               // sets up sensor, returns true if success
 
     float get_altitude();       // meters (m)
     float get_pressure();       // Pascals (Pa)

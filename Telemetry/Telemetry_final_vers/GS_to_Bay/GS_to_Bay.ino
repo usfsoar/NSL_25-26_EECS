@@ -476,6 +476,7 @@ void setup() {
   rfm96w.setSignalBandwidth(RFM_BW_HZ);
   rfm96w.setSpreadingFactor(RFM_SF);
   rfm96w.setTxPower(20, false);
+  rfm96w.setCodingRate4(8); 
 
   Serial.printf("Radio OK. Freq=%.3f BW=%lu SF=%u\n",
                 currentFreqMHz, (unsigned long)RFM_BW_HZ, (unsigned)RFM_SF);

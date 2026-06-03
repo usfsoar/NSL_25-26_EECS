@@ -108,9 +108,9 @@ static uint8_t next_type_to_send = 2;
 
 // ------------------- Scheduling (optimize delays) -------------------
 // Sensor update intervals (ms). Tune to your real sensor rates.
-static const uint32_t GPS_PERIOD_MS    = 200; // 5 Hz
-static const uint32_t ALT_PERIOD_MS    = 50;  // 20 Hz
-static const uint32_t IMU_PERIOD_MS    = 20;  // 50 Hz
+static const uint32_t GPS_PERIOD_MS    = 100; // 10 Hz
+static const uint32_t ALT_PERIOD_MS    = 1000/240;  // 240 Hz
+static const uint32_t IMU_PERIOD_MS    = 1000/400;  // 400 Hz
 static const uint32_t KALMAN_PERIOD_MS = 50;  // 20 Hz
 
 // TX pacing: we only TX when not waitingAck. This is the *minimum* gap between packets.
