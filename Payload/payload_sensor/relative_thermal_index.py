@@ -1,29 +1,36 @@
 import numpy as np
 import adafruit_mlx90640
 
-from payload_sensor.bmp580 import BMP
-
-_ALPHA_BMP = 0.8
-_bmp: BMP | None = None
+import board
+import busio
 
 THERMAL_CAM_WIDTH = 32
 THERMAL_CAM_HEIGHT = 24
 SKY_THRESHOLD = None
 
-class ThermalCam:
+class MLX:
     def __init__(self):
-        i2c = board.I2C(board.SCL, board.SDA)
-        mlx = adafruit_mlx90640.MLX90640(i2c)
+        pass
+
+    def initialize(self):
+        for _ in range(8):
+            try:
+                self.i2c = board.I2C(board.SCL, board.SDA)
+                self.mlx = adafruit_mlx90640.MLX90640(self.i2c)
+            except Exception as e:
+                print(f"Error initializing I2C for BNO: {e}")
+        
 
     def getFrame(self) -> list[int]:
-
         frame = [0] * THERMAL_CAM_HEIGHT * THERMAL_CAM_WIDTH
 
-        try:
-            self.mlx.getFrame(frame)
-            return frame
-        except ValueError:
-            return None
+        for _ in range(8):
+            try:
+                self.mlx.getFrame(frame)
+                return frame
+            except Exception as e:
+                print(f"Error retrieving frame from mlx: {e}")        
+        return None
 
 
 def crop_array(frame: list[float], crop_box: tuple[int, int, int, int]) -> np.ndarray:
@@ -49,27 +56,13 @@ def crop_array(frame: list[float], crop_box: tuple[int, int, int, int]) -> np.nd
 
     # return thermal_frame
 
-def _get_bmp() -> BMP:
-    global _bmp
-    if _bmp is None:
-        _bmp = BMP()
-        _bmp.initialize(_ALPHA_BMP)
-    return _bmp
-
-
-def get_ambient_temperature() -> float:
-    """Returns ambient temperature in Celsius from the BMP580 barometer."""
-    temperature, _ = _get_bmp().get_temperature()
-    return temperature
 
 # ATCD = Air-to-Canopy Differential 
-def calculate_ATCD(thermal_frame: list[float], bounding_box: tuple[int, int, int, int]) -> float | None:
+def calculate_ATCD(thermal_frame: list[float], bounding_box: tuple[int, int, int, int], ambient_temp: float) -> float | None:
     cropped_frame = crop_array(thermal_frame, bounding_box)
 
     if cropped_frame == 0:
         return None
-
-    ambient_temp = get_ambient_temperature()
 
     # Remove sky and backgroundpixels
     plant_pixels = cropped_frame[cropped_frame > SKY_THRESHOLD]
@@ -81,14 +74,14 @@ def calculate_ATCD(thermal_frame: list[float], bounding_box: tuple[int, int, int
 
     return float(ambient_temp - average_plant_temp)
 
-   """ 
-   for i in len(cropped_frame):
-        for j in len(cropped_frame[i]):
-            if cropped_frame[i][j] < SKY_THRESHOLD:
-                cropped_frame[i][j] = 0
-   
-    plant_temp_arr =
-    """
+""" 
+for i in len(cropped_frame):
+    for j in len(cropped_frame[i]):
+        if cropped_frame[i][j] < SKY_THRESHOLD:
+            cropped_frame[i][j] = 0
+
+plant_temp_arr =
+"""
 
 class RTI:
     def __init__():

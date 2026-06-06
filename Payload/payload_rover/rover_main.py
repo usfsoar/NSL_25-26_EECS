@@ -18,6 +18,7 @@ import payload_sensor.bno085 as BNO
 import payload_sensor.bmp580 as BMP
 import payload_sensor.ina260 as INA
 import payload_sensor.tofvl53 as TOF
+import payload_sensor.relative_thermal_index as RTI
 
 from payload_rover.motors import Motor, DriveController
 
@@ -49,7 +50,8 @@ WEIGHT_AREA = 1
 WEIGHT_CONFIDENCE = 0.7
 WEIGHT_OFFSET = 1
 
-
+THERMAL_CAM_HZ = 16
+THERMAL_CAM_DELAY = 1 / THERMAL_CAM_HZ
 
 print(__file__, mp.current_process().name)
 
@@ -491,9 +493,9 @@ def startPlantProcess(args: tuple):
 
 
 
-def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
+def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name):
     # Init shared memory
-    sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
+    sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
     data = np.ndarray(NUM_FIELDS, 
                       dtype=[('velocity', np.float64),
                              ('lin_accel', np.float64), 
@@ -509,6 +511,10 @@ def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
                                    ('current', np.float64),
                                    ('distance', np.float64)])
 
+    thermal_shm = mp.shared_memory.SharedMemory(name=therm_shm_name)
+    thermal_frame = np.ndarray(RTI.THERMAL_CAM_WIDTH * RTI.THERMAL_CAM_HEIGHT, 
+                      dtype=np.float64, 
+                      buffer=thermal_shm.buf)
 
     # Create all I2C dependent sensors
     bno = BNO.BNO085()
@@ -521,7 +527,11 @@ def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
 
     tof = TOF.TOF()
     tof.initialize()
-    
+
+    mlx = RTI.MLX()
+    mlx.initialize()
+    thermal_read = 0
+
     # Init velocity calculation
     local_data['velocity'] = 0
     prev_lin_accel = bno.get_linear_acceleration()
@@ -543,7 +553,7 @@ def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
         try: 
             stopped = roverQueue.get(block=False)
         except Exception as e:
-            pass # Not stopped sunce no message in queue
+            pass # Not stopped since no message in queue
 
         # calculate current velocity
         if stopped:
@@ -555,6 +565,11 @@ def __SensorMain(timeout, shm_name, roverQueue: mp.Queue):
 
         # save all these into shared memory at once
         data[:] = local_data[:]
+
+        # get frame from mlx if it's ready
+        if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
+            thermal_frame[:] = mlx.getFrame()[:]
+            thermal_read = time.time() 
 
         prev_lin_accel = local_data['lin_accel']
         prev_time = read_time
