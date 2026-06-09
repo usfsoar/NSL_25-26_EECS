@@ -55,11 +55,11 @@ class DriveController:
         self.front_left_motor.set_speed(0)
         self.front_right_motor.set_speed(0)
 
-    def set_speed(self, speed):
-        self.back_left_motor.set_speed(speed)
-        self.back_right_motor.set_speed(speed)
-        self.front_left_motor.set_speed(speed)
-        self.front_right_motor.set_speed(speed)
+    def set_speed(self, left, right):
+        self.back_left_motor.set_speed(left)
+        self.back_right_motor.set_speed(right)
+        self.front_left_motor.set_speed(left)
+        self.front_right_motor.set_speed(right)
 
     def move_forward(self, speed=100):
         self.back_left_motor.set_direction(True)

@@ -130,7 +130,7 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
         motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
 
     #Exit CubeSat
-    motors.move_forward(speed=100)
+    motors.set_speed(75,75)
     time.sleep(3)
 
     # Initialize grid pattern
@@ -157,8 +157,14 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
                 except Exception as e:
                     pass # Queue will throw empty exception if nothing is in there
                 if plantDetected:
-                    # TODO**
-                    pass
+                    # TODO** add frame centering, then move slow
+                    motors.stop()
+                    time.sleep(3)
+                    while plantDetected:
+                        left, right = im_center_pid()
+                        motors.set_speed(left, right)
+                        plantDetected = plantQueue.get(block=False)
+                        time.sleep(0.05)
 
                 traveled += sensor_data['velocity'] * (time.time() - move_time)
                 error = move_dist - traveled
@@ -185,7 +191,7 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
                     
 
                         
-                motors.move_forward(speed)
+                motors.set_speed(speed, speed)
                 time.sleep(0.05)
             
             motors.spin_right(speed=75)
@@ -203,6 +209,28 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
 
         # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
         # Once handled, then go back to holding and wait again
+
+def im_center_pid():
+    #TODO get frame dimensions, tune center constraint and set target constant
+    dt=0.5, x_left = 270, x_right = 370
+
+    target_degrees = (x_left + x_right) / 2
+    cx = distToCenter()
+    error = 320 - cx
+
+    p = abs(error * 0.5)
+    if error < 0:
+        right_rpm = p
+        left_rpm = -p    
+    elif error > 0:
+        right_rpm = -p
+        left_rpm = p
+    else:
+        right_rpm = 0
+        left_rpm = 0
+    
+    return left_rpm, right_rpm
+
 
 def startRoverProcess(args: tuple):
     return startProcess(target=__roverMain, args=args, name="RoverProcess")
