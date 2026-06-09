@@ -47,28 +47,37 @@ def target_distance_estimation(targetID, queue, sensor_data):
     return (x[0] + x[1]) / 2
 
 
-def recoverT_d(targetID, queue, sensor_data):
+def approximate_distance(T_d0, d0, T_d1, d1, box):    
+    print(f"Distance Estimation: {T_d0}, {d0}, {T_d1}, {d1}")
+
+    # Recover T^-1
+    T_inversve = np.array([
+                          [(d0 + d1)/(T_d0[0] + T_d1[0]), 0],
+                          [0, (d0 + d1)/(T_d0[1] + T_d1[1])]
+                          ])
+
+    # Get T(x)
+    T_x = np.array([abs(box[2] - box[0]), # Horizontal Length
+                       abs(box[3] - box[1])]) # Vertical Height
+    
+    # Apply T^-1(T(d1)) = x
+    x = np.matmul(T_inversve, T_x)
+
+    return (x[0] + x[1]) / 2
+
+def recoverT_d(box0, box1, vel0, vel1, elapsed):
     # Get bounding box at timestep t (Vector of height and width)
     # Retrieve targeted inference object (Something like get inference of targeted)
-    
-    box = getPlant(targetID, queue).box
+
     # box[0], box[1] # Top left
     # box[2], box[3] # Bottom right
-    size_0 = np.array([abs(box[2] - box[0]), # Horizontal Length
-                       abs(box[3] - box[1])]) # Vertical Height
-    # Start distance measurement from BNO? If one measurement suffices then doesn't need its own thread. If not, needs a dedicated thread
-    vel0 = sensor_data['velocity'] # Get velocity from BNO 
-    # Time how long we sleep
-    start_time = time.perf_counter()
+    size_0 = np.array([abs(box0[2] - box0[0]), # Horizontal Length
+                       abs(box0[3] - box0[1])]) # Vertical Height
     
-
     # Get bounding box at timestep t+1
     # Get updated inference from main loop
-    box = getPlant(targetID, queue).box
-    size_1 = np.array([abs(box[2] - box[0]), # Horizontal Length
-                       abs(box[3] - box[1])]) # Vertical Height
-    vel1 = sensor_data['velocity'] # Get Velocity from BNO
-    elapsed = time.perf_counter() - start_time
+    size_1 = np.array([abs(box1[2] - box1[0]), # Horizontal Length
+                       abs(box1[3] - box1[1])]) # Vertical Height
     # Get distance traveled 
     d = elapsed * ((vel1 + vel0) / 2)
 
