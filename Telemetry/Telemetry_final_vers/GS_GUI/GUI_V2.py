@@ -430,6 +430,7 @@ class SOARGroundStation(QMainWindow):
         self._signals   = SerialSignals()
         self._worker    = SerialWorker(self._signals)
         self._signals.line_received.connect(self._on_line)
+        
         self._signals.connection_changed.connect(self._on_conn)
 
 
@@ -787,8 +788,6 @@ class SOARGroundStation(QMainWindow):
 
 
     def _on_line(self, line: str):
-        STORE.packet_count += 1
-        self.pkt_lbl.setText(str(STORE.packet_count))
 
 
         # Raw log
@@ -822,8 +821,8 @@ class SOARGroundStation(QMainWindow):
                 'temp':     payload['temp'],
                 'pressure': payload['pressure'],
             })
-
-
+            STORE.packet_count += 1
+            self.setText(str(STORE.packet_count))
         elif kind == 'KALMAN':
             STORE.kal_t.append(payload['t'])
             STORE.kal_alt.append(payload['alt'])
@@ -836,7 +835,8 @@ class SOARGroundStation(QMainWindow):
                 'kal_vel': payload['vel'],
                 'kal_acc': payload['acc'],
             })
-
+            STORE.packet_count += 1
+            self.pkt_lbl.setText(str(STORE.packet_count))
 
         elif kind == 'IMU':
             t = payload['t']
@@ -846,7 +846,8 @@ class SOARGroundStation(QMainWindow):
             STORE.imu_gx.append(payload['gx']); STORE.imu_gy.append(payload['gy']); STORE.imu_gz.append(payload['gz'])
             STORE.imu_wx.append(payload['wx']); STORE.imu_wy.append(payload['wy']); STORE.imu_wz.append(payload['wz'])
 
-
+            STORE.packet_count += 1
+            self.pkt_lbl.setText(str(STORE.packet_count))
         elif kind == 'GPS':
             STORE.gps_history.append(payload)
             self.gps_text.append(
@@ -855,6 +856,8 @@ class SOARGroundStation(QMainWindow):
             )
             gsb = self.gps_text.verticalScrollBar()
             gsb.setValue(gsb.maximum())
+            STORE.packet_count += 1
+            self.pkt_lbl.setText(str(STORE.packet_count))
 
 
     def _refresh_plots(self):
