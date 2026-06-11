@@ -1,64 +1,34 @@
 # from aicam_lib.aicamera import AICamera
 
+import sys
+sys.path.append('../')
+
+# Libraries
 import time
 import numpy as np
+import math
+
+# Soar Libraries
+import aicam_lib.aicamera as ai
+import payload_sensor.relative_thermal_index as thermal
 
 # Camera constants
-FOCAL_LENGTH_AI = 4.74
-SENSOR_SIZE = 6.287
-RESOLUTION_WIDTH = 2028
-RESOLUTION_HEIGHT = 1520
-# FOCAL_LENGTH_AI = (FOCAL_LENGTH_MM * RESOLUTION_WIDTH ) / SENSOR_SIZE # in pixels pixels
-DISTANCE_CAMERAS = 0.1 # Meters NEEDS TO BE CHANGED
-MAX_TIMEOUT = 15
+FOCAL_LENGTH_AI_PIXELS = (ai.RESOLUTION_WIDTH / 2) / (math.tan(math.radians(ai.FOV_HORIZONTAL / 2)))
+FOCAL_LENGTH_THERMAL_PIXELS = (thermal.THERMAL_CAM_WIDTH / 2) / (math.tan(math.radians(thermal.FOV_HORIZONTAL / 2)))
+DISTANCE_CAMERAS = np.array([0.1, 0, 0]) # Meters [x, y, z] NEEDS TO BE CHANGED. Measured from center
 
-
-def getPlant(id, queue):
-    while True:
-        plantMap, frameNumber = queue.get()
-        if id not in plantMap or plantMap[id].last_seen > MAX_TIMEOUT:
-            raise Exception(f"Plant ID {id} no longer tracked")
-        if plantMap[id].last_seen == 0:
-            break
-    return plantMap[id].inference
-
-
-def target_distance_estimation(targetID, queue, sensor_data):    
-    T_d0, d0 = recoverT_d(targetID, queue, sensor_data)
-
-    T_d1, d1 = recoverT_d(targetID, queue, sensor_data)
-
-    print(f"Distance Estimation: {T_d0}, {d0}, {T_d1}, {d1}")
-
-    # Recover T^-1
-    T_inversve = np.array([
-                          [(d0 + d1)/(T_d0[0] + T_d1[0]), 0],
-                          [0, (d0 + d1)/(T_d0[1] + T_d1[1])]
-                          ])
-
-    # Get T(x)
-    box = getPlant(targetID, queue).box
-    T_x = np.array([abs(box[2] - box[0]), # Horizontal Length
-                       abs(box[3] - box[1])]) # Vertical Height
-    
-    # Apply T^-1(T(d1)) = x
-    x = np.matmul(T_inversve, T_x)
-
-    return (x[0] + x[1]) / 2
 
 
 def approximate_distance(T_d0, d0, T_d1, d1, box):    
-    print(f"Distance Estimation: {T_d0}, {d0}, {T_d1}, {d1}")
+    # print(f"Distance Estimation: {T_d0}, {d0}, {T_d1}, {d1}")
 
     # Recover T^-1
-    T_inversve = np.array([
-                          [(d0 + d1)/(T_d0[0] + T_d1[0]), 0],
-                          [0, (d0 + d1)/(T_d0[1] + T_d1[1])]
-                          ])
+    T_inversve = np.array([[(d0 + d1)/(T_d0[0] + T_d1[0]),                             0],
+                           [0,                             (d0 + d1)/(T_d0[1] + T_d1[1])]])
 
     # Get T(x)
     T_x = np.array([abs(box[2] - box[0]), # Horizontal Length
-                       abs(box[3] - box[1])]) # Vertical Height
+                    abs(box[3] - box[1])]) # Vertical Height
     
     # Apply T^-1(T(d1)) = x
     x = np.matmul(T_inversve, T_x)
@@ -87,13 +57,42 @@ def recoverT_d(box0, box1, vel0, vel1, elapsed):
     return (T_d, d)
 
 
-def get_ircamera_offset(distance):
-    # disparity = Coordinate in Left Image - Coordinate in Right Image
-    # Coordinate IR = Coordinate AI - Disparity 
+def translate_pixel_to_3d_point(pixel: np.array[int, int], dist: float):
+    x = (pixel[0] - ai.RESOLUTION_WIDTH  / 2) / FOCAL_LENGTH_AI_PIXELS
+    y = (pixel[1] - ai.RESOLUTION_HEIGHT / 2) / FOCAL_LENGTH_AI_PIXELS
     
-    disparty = distance / (FOCAL_LENGTH_AI * DISTANCE_CAMERAS)
+    return np.array([x * dist, y * dist, dist])
 
-    return disparty
+
+def project_point_to_thermal(point: np.array[int, int, int]):
+    x = FOCAL_LENGTH_THERMAL_PIXELS * (point[0] / point[2]) + thermal.THERMAL_CAM_WIDTH / 2
+    y = FOCAL_LENGTH_THERMAL_PIXELS * (point[1] / point[2]) + thermal.THERMAL_CAM_HEIGHT / 2
+
+    return np.array([x, y])
+
+
+def translate_box_to_thermal(box, dist):
+    top_left_point     = translate_pixel_to_3d_point(box[0:1], dist)
+    bottom_right_point = translate_pixel_to_3d_point(box[2:3], dist)
+
+    shifted_top_left     = top_left_point     - DISTANCE_CAMERAS
+    shifted_bottom_right = bottom_right_point - DISTANCE_CAMERAS
+
+    proj_top_left     = project_point_to_thermal(shifted_top_left)
+    proj_bottom_right = project_point_to_thermal(shifted_bottom_right)
+
+    return tuple(int(proj_top_left[0]),     int(proj_top_left[1]),
+                 int(proj_bottom_right[0]), int(proj_bottom_right[1]))
+
+
+
+# def get_ircamera_disparity(distance):
+#     # disparity = Coordinate in Left Image - Coordinate in Right Image
+#     # Coordinate IR = Coordinate AI - Disparity 
+    
+#     disparty = (FOCAL_LENGTH_AI_PIXELS * DISTANCE_CAMERAS) / distance
+
+#     return round(disparty)
 
 
 if __name__ == "__main__":
@@ -101,12 +100,13 @@ if __name__ == "__main__":
 
     while True:
         try:
-            distance_estimate = target_distance_estimation()
-            distance_actual = getActualDistance()
-            print(f"Estimate of distance from target: {distance_estimate}")
-            print(f"Actual distance from target: {distance_actual}")
-            print(f"Estimate Percent Error: {100 * abs(distance_actual - distance_estimate) / distance_actual}")
-            print(f"Calculated IR camera offset: {get_ircamera_offset(distance_estimate)}\n")
+            print("This test is no longer correct")
+            # distance_estimate = target_distance_estimation()
+            # distance_actual = getActualDistance()
+            # print(f"Estimate of distance from target: {distance_estimate}")
+            # print(f"Actual distance from target: {distance_actual}")
+            # print(f"Estimate Percent Error: {100 * abs(distance_actual - distance_estimate) / distance_actual}")
+            # print(f"Calculated IR camera offset: {get_ircamera_offset(distance_estimate)}\n")
             time.sleep(1)
         except:
             break
