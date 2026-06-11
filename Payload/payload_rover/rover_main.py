@@ -218,7 +218,7 @@ def im_center_pid():
     cx = distToCenter()
     error = 320 - cx
 
-    p = abs(error * 0.5)
+    p = abs(error * dt)
     if error < 0:
         right_rpm = p
         left_rpm = -p    
