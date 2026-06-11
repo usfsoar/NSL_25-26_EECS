@@ -1,5 +1,5 @@
 /*
- * V4_Telemetry_Bay_2026.ino
+ * V5_Telemetry_Bay_2026.ino
  *
  * Integrated Telemetry System for Teensy 4.1
  * Reads data from IMU (BNO085), Barometer (BMP581), and GPS sensors
@@ -454,7 +454,7 @@ static void updateKalman() {
 
       if (can_run) {
         uint32_t t_now = micros();
-        // double dt = (double)(t_now - thread_t_prev) * 1e-6;
+        double dt = (double)(t_now - thread_t_prev) * 1e-6;
         if (dt <= 0 || dt > 1.0) dt = 0.05;
         thread_t_prev = t_now;
 
@@ -910,20 +910,62 @@ void thread_radio_tx() {
             case 2: typeStr = "GPS"; break;
             case 3: typeStr = "KAL"; break;
           }
+        uint8_t packet[128];
+        uint16_t idx = 0;
 
+        // Header
+        memcpy(packet + idx, &txPayload.type, sizeof(txPayload.type));
+        idx += sizeof(txPayload.type);
 
-          Serial.printf("[Bay TX] Type=%s seq=%lu size=%u (sizeof(SensorData)=%u)\n", typeStr, (unsigned long)bay_seq, (unsigned)packetSize, (unsigned)sizeof(SensorData));
+        memcpy(packet + idx, &txPayload.bay_seq, sizeof(txPayload.bay_seq));
+        idx += sizeof(txPayload.bay_seq);
+        
+        memcpy(packet + idx, txPayload.timestamp, sizeof(txPayload.timestamp));
+        idx += sizeof(txPayload.timestamp);
+        // Payload
+        switch (txPayload.type)
+        {
+            case IMU:
+                memcpy(packet + idx,
+                      &txPayload.data.imu,
+                      sizeof(imu_packet));
+                idx += sizeof(imu_packet);
+                break;
 
+            case ALTIMETER:
+                memcpy(packet + idx,
+                      &txPayload.data.alt,
+                      sizeof(altimeter_packet));
+                idx += sizeof(altimeter_packet);
+                break;
 
-          spiMutexRF.lock();
-          rfm96w.setModeIdle();
-          rfm96w.send((uint8_t*)&txPayload, packetSize);
-          rfm96w.waitPacketSent();
-          rfm96w.setModeRx();
-          spiMutexRF.unlock();
+            case GPS:
+                memcpy(packet + idx,
+                      &txPayload.data.gps,
+                      sizeof(gps_packet));
+                idx += sizeof(gps_packet);
+                break;
 
+            case KALMAN:
+                memcpy(packet + idx,
+                      &txPayload.data.kalman,
+                      sizeof(kalman_packet));
+                idx += sizeof(kalman_packet);
+                break;
+        }
 
-          Serial.printf("[Bay TX] Sent %s packet bay_seq=%lu\n", typeStr, (unsigned long)bay_seq);
+        spiMutexRF.lock();
+        rfm96w.setModeIdle();
+        rfm96w.send(packet, idx);
+        rfm96w.waitPacketSent();
+        rfm96w.setModeRx();
+        spiMutexRF.unlock();
+
+        Serial.printf("[Bay TX] Type=%u Size=%u\n",
+                      txPayload.type,
+                      idx);
+
+      
           bay_seq++;
         }
       }

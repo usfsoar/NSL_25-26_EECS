@@ -44,6 +44,7 @@ struct SensorData
 {
 	SensorType type;
 	uint32_t bay_seq;
+	char timestamp[16];
 	union
 	{
 		imu_packet imu;
@@ -52,7 +53,6 @@ struct SensorData
 		kalman_packet kalman;
 	} data;
 
-	char timestamp[16];
 };
 #pragma pack(pop)
 void dataToString(SensorData sdata, char* msg) {

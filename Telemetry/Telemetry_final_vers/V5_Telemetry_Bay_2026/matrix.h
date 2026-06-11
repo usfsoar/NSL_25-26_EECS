@@ -565,6 +565,11 @@ int inverse(matrix * in, matrix * out) {
     if (adjoint(in, adjoint_mtx) == -3) { return -3; }
     
     determinant(in, &det);
+    if (det == 0.0) {
+        matrixDestroy(adjoint_mtx);
+        return -4; /* Cannot invert a singular matrix */
+    }
+    divide(det, adjoint_mtx, out);
     divide(det, adjoint_mtx, out);
 
     matrixDestroy(adjoint_mtx);

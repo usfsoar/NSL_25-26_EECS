@@ -314,18 +314,23 @@ void RadioTask(void *pv) {
         size_t expectedSize = sizeof(SensorData);
        
         // Check if this is a binary telemetry packet (fixed size) or ASCII command (variable size)
-        if (pkt.len == expectedSize) {
+        // if (pkt.len == expectedSize) {
           // Binary SensorData telemetry packet
           Serial.printf("RSSI=%d\n", rssi);
          
           const char* typeStr = "?";
-          switch (rxData->type) {
-            case 0: typeStr = "IMU"; break;
-            case 1: typeStr = "ALT"; break;
-            case 2: typeStr = "GPS"; break;
-            case 3: typeStr = "KAL"; break;
+          if (pkt.len == 85 && rxData->type == 0) {
+              typeStr = "IMU";
+          } else if (pkt.len == 33 && rxData->type == 1) {
+              typeStr = "ALT";
+          } else if (pkt.len == 121 && rxData->type == 2) {
+              typeStr = "GPS";
+          } else if (pkt.len == 49 && rxData->type == 3) {
+              typeStr = "KAL";
+          } else {
+              typeStr = "UNKNOWN"; // Always handle the default case!
           }
-         
+                  
           pkt.data[pkt.len] = 0;
 
 
@@ -469,7 +474,7 @@ void RadioTask(void *pv) {
       }
       gs_seq++;
       rfm96w.setModeRx();
-        } else {
+        if (typeStr == "UNKNOWN") {
           // ASCII command packet (variable length) - push to AppTask for command parsing
           pkt.data[pkt.len] = 0;
           (void)xQueueSend(rxQueue, &pkt, 0);

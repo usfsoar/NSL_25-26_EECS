@@ -8,7 +8,7 @@ SOAR_BNO085::SOAR_BNO085() : bno08x(-1) {
 
   if (!bno08x.begin_I2C()) {
     Serial.println("Failed to find BNO08x. Check wiring.");
-    while (1) { delay(10); }
+    // while (1) { delay(10); }
   }
   Serial.println("BNO08x Found!");
   setReports();

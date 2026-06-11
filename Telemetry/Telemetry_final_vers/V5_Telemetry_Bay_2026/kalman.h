@@ -220,6 +220,11 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
     product(filter->H_k, filter->x_k, filter->vec_M);
     difference(filter->z_k, filter->vec_M, filter->y_k);
 
+    /* update innovation covariance */
+    product(filter->P_k, filter->H_kt, filter->temp_N_M_1);
+    product(filter->H_k, filter->temp_N_M_1, filter->temp_M_M_1);
+    sum(filter->temp_M_M_1, filter->R_k, filter->S_k);
+    
     /* check for outlier */
     for (i = 1; i <= filter->y_k->rows; i++) {
         if (ELEM(filter->S_k, i, i) == 0) { continue; }
@@ -228,15 +233,10 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
     /* reject outlier */
     if (mahalanobis_distance >= OUTLIER) { 
         /* set past values equal to current values */
-        filter->x_k_prev = matrixCopy(filter->x_k);
-        filter->P_k_prev = matrixCopy(filter->P_k);
+        matrixCopyData(filter->x_k, filter->x_k_prev);
+        matrixCopyData(filter->P_k, filter->P_k_prev);
         return;
-    } 
-
-    /* update innovation covariance */
-    product(filter->P_k, filter->H_kt, filter->temp_N_M_1);
-    product(filter->H_k, filter->temp_N_M_1, filter->temp_M_M_1);
-    sum(filter->temp_M_M_1, filter->R_k, filter->S_k);
+    }
 
     /* update kalman gain */
     inverse(filter->S_k, filter->temp_M_M_1);
@@ -244,7 +244,7 @@ void kalmanFilterUpdate(kalmanFilter *filter) {
     product(filter->P_k, filter->temp_N_M_1, filter->K_k);
 
     /* update state estimate_vec */
-    filter->x_k_prev = matrixCopy(filter->x_k);
+    matrixCopyData(filter->x_k, filter->x_k_prev); 
     product(filter->K_k, filter->y_k, filter->vec_N);
     sum(filter->x_k_prev, filter->vec_N, filter->x_k);
 
