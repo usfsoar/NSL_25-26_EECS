@@ -54,15 +54,15 @@ def main():
 
 
     sensor_shm = mp.shared_memory.SharedMemory(create=True, 
-        size=np.zeros(5, dtype=[('velocity', np.float64), ('lin_accel', np.float64), ('temperature', np.float64), ('current', np.float64), ('distance', np.float64)]).nbytes)
-    sensor_data = np.ndarray(5, 
+        size=np.zeros(1, dtype=[('velocity', np.float64), ('lin_accel', np.float64), ('temperature', np.float64), ('current', np.float64), ('distance', np.float64)]).nbytes)
+    sensor_data = np.ndarray(1, 
                       dtype=[('velocity', np.float64),
                              ('lin_accel', np.float64), 
                              ('temperature', np.float64),
                              ('current', np.float64),
                              ('distance', np.float64)], 
                       buffer=sensor_shm.buf)
-    local_data = np.ndarray(5,dtype=[('velocity', np.float64),
+    local_data = np.ndarray(1,dtype=[('velocity', np.float64),
                                      ('lin_accel', np.float64), 
                                      ('temperature', np.float64),
                                      ('current', np.float64),

@@ -4,6 +4,12 @@ from aicam_lib.camera import Camera
 from aicam_lib.inference import Inference
 from aicam_lib.post_processing import boxFloatToInt
 
+RESOLUTION_WIDTH = 2028
+RESOLUTION_HEIGHT = 1520
+AICAM_FRAME_RATE = 30
+FOV_HORIZONTAL = 66
+FOV_VERTICAL = 52.3
+
 class AICamera(Camera):
     def __init__(self, network: str, size: tuple[int, int] = (640, 480)):
         super().__init__(size)

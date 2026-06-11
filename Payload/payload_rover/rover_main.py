@@ -7,6 +7,7 @@ import os
 import math
 import sys
 import numpy as np
+import shutil
 
 #-----Soar Code-----
 import aicam_lib.aicamera as ai
@@ -24,13 +25,10 @@ from payload_rover.motors import Motor, DriveController
 
 
 #-----Constants-----
-NUM_FIELDS = 5
-
 ALPHA_BNO = 0.8
 ALPHA_BMP = 0.8
 
-AICAM_FRAME_RATE = 30
-FRAME_DELAY = 1 / AICAM_FRAME_RATE
+FRAME_DELAY = 1 / ai.AICAM_FRAME_RATE
 MODEL_PATH = "payload_rover/yolo_200epoch.pt"
 
 MAX_DIST = 4 * 2028
@@ -39,10 +37,8 @@ DISTANCE_THRESHOLD = 220 # TODO** SUBJECT TO CHANGE AND TESTING
 PLANT_CLASSES = set([6, 8]) # TODO**
 MAX_UNMATCHED_TIME = 30 # TODO** TUNE 
 
-RESOLUTION_WIDTH = 2028
-RESOLUTION_HEIGHT = 1520
-MAX_AREA = RESOLUTION_WIDTH * RESOLUTION_HEIGHT
-MAX_OFFSET = math.sqrt((RESOLUTION_WIDTH/2) ** 2 + (RESOLUTION_HEIGHT/2) ** 2)
+MAX_AREA = ai.RESOLUTION_WIDTH * ai.RESOLUTION_HEIGHT
+MAX_OFFSET = math.sqrt((ai.RESOLUTION_WIDTH/2) ** 2 + (ai.RESOLUTION_HEIGHT/2) ** 2)
 
 # Hyper-parameters TODO** TUNE THEM
 ACCEPTABLE_LAST_SEEN = 1
@@ -50,8 +46,10 @@ WEIGHT_AREA = 1
 WEIGHT_CONFIDENCE = 0.7
 WEIGHT_OFFSET = 1
 
-THERMAL_CAM_HZ = 16
-THERMAL_CAM_DELAY = 1 / THERMAL_CAM_HZ
+THERMAL_CAM_DELAY = 1 / RTI.THERMAL_CAM_HZ
+
+MAX_BOX_DELAY = 1500 # TODO** Need to tune
+MAX_LIN_DELAY = 1500
 
 print(__file__, mp.current_process().name)
 
@@ -108,7 +106,7 @@ def startProcess(target: function, args: tuple, name: str):
 def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
     # Setup sensor shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
-    sensor_data = np.ndarray(NUM_FIELDS, 
+    sensor_data = np.ndarray(1, 
                       dtype=[('velocity', np.float64),
                              ('lin_accel', np.float64), 
                              ('temperature', np.float64),
@@ -237,11 +235,13 @@ def startRoverProcess(args: tuple):
 
 
 class Plant():
-    def __init__(self, inference, last_seen: int):
+    def __init__(self, inference, last_seen: int, t):
         self.inference = inference
         self.last_seen = last_seen
+        self.t = t
 
 
+# Good enough for now
 # TODO** Take into account the centers of the boxes
 # Boxes centered on same thing are probably looking at the same thing
 # Take into account time since last seen too??? More time since last seen, farther distance could've moved
@@ -264,6 +264,7 @@ def generateId():
 
 
 def idPlants(prevPlantMap: dict[Plant], inferences):
+    t = time.perf_counter()
     plantMap = dict()
 
     for inference in inferences:
@@ -289,7 +290,7 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
 
         if bestId == -1:
             id = generateId()
-            plantMap[id] = Plant(inference, 0)
+            plantMap[id] = Plant(inference, 0, t)
         elif bestId == -2:
             continue
         else:
@@ -297,6 +298,7 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
             p = prevPlantMap.pop(bestId)
             p.inference = inference
             p.last_seen = 0
+            p.t = t
             plantMap[bestId] = p
             
 
@@ -314,9 +316,9 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
     aicam = None
     if SIM is not None:
         shm, lock = SIM
-        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
+        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
     else:
-        aicam = ai.AICamera(network=MODEL_PATH, size=(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
+        aicam = ai.AICamera(network=MODEL_PATH, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
 
     # make aicam directory if not already there
     if not os.path.exists("aicam"):
@@ -371,9 +373,9 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
 
 
         # save frame to file with frame number name (remove oldest frame if > 600 images)
-        if os.path.exists(f"aicam/{(frameNumber - 600):05d}.jpg"):
-            # delete oldest frame
-            os.remove(f"aicam/{(frameNumber - 600):05d}.jpg")
+        # if os.path.exists(f"aicam/{(frameNumber - 600):05d}.jpg"):
+        #     # delete oldest frame
+        #     os.remove(f"aicam/{(frameNumber - 600):05d}.jpg")
         # TODO** Conver this to shared memory for sure. Just use a lock and shared memory array. Not too bad
         # Maybe just save all frames if space permits. Then we can reconstruct a video of what the rover saw????
         cv2.imwrite(f"aicam/{frameNumber:05d}.jpg", frame) # TODO** A lot of I/O overhead? Maybe save in shared memory
@@ -408,7 +410,7 @@ def distToCenter(box):
     center_y = box[3] + (box[1] - box[3]) / 2
 
     # Return euclid distance to center
-    return math.sqrt((center_x - RESOLUTION_WIDTH/2)**2 + (center_y - RESOLUTION_HEIGHT/2)**2)
+    return math.sqrt((center_x - ai.RESOLUTION_WIDTH/2)**2 + (center_y - ai.RESOLUTION_HEIGHT/2)**2)
 
 
 def selectPlant(plantMap, ignore: set):
@@ -439,25 +441,24 @@ def selectPlant(plantMap, ignore: set):
     return targetId
 
 
-def __plantMain(SIM, timeout, aiqueue: mp.Queue, sensor_shm_name):#, roverqueue: mp.Queue):
+def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name):
     # Setup sensor shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
-    sensor_data = np.ndarray(NUM_FIELDS, 
+    sensor_data = np.ndarray(1, 
                       dtype=[('velocity', np.float64),
                              ('lin_accel', np.float64), 
                              ('temperature', np.float64),
                              ('current', np.float64),
                              ('distance', np.float64)], 
                       buffer=sensor_shm.buf)
-    
-    # intitialize thermal camera
-    thermalcam = None
-    if SIM is not None:
-        # thermalcam = webots camera
-        pass
-    else:    
-        #thermalcam = THERMAL CAM CLASS
-        pass
+
+    thermal_shm = mp.shared_memory.SharedMemory(name=thermal_shm_name)
+    thermal_data = np.ndarray(RTI.THERMAL_CAM_WIDTH * RTI.THERMAL_CAM_HEIGHT, 
+                      dtype=np.float64, 
+                      buffer=thermal_shm.buf)
+
+    prevPlants = {}
+    prevLinTransform = {}
 
     # initialize an ignore id list
     ignore = set()
@@ -472,7 +473,8 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue, sensor_shm_name):#, roverqueue:
         plantMap, frameNumber = aiqueue.get()
 
         # choose plant ID according to selection algorithm
-        targetID = selectPlant(plantMap, ignore)
+        # TODO** Change to choose if good enough target exists
+        targetID = selectPlant(plantMap, ignore) # Just choose one over the threshold??
 
         if targetID == -1:
             continue
@@ -482,36 +484,61 @@ def __plantMain(SIM, timeout, aiqueue: mp.Queue, sensor_shm_name):#, roverqueue:
         # send plant ID and relative position over pipe to rover control (rover should at least slow)
         # roverqueue.
         # TODO**
-    
-        distance = 0
-        try:
-            # call distance approximation on plant id
-            distance = translation.target_distance_estimation(targetID, aiqueue, sensor_data)
-        except Exception as e:
-            import traceback
-            traceback.print_exception(e)
-            # printDBG("Exception:", str(e))
-            continue
 
-        printDBG("Managed to estimate a distance")
-        printDBG(f"Estimated distance to {targetID}: {distance}")
-    
-        # calculate offset
-        # disparity = translation.get_ircamera_offset(distance)
+        # TODO** Sleep for a small bit to let rover stop???
 
-        # printDBG(f"Plant detected: {targetID}, distance: {distance}")
+        vel = sensor_data['velocity'][0] # Get velocity from BNO
+        temp = sensor_data['temperature'][0] # Get tmp from bmp
+        thermal_frame = None # Only copy if actually needed
+        printDBG(f"Velocity: {vel}")
+        # Store time, vel, and size in data structure
+        for id, plant in plantMap.items(): 
+            if id in ignore: # Don't process plants again
+                continue
 
-        # Retrieve pixels from thermal 
-        # TODO**
+            old_plant, old_vel = prevPlants.pop(id, (None, None))
+            
+            if old_plant == None or (plant.t - old_plant.t) > MAX_BOX_DELAY:
+                prevPlants[id] = (plant, vel) # No old measurement
+            else:
+                T_d, d = translation.recoverT_d(old_plant.inference.box, plant.inference.box, old_vel, vel, plant.t - old_plant.t)
+                
+                printDBG(f"d value: {d}")
 
-        # Save ID + health + copy picture to readings
-        # TODO**
-        # Copy f"{frameNumber}.jpg" will need to draw plant on it too to plant folder and rename to plant id
-        # store plant id, health, location? into csv file in plants folder
+                # Try to recover inverse function if previous exists
+                T_d0, d_0, t_0 = prevLinTransform.pop(id, (None, None, None))
+                if t_0 == None or (plant.t - t_0) > MAX_LIN_DELAY:
+                    prevLinTransform[id] = (T_d, d, plant.t)
+                else:
+                    dist = translation.approximate_distance(T_d0, d_0, T_d, d, plant.inference.box)
+                    printDBG(f"Estimated Distance: {dist}")
 
+                    # Calculate box in thermal frame of reference
+                    thermal_box = translation.translate_box_to_thermal(plant.inference.box, dist)
 
-        # add ID to ignore list
-        # ignore.add(targetID)
+                    # Copy frame if this hasn't happened yet this iteration
+                    if thermal_frame is None:
+                        thermal_frame = thermal_data[:]
+                        cv2.imwrite(f"plants/{frameNumber:05d}.jpg", thermal_frame)
+
+                        # Also copy AI Cam frame
+                        shutil.copyfile(f"aicam/{frameNumber:05d}.jpg", f"plants/{frameNumber:05d}.jpg")
+
+                    # Calculate health
+                    actd = RTI.calculate_ATCD(thermal_frame, thermal_box, temp)
+
+                    # Save plant health data
+                    with open(f"plants/{id.txt}", "w") as f:
+                        f.write(f"Plant ID: {id}\n"
+                              + f"Plant ATCD: {actd}"
+                              + f"Distance when reading was taken: {dist}"
+                              + f"Top Left Box Thermal Pixel: ({thermal_box[0]}, {thermal_box[1]})"
+                              + f"Bottom Right Box Thermal Pixel: ({thermal_box[2]}, {thermal_box[3]})"
+                              + f"Time reading was taken: {time.time()}"
+                              + f"Frame Number: {frameNumber}")
+
+                    # Add ID to ignore list
+                    ignore.add(id)
 
         
 
@@ -524,7 +551,7 @@ def startPlantProcess(args: tuple):
 def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name):
     # Init shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
-    data = np.ndarray(NUM_FIELDS, 
+    data = np.ndarray(1, 
                       dtype=[('velocity', np.float64),
                              ('lin_accel', np.float64), 
                              ('temperature', np.float64),
@@ -532,7 +559,7 @@ def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name)
                              ('distance', np.float64)], 
                       buffer=sensor_shm.buf)
     
-    local_data = np.ndarray(NUM_FIELDS, 
+    local_data = np.ndarray(1, 
                             dtype=[('velocity', np.float64),
                                    ('lin_accel', np.float64), 
                                    ('temperature', np.float64),
@@ -597,7 +624,7 @@ def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name)
         # get frame from mlx if it's ready
         if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
             thermal_frame[:] = mlx.getFrame()[:]
-            thermal_read = time.time() 
+            thermal_read = time.time()
 
         prev_lin_accel = local_data['lin_accel']
         prev_time = read_time

@@ -360,7 +360,10 @@ def main():
     time.sleep(5)
 
     sensor_shm = mp.shared_memory.SharedMemory(create=True, 
-        size=np.zeros(NUM_FIELDS, dtype=[('velocity', np.float64), ('lin_accel', np.float64), ('temperature', np.float64), ('current', np.float64), ('distance', np.float64)]).nbytes)
+        size=np.zeros(1, dtype=[('velocity', np.float64), ('lin_accel', np.float64), ('temperature', np.float64), ('current', np.float64), ('distance', np.float64)]).nbytes)
+
+    # Create and pass in all required args for the threads
+    # TODO**
 
     # Start processes
     processes = list()
