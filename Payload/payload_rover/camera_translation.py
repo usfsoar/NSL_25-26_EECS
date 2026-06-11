@@ -15,8 +15,8 @@ import payload_sensor.relative_thermal_index as thermal
 # Camera constants
 FOCAL_LENGTH_AI_PIXELS = (ai.RESOLUTION_WIDTH / 2) / (math.tan(math.radians(ai.FOV_HORIZONTAL / 2)))
 FOCAL_LENGTH_THERMAL_PIXELS = (thermal.THERMAL_CAM_WIDTH / 2) / (math.tan(math.radians(thermal.FOV_HORIZONTAL / 2)))
-DISTANCE_CAMERAS = np.array([0.1, 0, 0]) # Meters [x, y, z] NEEDS TO BE CHANGED. Measured from center
-
+DISTANCE_CAMERAS = np.array([0, 24297.531, 0]) # Meters [x, y, z] NEEDS TO BE CHANGED. Measured from center
+# 24.297531 mm between camera centers
 
 
 def approximate_distance(T_d0, d0, T_d1, d1, box):    
