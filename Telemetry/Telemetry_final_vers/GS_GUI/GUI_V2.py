@@ -822,7 +822,7 @@ class SOARGroundStation(QMainWindow):
                 'pressure': payload['pressure'],
             })
             STORE.packet_count += 1
-            self.setText(str(STORE.packet_count))
+            self.pkt_lbl.setText(str(STORE.packet_count))
         elif kind == 'KALMAN':
             STORE.kal_t.append(payload['t'])
             STORE.kal_alt.append(payload['alt'])
