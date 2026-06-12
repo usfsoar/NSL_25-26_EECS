@@ -316,7 +316,7 @@ static void startTelemetryTxn(uint8_t type, const char* payload) {
 }
 static void updateGPS() {
      // i2cMutexGPS.lock();
-    char nmea_tmp[100];
+    char nmea_tmp[25];
     gps2.GET_NMEA(nmea_tmp);
     if (telemetry_on) {
 
@@ -437,7 +437,7 @@ static void updateKalman() {
 // void thread_kalman() {
 //   while (1) {
     if (telemetry_on) {
-      uint32_t thread_t_prev = micros();
+      static uint32_t thread_t_prev = micros();
       // dataMutex.lock();
       bool can_run = have_alt && have_imu;
       float k_alt      = altitude;
@@ -530,9 +530,9 @@ static void updateKalman() {
 
         // Stage update
         switch (stage) {
-          case 0: if ((kalman_acceleration > 0) && (kalman_velocity > 0) && (kalman_altitude > MIN_ALT)) stage = 1; break;
+          case 0: if ((kalman_acceleration > 1) && (kalman_velocity > 20) && (kalman_altitude > MIN_ALT)) stage = 1; break;
           case 1: if ((kalman_acceleration < 0) && (kalman_velocity > 0) && (kalman_altitude > MIN_ALT)) stage = 2; break;
-          case 2: if ((kalman_acceleration < 0) && (kalman_velocity > 0) && (kalman_altitude > APOGEE))  stage = 3; break;
+          case 2: if ((kalman_acceleration < 0) && (kalman_velocity > 0) && (abs(kalman_altitude - APOGEE) >= 500))  stage = 3; break;
           case 3: if ((kalman_velocity < 0)     && (kalman_altitude < APOGEE))                           stage = 4; break;
           case 4: if (kalman_altitude < MIN_ALT)                                                         stage = 0; break;
         }
@@ -919,7 +919,7 @@ void thread_radio_tx() {
 
         memcpy(packet + idx, &txPayload.bay_seq, sizeof(txPayload.bay_seq));
         idx += sizeof(txPayload.bay_seq);
-        
+
         memcpy(packet + idx, txPayload.timestamp, sizeof(txPayload.timestamp));
         idx += sizeof(txPayload.timestamp);
         // Payload
@@ -961,8 +961,9 @@ void thread_radio_tx() {
         rfm96w.setModeRx();
         spiMutexRF.unlock();
 
-        Serial.printf("[Bay TX] Type=%u Size=%u\n",
+        Serial.printf("[Bay TX] Type=%u Bay_seq=%d, Size=%u\n",
                       txPayload.type,
+                      bay_seq,
                       idx);
 
       

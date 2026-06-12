@@ -20,7 +20,7 @@ struct altimeter_packet
 
 struct gps_packet
 {
-	char nmea[100];
+	char nmea[25];
 };
 
 struct kalman_packet

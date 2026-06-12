@@ -323,7 +323,7 @@ void RadioTask(void *pv) {
               typeStr = "IMU";
           } else if (pkt.len == 33 && rxData->type == 1) {
               typeStr = "ALT";
-          } else if (pkt.len == 121 && rxData->type == 2) {
+          } else if (pkt.len == 46 && rxData->type == 2) {
               typeStr = "GPS";
           } else if (pkt.len == 49 && rxData->type == 3) {
               typeStr = "KAL";

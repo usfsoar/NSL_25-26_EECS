@@ -17,18 +17,32 @@ void SOAR_RTOS_GPS::setup() {
 }
 
 void SOAR_RTOS_GPS::GET_NMEA(char* nmea) {
-  char* rmcgga;
-  // continue until GPS is received
+
   while (true) {
     char c = GPS.read();
-    if (GPSECHO)
-        if (c) Serial.print(c);
-    if (GPS.newNMEAreceived()) {
-        rmcgga = GPS.lastNMEA();
-        // add one to include null terminator
-        strncpy(nmea, rmcgga, std::strlen(rmcgga) + 1);
-        if (GPS.parse(GPS.lastNMEA()))
-            return;
+
+    if (GPSECHO && c) {
+      Serial.print(c);
+    }
+
+    if (GPS.parse(GPS.lastNMEA())) {
+
+      if (GPS.fix) {
+
+        snprintf(
+          nmea,
+          25,
+          "%.6f,%.6f",
+          GPS.latitudeDegrees,
+          GPS.longitudeDegrees
+        );
+      }
+      else {
+        strncpy(nmea, "NO_FIX", 25);
+      }
+
+      return;
     }
   }
 }
+
