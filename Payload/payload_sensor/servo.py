@@ -8,16 +8,37 @@ class ServoControl:
     def initialize(self, pin: int = 18, min_angle: int = -90, max_angle: int = 90):
         self.min = min_angle/180
         self.max = max_angle/180
-        self.servo = Servo(pin, min_pulse_width=0.0005, max_pulse_width=0.0025)
+
+        for i in range(10):
+            try:
+                self.servo = Servo(pin, min_pulse_width=0.0005, max_pulse_width=0.0025)
+                break
+            except Exception as e:
+                print(f"Error initializing Servo: {e}")
 
     def retract(self):
-        self.servo.value = self.max
+        for i in range(10):
+            try:
+                self.servo.value = self.max
+                break
+            except Exception as e:
+                print(f"Error retracting the Servo: {e}")
     
     def lock(self):
-        self.servo.value = self.min
+        for i in range(10):
+            try:
+                self.servo.value = self.min
+                break
+            except Exception as e:
+                print(f"Error locking the Servo: {e}")
 
     def test(self, val=.75):
-        self.servo.value = val
+        for i in range(10):
+            try:
+                self.servo.value = val
+                break
+            except Exception as e:
+                print(f"Error testing the Servo: {e}")
 
 if __name__ == '__main__':
     servo = ServoControl()
