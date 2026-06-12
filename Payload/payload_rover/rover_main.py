@@ -42,6 +42,7 @@ MAX_OFFSET = math.sqrt((ai.RESOLUTION_WIDTH/2) ** 2 + (ai.RESOLUTION_HEIGHT/2) *
 
 # Hyper-parameters TODO** TUNE THEM
 ACCEPTABLE_LAST_SEEN = 1
+CONFIDENCE_THRESHOLD = 0.1
 WEIGHT_AREA = 1
 WEIGHT_CONFIDENCE = 0.7
 WEIGHT_OFFSET = 1
@@ -422,7 +423,7 @@ def selectPlant(plantMap, ignore: set):
 
     for id, plant in plantMap.items():
         inf = plant.inference
-        if id not in ignore and plant.last_seen <= ACCEPTABLE_LAST_SEEN:
+        if id not in ignore and plant.last_seen <= ACCEPTABLE_LAST_SEEN and plant.inference.confidence >= CONFIDENCE_THRESHOLD:
             # Normalize all to < 1
             # maximize area / screen area
             area = findArea(inf.box) / MAX_AREA

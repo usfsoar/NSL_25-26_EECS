@@ -30,6 +30,7 @@ from payload_sensor.bmp580 import BMP
 from payload_sensor.bno085 import BNO085
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 from payload_sensor.servo import ServoControl
+import payload_sensor.relative_thermal_index as RTI
 
 from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, NUM_FIELDS
 
@@ -95,6 +96,9 @@ ROVER_EXIT_TIMEOUT = 60
 WHEEL_RADIUS = 0
 WHEEL_BASE = 0
 WHEEL_CIRCUM = 2 * 3.14 * WHEEL_RADIUS
+
+AI_MODEL_PATH = "model.pt"
+THERMAL_SHAPE = (RTI.THERMAL_CAM_HEIGHT, RTI.THERMAL_CAM_WIDTH, 1)
 
 #data storage
 data = {
@@ -363,13 +367,19 @@ def main():
         size=np.zeros(1, dtype=[('velocity', np.float64), ('lin_accel', np.float64), ('temperature', np.float64), ('current', np.float64), ('distance', np.float64)]).nbytes)
 
     # Create and pass in all required args for the threads
-    # TODO**
+    # AI to Plant Process Message Queue
+    aiToPlantQueue = mp.Queue(maxsize=1)
+    plantToRover = mp.Queue(maxsize=1)
+
+    # Thermal Camera Shared Memory
+    thermal_shm = mp.shared_memory.SharedMemory(create=True,
+        size=np.zeros(THERMAL_SHAPE, dtype=np.uint8).nbytes)
 
     # Start processes
     processes = list()
-    processes.append(startRoverProcess()) # rover
-    processes.append(startAIProcess()) # ai cam
-    processes.append(startPlantProcess()) # plant processing   
+    processes.append(startRoverProcess((None, ROVER_SCAN_TIMEOUT, sensor_shm.name, plantToRover))) # rover
+    processes.append(startAIProcess((None, ROVER_SCAN_TIMEOUT, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
+    processes.append(startPlantProcess((thermal_shm.name, ROVER_SCAN_TIMEOUT, aiToPlantQueue, sensor_shm.name))) # plant processing   
     
     # wait on all 3 to finish
     for p in processes:
