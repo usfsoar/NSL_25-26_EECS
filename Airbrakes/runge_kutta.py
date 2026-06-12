@@ -3,7 +3,7 @@ from numba import njit
 
 
 ROCKET_MASS = 25.09 # mass of rocket in kg (55.32lb)
-SLEW_RATE = 62.5 # steps/s
+SLEW_RATE = 3885.59 # steps/s
 
 
 steps = np.array([0, 1000.0, 2000.0, 3000.0, 4000.0, 5000.0, 6000.0, 7000.0, 8000.0, 9000.0, 10000.0, 11000.0])
