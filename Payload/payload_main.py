@@ -32,7 +32,7 @@ from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 from payload_sensor.servo import ServoControl
 import payload_sensor.relative_thermal_index as RTI
 
-from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, NUM_FIELDS
+from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
@@ -190,7 +190,11 @@ def power_loss_recovery():
             csvfile.seek(pos)
             first_row = csvfile.readline().decode()
             for col in csv.reader([first_row]):
-                data["timestamp"] = col[0] # Only getting previous start time
+                try:
+                    data["timestamp"] = col[0] # Only getting previous start time
+                except Exception as e:
+                    print(f"Failed to recovery power: {e}")
+                    return
                 start_time = TelemetryLogger.string_to_sec(data["timestamp"])
             
             csvfile.seek(0, os.SEEK_END)
@@ -379,7 +383,7 @@ def main():
     processes = list()
     processes.append(startRoverProcess((None, ROVER_SCAN_TIMEOUT, sensor_shm.name, plantToRover))) # rover
     processes.append(startAIProcess((None, ROVER_SCAN_TIMEOUT, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
-    processes.append(startPlantProcess((thermal_shm.name, ROVER_SCAN_TIMEOUT, aiToPlantQueue, sensor_shm.name))) # plant processing   
+    processes.append(startPlantProcess((thermal_shm.name, ROVER_SCAN_TIMEOUT, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
     
     # wait on all 3 to finish
     for p in processes:

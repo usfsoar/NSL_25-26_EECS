@@ -57,14 +57,14 @@ def recoverT_d(box0, box1, vel0, vel1, elapsed):
     return (T_d, d)
 
 
-def translate_pixel_to_3d_point(pixel: np.array[int, int], dist: float):
+def translate_pixel_to_3d_point(pixel, dist: float):
     x = (pixel[0] - ai.RESOLUTION_WIDTH  / 2) / FOCAL_LENGTH_AI_PIXELS
     y = (pixel[1] - ai.RESOLUTION_HEIGHT / 2) / FOCAL_LENGTH_AI_PIXELS
     
     return np.array([x * dist, y * dist, dist])
 
 
-def project_point_to_thermal(point: np.array[int, int, int]):
+def project_point_to_thermal(point):
     x = FOCAL_LENGTH_THERMAL_PIXELS * (point[0] / point[2]) + thermal.THERMAL_CAM_WIDTH / 2
     y = FOCAL_LENGTH_THERMAL_PIXELS * (point[1] / point[2]) + thermal.THERMAL_CAM_HEIGHT / 2
 

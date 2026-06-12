@@ -11,7 +11,7 @@ import shutil
 
 #-----Soar Code-----
 import aicam_lib.aicamera as ai
-import aicam_lib.webots_aicam as webots_ai
+# import aicam_lib.webots_aicam as webots_ai
 import aicam_lib.rendering as rendering
 import payload_rover.camera_translation as translation
 
@@ -67,7 +67,7 @@ def printDBG(*args, **kwargs):
 
 
 
-def startProcess(target: function, args: tuple, name: str):
+def startProcess(target, args: tuple, name: str):
     # Use the 'spawn' start method to avoid inheriting Webots' controller
     for _ in range(8):
         try:
@@ -105,69 +105,87 @@ def startProcess(target: function, args: tuple, name: str):
 
 
 def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
-    # Setup sensor shared memory
-    sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
-    sensor_data = np.ndarray(1, 
-                      dtype=[('velocity', np.float64),
-                             ('lin_accel', np.float64), 
-                             ('temperature', np.float64),
-                             ('current', np.float64),
-                             ('distance', np.float64)], 
-                      buffer=sensor_shm.buf)
+    # Simplified rover logic :(
+    left_back_motor = Motor(wheel_diameter=0.1, direction_pin="BOARD10")
+    right_back_motor = Motor(wheel_diameter=0.1, direction_pin="BOARD40")
+    left_front_motor = Motor(wheel_diameter=0.1, direction_pin="BOARD16", pwm_pin="BOARD8")
+    right_front_motor = Motor(wheel_diameter=0.1, direction_pin="BOARD18", pwm_pin="BOARD38")
 
-    # Setup sensors
-    back_left_motor, back_right_motor, front_left_motor, front_right_motor = None
-    motors = None
-    if SIM is not None:
-        pass
-    else:
-        back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
-        back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
-        front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
-        front_right_motor = Motor(wheel_diameter=0.1, pwm_channel=3, direction_pin=10, output_pin=-1)
+    motors = DriveController(left_back_motor, right_back_motor, left_front_motor, right_front_motor)
 
-        motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
+    motors.move_forward(1, 1)
 
-    #Exit CubeSat
-    motors.set_speed(75,75)
-    time.sleep(3)
+    time.sleep(timeout - motors.move_forward(1))
+   
+   
+    # # Setup sensor shared memory
+    # sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
+    # sensor_data = np.ndarray(1, 
+    #                   dtype=[('velocity', np.float64),
+    #                          ('lin_accel', np.float64), 
+    #                          ('temperature', np.float64),
+    #                          ('current', np.float64),
+    #                          ('distance', np.float64)], 
+    #                   buffer=sensor_shm.buf)
 
-    # Initialize grid pattern
-    move_dist = 0
-    kp = 0.5
-    dist_increment = 1 #meter
+    # # Setup sensors
+    # back_left_motor, back_right_motor, front_left_motor, front_right_motor = None
+    # motors = None
+    # if SIM is not None:
+    #     pass
+    # else:
+    #     back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
+    #     back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
+    #     front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
+    #     front_right_motor = Motor(wheel_diameter=0.1, pwm_channel=3, direction_pin=10, output_pin=-1)
 
-    motor_stall = 0
+    #     motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
 
-    while True:
-        if time.time() > timeout:
-            traveled = 0
-            move_time = time.time()
-            move_dist = move_dist + dist_increment
+    # #Exit CubeSat
+    # motors.set_speed(75,75)
+    # time.sleep(3)
 
-            while (traveled < move_dist):
+    # # Initialize grid pattern
+    # move_dist = 0
+    # kp = 0.5
+    # dist_increment = 1 #meter
 
-                # MOVE THIS!!!!!
-                # I can send plant id, pixel coordinates on screen, confidence, or label
-                plantDetected = False
-                try:
-                    plantDetected = plantQueue.get(block=False) # Must have block=False if you don't want to wait for something to arrive in the queue
-                    # Also have the timeout options which will block for a time given
-                except Exception as e:
-                    pass # Queue will throw empty exception if nothing is in there
-                if plantDetected:
-                    # TODO** add frame centering, then move slow
-                    motors.stop()
-                    time.sleep(3)
-                    while plantDetected:
-                        left, right = im_center_pid()
-                        motors.set_speed(left, right)
-                        plantDetected = plantQueue.get(block=False)
-                        time.sleep(0.05)
+    # motor_stall = 0
 
-                traveled += sensor_data['velocity'] * (time.time() - move_time)
-                error = move_dist - traveled
-                speed = max(25, min(int(error * kp), 100))
+    # while True:
+    #     if time.time() > timeout:
+    #         traveled = 0
+    #         move_time = time.time()
+    #         move_dist = move_dist + dist_increment
+
+    #         while (traveled < move_dist):
+
+    #             # MOVE THIS!!!!!
+    #             # I can send plant id, pixel coordinates on screen, confidence, or label
+    #             plantDetected = False
+    #             try:
+    #                 plantDetected = plantQueue.get(block=False) # Must have block=False if you don't want to wait for something to arrive in the queue
+    #                 # Also have the timeout options which will block for a time given
+    #             except Exception as e:
+    #                 pass # Queue will throw empty exception if nothing is in there
+    #             if plantDetected:
+    #                 # TODO** add frame centering, then move slow
+    #                 motors.stop()
+    #                 time.sleep(3)
+    #                 while plantDetected:
+    #                     left, right = im_center_pid()
+    #                     motors.set_speed(left, right)
+    #                     try:
+    #                         plantDetected = plantQueue.get(block=False) # Must have block=False if you don't want to wait for something to arrive in the queue
+    #                         # Also have the timeout options which will block for a time given
+    #                     except Exception as e:
+    #                         plantDetected = False
+    #                         pass
+    #                     time.sleep(0.05)
+
+    #             traveled += sensor_data['velocity'] * (time.time() - move_time)
+    #             error = move_dist - traveled
+    #             speed = max(25, min(int(error * kp), 100))
                 
                 # if ina.is_stall():
                 #     motors.stop()
@@ -190,10 +208,10 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
                     
 
                         
-                motors.set_speed(speed, speed)
-                time.sleep(0.05)
+            #     motors.set_speed(speed, speed)
+            #     time.sleep(0.05)
             
-            motors.spin_right(speed=75)
+            # motors.spin_right(speed=75)
             
         # check if obstacle function
             # call obstacle avoidance function
@@ -209,26 +227,28 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
         # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
         # Once handled, then go back to holding and wait again
 
-def im_center_pid():
-    #TODO get frame dimensions, tune center constraint and set target constant
-    dt=0.5, x_left = 270, x_right = 370
+# def im_center_pid():
+#     #TODO get frame dimensions, tune center constraint and set target constant
+#     dt = 0.5
+#     x_left = 270
+#     x_right = 370
 
-    target_degrees = (x_left + x_right) / 2
-    cx = distToCenter()
-    error = 320 - cx
+#     target_degrees = (x_left + x_right) / 2
+#     cx = distToCenter()
+#     error = 320 - cx
 
-    p = abs(error * dt)
-    if error < 0:
-        right_rpm = p
-        left_rpm = -p    
-    elif error > 0:
-        right_rpm = -p
-        left_rpm = p
-    else:
-        right_rpm = 0
-        left_rpm = 0
+#     p = abs(error * dt)
+#     if error < 0:
+#         right_rpm = p
+#         left_rpm = -p    
+#     elif error > 0:
+#         right_rpm = -p
+#         left_rpm = p
+#     else:
+#         right_rpm = 0
+#         left_rpm = 0
     
-    return left_rpm, right_rpm
+#     return left_rpm, right_rpm
 
 
 def startRoverProcess(args: tuple):
@@ -317,7 +337,7 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
     aicam = None
     if SIM is not None:
         shm, lock = SIM
-        aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
+        #aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
     else:
         aicam = ai.AICamera(network=MODEL_PATH, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
 
@@ -442,7 +462,7 @@ def selectPlant(plantMap, ignore: set):
     return targetId
 
 
-def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name):
+def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name, plantToRover):
     # Setup sensor shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
     sensor_data = np.ndarray(1, 
@@ -484,7 +504,7 @@ def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name):
 
         # send plant ID and relative position over pipe to rover control (rover should at least slow)
         # roverqueue.
-        # TODO**
+        plantToRover.put(True)
 
         # TODO** Sleep for a small bit to let rover stop???
 
