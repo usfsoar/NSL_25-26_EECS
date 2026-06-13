@@ -33,7 +33,7 @@ try:
     states = state_machine.StateMachine()
     bmpsensor.set_sea_level()
     # Create PID object
-    mypid = pid.PID(0.1,0.01,0.01,bmpsensor.pressure(), bmpsensor.temperature())
+    mypid = pid.PID(0.1,0.01,0.01)
     # Create Rocket Data object
     data = rocket_data.RocketData(
         'airbrakes' + str(datetime.datetime.now().strftime("%Y-%b-%d-%H-%M-%S")) + 
@@ -41,7 +41,9 @@ try:
         'Acceleration Z', 'State', 'Steps', 'Predicted Apogee', 'Error', 'Pressure', 'Temp', 'Density', 'Current Step']
     )
     data.createFile()
-    raise ValueError
+
+    with open(REBOOT_LOG, "w") as f:
+        f.write("0")
     
 except Exception as e:
     traceback.print_exc()
@@ -50,8 +52,6 @@ except Exception as e:
 
     with open(log_name,'w') as f:
         f.write(f"Restart triggered by error: {traceback.format_exc()}")
-    with open(REBOOT_LOG, "w") as f:
-        f.write("0")
     
     if os.path.exists(REBOOT_LOG):
         with open(REBOOT_LOG, "r") as f:
@@ -72,49 +72,62 @@ except Exception as e:
     
     time.sleep(5)
     os.system('sudo reboot')
+    sys.exit(0)
 
-with open(REBOOT_LOG, "w") as f:
-        f.write("0")
 # Initial values
 
-target_apogee = 1.5 # Our target max height in meters
+target_apogee = 3048 # Our target max height in meters
 dt = 0.1 # time between iterations
 extra_dt = 0.1 # added time between iterations to remove errors in velocity
 apogee = 0 # our current max height
-previous_altitude = 0
+
+previous_altitude = bmpsensor.altitude()
+if previous_altitude is None:
+
+    previous_altitude = 0
 steps = 0
 accelerationX, accelerationY, accelerationZ = None, None, None
 predicted_apogee = 0
 error = 0
+pressure = 1013.25
+temperature = 15.0
+state = 0
 
-
+previous_time = time.time()
 
 while True:
     # Update dt
-    elapsed_time = time.time() - start_time
+    curr_time = time.time()
+    dt = curr_time - previous_time
+    dt = max(dt, .001)
+
+    elapsed_time = curr_time - start_time
     # Get sensor data
     try:
         altitude = bmpsensor.altitude()
-        if not altitude:
+        if altitude is None:
             raise NoneError("Altitude is None!")
         
     except Exception as e:
         print(e)
         time.sleep(extra_dt)
-        dt = dt + time.time() - start_time - elapsed_time
         continue
+    
+    if altitude > apogee:
+        apogee = altitude
+
     velocity = (altitude - previous_altitude) / dt
+    previous_altitude = altitude
    
 
     try:
         acceleration = bnosensor.linear_acceleration()
-        if None in acceleration:
+        if acceleration is None or None in acceleration:
             raise NoneError("Acceleration is None!")
         accelerationX, accelerationY, accelerationZ = acceleration
     except Exception as e:
         print(e)
         time.sleep(extra_dt)
-        dt = dt + time.time() - start_time - elapsed_time
         continue
     try:
         pressure = bmpsensor.pressure()
@@ -136,16 +149,17 @@ while True:
     try:
         match state:
             # If motor is burning or rocket is descending -> close airbrakes
-            case 1 | 4:
+            case 1 | 4 | 0:
                 motor.move_to(0)
             # When in active state -> run PID
             case 2:
-                mypid.update(elapsed_time, altitude, velocity, accelerationZ, air_density, dt)
-                error = mypid.error(steps)
+                mypid.update(altitude, velocity, accelerationZ, dt)
+                error = mypid.error()
                 pid_output = mypid.pidSum()
                 predicted_apogee = mypid.projHeight
-                steps = int(mypid.motorInput(pid_output))
-                motor.move_to(motor.max_step)
+                mypid.motorInput(pid_output)
+                motor.move_to(int(mypid.currStep))
+                steps = int(mypid.currStep)
             # If rocket has passed target -> fully open airbrakes
             case 3:
                 motor.move_to(motor.max_step)
@@ -153,6 +167,8 @@ while True:
             # When rocket has landed -> break loop
             case 5:
                 break
+            case _:
+                motor.move_to(0)
     except Exception as e:
         print(f"Error controlling airbrakes: {e}")
     
@@ -179,13 +195,11 @@ while True:
         print(f'Time: {elapsed_time}, Altitude: {altitude}, Velocity: {velocity}, Acceleration: {accelerationZ}, State: {state}, Steps: {motor.current_pos}')
     except Exception as e:
         print(f"Error logging data: {e}")
-    # Update values
-    previous_altitude = altitude
     
     # Delay before next iteration
     time.sleep(extra_dt)
     # Update dt
-    dt = time.time() - start_time - elapsed_time
+    previous_time = curr_time
     
 print("Landed! Creating Plots of Airbrakes Data!")
 # Create graphs and save to SD card
