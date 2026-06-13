@@ -72,7 +72,7 @@ class StateMachine:
                         self.state4_counter += 1
                         if self.state4_counter >= self.state4_threshold:
                             self.current_state = 4
-                    elif altitude < apogee:
+                    elif altitude < apogee - 15:
                         self.state4_counter += 1
                         if self.state4_counter >= self.state4_threshold:
                             self.current_state = 4
