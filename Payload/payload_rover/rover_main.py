@@ -1,6 +1,7 @@
 
 #-----Libraries-----
 import multiprocessing as mp
+import multiprocessing.shared_memory as shared_memory
 import time
 import cv2
 import os
@@ -104,7 +105,17 @@ def startProcess(target, args: tuple, name: str):
     return None
 
 
-def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
+def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue, roverToSensorQueue: mp.Queue):
+    # Setup sensor shared memory
+    sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
+    sensor_data = np.ndarray(1, 
+                      dtype=[('velocity', np.float64),
+                             ('lin_accel', np.float64), 
+                             ('temperature', np.float64),
+                             ('current', np.float64),
+                             ('distance', np.float64)], 
+                      buffer=sensor_shm.buf)
+    
     # Simplified rover logic :(
     left_back_motor = Motor(wheel_diameter=0.1, direction_pin="BOARD10")
     right_back_motor = Motor(wheel_diameter=0.1, direction_pin="BOARD40")
@@ -113,37 +124,36 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
 
     motors = DriveController(left_back_motor, right_back_motor, left_front_motor, right_front_motor)
 
+
+    # Exit CubeSat
+    # motors.set_speed(0.5,0.5)
+    # time.sleep(4)
     motors.move_forward(1, 1)
 
-    time.sleep(timeout - motors.move_forward(1))
-   
-   
-    # # Setup sensor shared memory
-    # sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
-    # sensor_data = np.ndarray(1, 
-    #                   dtype=[('velocity', np.float64),
-    #                          ('lin_accel', np.float64), 
-    #                          ('temperature', np.float64),
-    #                          ('current', np.float64),
-    #                          ('distance', np.float64)], 
-    #                   buffer=sensor_shm.buf)
+    # time.sleep(timeout - motors.move_forward(1))
 
-    # # Setup sensors
-    # back_left_motor, back_right_motor, front_left_motor, front_right_motor = None
-    # motors = None
-    # if SIM is not None:
-    #     pass
-    # else:
-    #     back_left_motor = Motor(wheel_diameter=0.1, pwm_channel=0, direction_pin=13, output_pin=-1)
-    #     back_right_motor = Motor(wheel_diameter=0.1, pwm_channel=1, direction_pin=12, output_pin=-1)
-    #     front_left_motor = Motor(wheel_diameter=0.1, pwm_channel=2, direction_pin=11, output_pin=-1)
-    #     front_right_motor = Motor(wheel_diameter=0.1, pwm_channel=3, direction_pin=10, output_pin=-1)
+    while True:
+        if time.time() > timeout:
+            break
 
-    #     motors = DriveController(back_left_motor, back_right_motor, front_left_motor, front_right_motor)
+        try:
+            selected = plantQueue.get(block=False)
+        except Exception as e:
+            pass # No message in queue
 
-    # #Exit CubeSat
-    # motors.set_speed(75,75)
-    # time.sleep(3)
+        if selected:
+            # Stop 
+            motors.set_speed(0, 0)
+            if not roverToSensorQueue.full():
+                roverToSensorQueue.put(True)
+
+            time.sleep(0.07) # Sleep until process has a good chance to reach queue read
+            
+            # Go back to normal speed
+            motors.set_speed(1,1)
+
+        time.sleep(0.08) # Prevent looping too quickly
+
 
     # # Initialize grid pattern
     # move_dist = 0
@@ -227,28 +237,28 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
         # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
         # Once handled, then go back to holding and wait again
 
-# def im_center_pid():
-#     #TODO get frame dimensions, tune center constraint and set target constant
-#     dt = 0.5
-#     x_left = 270
-#     x_right = 370
+def im_center_pid():
+    #TODO get frame dimensions, tune center constraint and set target constant
+    dt = 0.5
+    x_left = 270
+    x_right = 370
 
-#     target_degrees = (x_left + x_right) / 2
-#     cx = distToCenter()
-#     error = 320 - cx
+    target_degrees = (x_left + x_right) / 2
+    cx = distToCenter()
+    error = 320 - cx
 
-#     p = abs(error * dt)
-#     if error < 0:
-#         right_rpm = p
-#         left_rpm = -p    
-#     elif error > 0:
-#         right_rpm = -p
-#         left_rpm = p
-#     else:
-#         right_rpm = 0
-#         left_rpm = 0
+    p = abs(error * dt)
+    if error < 0:
+        right_rpm = p
+        left_rpm = -p    
+    elif error > 0:
+        right_rpm = -p
+        left_rpm = p
+    else:
+        right_rpm = 0
+        left_rpm = 0
     
-#     return left_rpm, right_rpm
+    return left_rpm, right_rpm
 
 
 def startRoverProcess(args: tuple):
@@ -569,7 +579,7 @@ def startPlantProcess(args: tuple):
 
 
 
-def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name):
+def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue):
     # Init shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
     data = np.ndarray(1, 
@@ -601,12 +611,12 @@ def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name)
 
     ina = INA.INA()
 
-    tof = TOF.TOF()
-    tof.initialize()
+    # tof = TOF.TOF()
+    # tof.initialize()
 
-    mlx = RTI.MLX()
-    mlx.initialize()
-    thermal_read = 0
+    # mlx = RTI.MLX()
+    # mlx.initialize()
+    # thermal_read = 0
 
     # Init velocity calculation
     local_data['velocity'] = 0
@@ -622,7 +632,7 @@ def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name)
         local_data['lin_accel'] = bno.get_linear_acceleration()
         local_data['temperature'] = bmp.get_temperature()
         local_data['current'] = ina.get_current_a()
-        local_data['distance'] = tof.get_distance()
+        local_data['distance'] = None #tof.get_distance()
 
         # attempt to read from queue for reset velocity bias to 0
         stopped = False
@@ -642,10 +652,10 @@ def __SensorMain(timeout, sensor_shm_name, roverQueue: mp.Queue, therm_shm_name)
         # save all these into shared memory at once
         data[:] = local_data[:]
 
-        # get frame from mlx if it's ready
-        if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
-            thermal_frame[:] = mlx.getFrame()[:]
-            thermal_read = time.time()
+        # # get frame from mlx if it's ready
+        # if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
+        #     thermal_frame[:] = mlx.getFrame()[:]
+        #     thermal_read = time.time()
 
         prev_lin_accel = local_data['lin_accel']
         prev_time = read_time

@@ -20,6 +20,7 @@ import os
 import csv
 import time
 import multiprocessing as mp
+import multiprocessing.shared_memory as shared_memory
 import numpy as np
 
 #import classes
@@ -32,7 +33,7 @@ from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 from payload_sensor.servo import ServoControl
 import payload_sensor.relative_thermal_index as RTI
 
-from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess
+from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, startSensorProcess
 
 #----GLOBAL VARIABLES----
 #mode: launch, drop, hand, sim
@@ -286,9 +287,9 @@ def get_sensor_data():
         data["temperature"], _ = bmp.get_temperature()
 
 def set_zero_altitude(power_loss):
-    prev = bmp.get_pressure()
+    raw, prev = bmp.get_pressure()
     while True:
-        curr = bmp.get_pressure()
+        raw, curr = bmp.get_pressure()
         if abs(curr - prev) < 5:
             break
         prev = curr
@@ -374,17 +375,20 @@ def main():
     # AI to Plant Process Message Queue
     aiToPlantQueue = mp.Queue(maxsize=1)
     plantToRover = mp.Queue(maxsize=1)
+    roverToSensorQueue = mp.Queue(maxsize=1)
 
     # Thermal Camera Shared Memory
     thermal_shm = mp.shared_memory.SharedMemory(create=True,
-        size=np.zeros(THERMAL_SHAPE, dtype=np.uint8).nbytes)
+    size=np.zeros(THERMAL_SHAPE, dtype=np.float64).nbytes)
 
     # Start processes
+    timeout_time = time.time() + ROVER_SCAN_TIMEOUT
     processes = list()
-    processes.append(startRoverProcess((None, ROVER_SCAN_TIMEOUT, sensor_shm.name, plantToRover))) # rover
-    processes.append(startAIProcess((None, ROVER_SCAN_TIMEOUT, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
-    processes.append(startPlantProcess((thermal_shm.name, ROVER_SCAN_TIMEOUT, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
-    
+    processes.append(startRoverProcess((None, timeout_time, sensor_shm.name, plantToRover, roverToSensorQueue))) # rover
+    processes.append(startAIProcess((None, timeout_time, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
+    processes.append(startPlantProcess((thermal_shm.name, timeout_time, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
+    processes.append(startSensorProcess((timeout_time, sensor_shm.name, thermal_shm.name, roverToSensorQueue))) # sensor process
+
     # wait on all 3 to finish
     for p in processes:
         p.join()

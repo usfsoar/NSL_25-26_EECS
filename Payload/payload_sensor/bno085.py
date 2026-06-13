@@ -17,7 +17,7 @@ from adafruit_bno08x import (
    # BNO_REPORT_GRAVITY
 )
 
-import abstract_bno
+import payload_sensor.abstract_bno as abstract_bno
 
 
 # todo: Class getters should probably have exceptions and bad data handled

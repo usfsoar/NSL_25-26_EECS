@@ -1,5 +1,5 @@
 import asyncio
-from gpiozero import DigitalOutputDevice
+from gpiozero import DigitalOutputDevice, PWMOutputDevice
 from time import sleep
 
 class Motor:
@@ -10,17 +10,18 @@ class Motor:
         self.position = 0                                           # axel position
         self.pwmRight = None
         if pwm_pin is not None:
-            self.pwmRight = DigitalOutputDevice(pwm_pin)          # 0 or 1 at 25 kHz
+            self.pwmRight = PWMOutputDevice(pwm_pin, frequency=25000)          # 0 or 1 at 25 kHz
             self.pwmRight.on()
         self.direction_pin = DigitalOutputDevice(direction_pin)     # GPIO output for direction control
 
     # 1 for on 0 for off
     def set_speed(self, speed):
         if self.pwmRight is not None:
-            if (speed == 1):
-                self.pwmRight.off()
-            elif (speed == 0):
-                self.pwmRight.on()
+            self.pwmRight.value = speed
+            # if (speed == 1):
+            #     self.pwmRight.off()
+            # elif (speed == 0):
+            #     self.pwmRight.on()
 
     # True for forward, false for backward
     def set_direction(self, forward=True):

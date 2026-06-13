@@ -46,8 +46,8 @@ class INA():
         Returns:
             float: Current in mA
         """
+        current = 0
         for _ in range(8):
-            current = 0
             try:
                 current = self._sensor.current
             except Exception as e:
@@ -61,17 +61,11 @@ class INA():
         Returns:
             float: Current in A
         """
-        current = 0
-        try:
-            current = self._sensor.current / 1000.0
-        except Exception as e:
-            print(f"[INA260] Error retrieving current: {e}")
-        return current
+        return self.get_current_ma / 1000.0
     
 if __name__ == '__main__':
     ina = INA()
     while True:
         print(f"Current: {ina.get_current_ma()} mA")
         print(f"Current: {ina.get_current_a()} A")
-        print(f"Is Stall: {ina.is_stall()}")
         time.sleep(0.5)
