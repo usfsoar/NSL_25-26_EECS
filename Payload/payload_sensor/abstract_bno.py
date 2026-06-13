@@ -4,7 +4,7 @@ import time
 import math
 
 
-RECOVERY_WAIT = 0.05
+RECOVERY_WAIT = 0.1
 
 # todo: Class getters should probably have exceptions and bad data handled
 
@@ -29,14 +29,19 @@ class abstract_BNO():
         self.accel = None
         self.i2c = None
         self.sensor = None
+        self.accel_reads
 
 
     def recover(self):
         print(f"Recovering BNO")
-        del self.sensor
-        del self.i2c
+        try:
+            del self.sensor
+            del self.i2c
+        except Exception as e:
+            print(f"Error deleting old i2c sensor object: {e}")
         time.sleep(RECOVERY_WAIT)
         self.initialize(alpha=self.alpha, address=self.address)
+        
 
 
     def get_acceleration(self):
@@ -49,6 +54,11 @@ class abstract_BNO():
         for i in range (8):
             try:
                 raw_accel = self.sensor.acceleration
+
+                # TODO** Add sanity check that sensor is not returning the same values
+                # Recover if accel values are not changing
+                
+                # We want magnitude
                 raw_accel = math.sqrt(raw_accel[0]*raw_accel[0] + raw_accel[1]*raw_accel[1] + raw_accel[2]*raw_accel[2])
             except Exception as e:
                 print(f"BNO Acceleration Exception: {e}")

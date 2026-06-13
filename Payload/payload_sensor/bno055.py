@@ -7,7 +7,7 @@ import busio
 import time
 import math
 
-import payload_sensor.abstract_bno as abstract_bno
+import abstract_bno
 
 # todo: Class getters should probably have exceptions and bad data handled
 
