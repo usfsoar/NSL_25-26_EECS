@@ -1,16 +1,13 @@
 # Class to calculate how much the servo needs to actuate based on error
 # dt and prevError need to be calculated in MAIN
 
-import time
 import math
 import runge_kutta
 
 SLEW_RATE = 3885.59
 
 class PID:
-    def __init__(self, gainP, gainI, gainD, time = 0, apogee = 3048): #constructor
-        self.time = time
-       
+    def __init__(self, gainP, gainI, gainD, apogee = 3048): #constructor       
         self.gainP = gainP
         self.gainI = gainI
         self.gainD = gainD
@@ -37,8 +34,7 @@ class PID:
         self.targetStep = 0
 
 
-    def update(self, time, altitude, velocity, acceleration, dt):
-        self.time = time
+    def update(self, altitude, velocity, acceleration, dt):
         self.acceleration = acceleration
         self.altitude = altitude
         self.velocity = velocity
@@ -53,7 +49,7 @@ class PID:
             self.currStep = max(self.currStep - maxMove, self.targetStep)
 
     def error(self):
-        self.projHeight = self.rk4.prediction(self.time, self.altitude, self.velocity, self.currStep, self.targetStep) 
+        self.projHeight = self.rk4.prediction(self.dt, self.altitude, self.velocity, self.currStep, self.targetStep) 
         self.errorValue = self.projHeight - self.apogee
         return self.errorValue
 
