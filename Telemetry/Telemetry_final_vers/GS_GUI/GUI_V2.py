@@ -29,9 +29,11 @@ import sys
 import re
 import serial
 import serial.tools.list_ports
+import io
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 from collections import deque
 from threading import Thread
-
+import folium
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -214,6 +216,8 @@ class TelemetryStore:
 
         # GPS
         self.gps_history = deque(maxlen=50)
+        self.map_view = None 
+        
 
 
         # Latest snapshot for stat boxes
@@ -413,6 +417,22 @@ def stat_card(label: str, color: str) -> tuple:
     return box, val
 
 
+def extract_coordinates(gps_string: str):
+    # 1. Guard against empty data or error states
+    if not gps_string or "NO_FIX" in gps_string:
+        return None
+            
+    try:
+         # 2. Split the text and convert to floats
+        parts = gps_string.split(',')
+        lat = float(parts[0].strip())
+        lon = float(parts[1].strip())
+        return lat, lon
+            
+    except (ValueError, IndexError):
+        # 3. Catch crashes if the string has letters or is missing a comma
+        print(f"Failed to parse GPS text: {gps_string}")
+        return None
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -424,7 +444,7 @@ class SOARGroundStation(QMainWindow):
         self.setWindowTitle("SOAR Ground Station — Live Telemetry")
         self.setMinimumSize(1400, 900)
         self.setStyleSheet(STYLESHEET)
-
+        self._last_coords = None 
 
         self._connected = False
         self._signals   = SerialSignals()
@@ -661,17 +681,16 @@ class SOARGroundStation(QMainWindow):
         row1.addWidget(self.plt_lin)
         v.addLayout(row1, 1)
         v.addWidget(self.plt_gyro, 1)
+        
         return w
 
-
     # ── GPS tab ───────────────────────────────────────────────────────────────
-
 
     def _tab_gps(self) -> QWidget:
         w = QWidget()
         v = QVBoxLayout(w)
 
-
+        # Top Bar
         top = QHBoxLayout()
         lbl = QLabel("Live NMEA stream")
         lbl.setStyleSheet(f"color:{PALETTE['cyan']}; font-weight:bold; font-size:13px;")
@@ -683,13 +702,66 @@ class SOARGroundStation(QMainWindow):
         top.addWidget(clr_btn)
         v.addLayout(top)
 
+        # Interactive Folium Map Viewer
+        self.map_view = QWebEngineView()
+        v.addWidget(self.map_view, 3)  # Takes up 3/4 of the vertical space
 
+        # Raw NMEA Stream Text Box
         self.gps_text = QTextEdit()
         self.gps_text.setReadOnly(True)
         self.gps_text.setFont(QFont("Courier New", 11))
-        v.addWidget(self.gps_text)
+        v.addWidget(self.gps_text, 1)  # Takes up 1/4 of the vertical space
+        
         return w
+    
+    def _update_map(self, lat: float, lon: float):
+        """Generates a Folium map and loads it into the QWebEngineView."""
+        
+        # Guard check: If the GUI hasn't built the map yet, abort safely.
+        if not hasattr(self, 'map_view') or self.map_view is None:
+            return
 
+        # Round to 5 decimal places (~1.1 meter precision) to ignore microscopic sensor jitter
+        new_coords = (round(lat, 5), round(lon, 5))
+        
+        # Guard check: If the rocket hasn't moved, do not reload the map
+        if self._last_coords == new_coords:
+            return
+            
+        # Update the tracker with the new location
+        self._last_coords = new_coords
+            
+        # Create map with a dark theme to match the ground station UI
+        m = folium.Map(
+            location=[lat, lon], 
+            zoom_start=16, 
+            tiles="OpenStreetMap"
+        )
+        
+        # Add the rocket marker
+        folium.Marker(
+            location=[lat, lon], 
+            popup="V5 Telemetry Bay",
+            icon=folium.Icon(color="red", icon="rocket", prefix="fa")
+        ).add_to(m)
+
+        folium.TileLayer(
+            tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            attr='Esri',
+            name='Esri Satellite',
+            overlay=False,
+            control=True
+        ).add_to(m)
+        
+        folium.LayerControl().add_to(m)
+        
+        # Save the map to a string buffer instead of a file
+        data = io.BytesIO()
+        m.save(data, close_file=False)
+        html_content = data.getvalue().decode()
+
+        # Render it in the GUI
+        self.map_view.setHtml(html_content)
 
     # ── Terminal ──────────────────────────────────────────────────────────────
 
@@ -850,14 +922,26 @@ class SOARGroundStation(QMainWindow):
             self.pkt_lbl.setText(str(STORE.packet_count))
         elif kind == 'GPS':
             STORE.gps_history.append(payload)
+            raw_text = payload['nmea']
+            
+            # Update text log once with the timestamp
             self.gps_text.append(
                 f"<span style='color:#668866'>[{payload['ts']}]</span> "
-                f"<span style='color:#88ffaa'>{payload['nmea']}</span>"
+                f"<span style='color:#88ffaa'>{raw_text}</span>"
             )
             gsb = self.gps_text.verticalScrollBar()
             gsb.setValue(gsb.maximum())
+            
+            # Update packet counter
             STORE.packet_count += 1
             self.pkt_lbl.setText(str(STORE.packet_count))
+    
+            # Safely attempt to get floats and update the map
+            coords = extract_coordinates(raw_text)
+            if coords:
+                self._update_map(coords[0], coords[1])
+            else:
+                self._update_map(0,0)
 
 
     def _refresh_plots(self):
