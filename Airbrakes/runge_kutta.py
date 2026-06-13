@@ -1,6 +1,7 @@
 import numpy as np
 from numba import njit
 
+max_iterations = 100000
 
 ROCKET_MASS = 25.09 # mass of rocket in kg (55.32lb)
 SLEW_RATE = 3885.59 # steps/s
@@ -94,10 +95,11 @@ def get_accel(velocity , angle, alt):
     return a
 
 @njit
-def update(time,dt, altitude, velocity, step, target):
+def update(dt, altitude, velocity, step, target):
     curr_step = step
+    iterations = 0
 
-    while velocity > 0:
+    while velocity > 0 and iterations < max_iterations:
         curr_angle = step_to_angle(curr_step)
 
         v1 = velocity
@@ -120,18 +122,14 @@ def update(time,dt, altitude, velocity, step, target):
         elif curr_step > target:
             curr_step = max(curr_step - dt*SLEW_RATE, target)
 
-        time += dt
+        iterations += 1
 
     return altitude
 
 
-
 class RungeKutta4:
-    def __init__(self):
-        self.dt = 0.1
-
-    def prediction(self, time, altitude, velocity, step, target):
-        return update(time, self.dt, altitude, velocity,step, target)
+    def prediction(self, dt, altitude, velocity, step, target):
+        return update(dt, altitude, velocity,step, target)
 
 if __name__ == '__main__':
     print(get_drag(210, 22.5, 1000))
