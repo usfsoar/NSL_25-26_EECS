@@ -656,19 +656,10 @@ void setup() {
 
 
   // Prepare files
-  sd.deleteFile(TEST_FILEPATH);
-  sd.deleteFile(IMU_FILEPATH);
-  sd.deleteFile(GPS_FILEPATH);
-  sd.deleteFile(ALTIMETER_FILEPATH);
-  sd.deleteFile(KALMAN_FILEPATH);
-
-
-  sd.writeFile(TEST_FILEPATH, "test\n");
-  sd.writeFile(IMU_FILEPATH, "time_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
-  sd.writeFile(ALTIMETER_FILEPATH, "time_stamp,altitude,temperature,pressure\n");
-  sd.writeFile(GPS_FILEPATH, "time_stamp,gps_data\n");
-  sd.writeFile(KALMAN_FILEPATH, "time_stamp, state, altitude,velocity,acceleration\n");
-
+  sd.appendFile(IMU_FILEPATH,       "\n\nInitializing\n\ntime_stamp,accel_x,accel_y,accel_z,linear_x,linear_y,linear_z,gravity_x,gravity_y,gravity_z,quat_w,quat_x,quat_y,quat_z,gyro_x,gyro_y,gyro_z\n");
+  sd.appendFile(ALTIMETER_FILEPATH, "\n\nInitializing\n\ntime_stamp,altitude,temperature,pressure\n");
+  sd.appendFile(GPS_FILEPATH,       "\n\nInitializing\n\ntime_stamp,gps_data\n");
+  sd.appendFile(KALMAN_FILEPATH,    "\n\nInitializing\n\ntime_stamp, state, altitude,velocity,acceleration\n");
 
   while (!Serial && millis() < 1000) {}
 
