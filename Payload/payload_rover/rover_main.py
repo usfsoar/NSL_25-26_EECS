@@ -16,7 +16,6 @@ import aicam_lib.aicamera as ai
 import aicam_lib.rendering as rendering
 import payload_rover.camera_translation as translation
 
-import payload_sensor.bno085 as BNO
 import payload_sensor.bmp580 as BMP
 import payload_sensor.ina260 as INA
 import payload_sensor.tofvl53 as TOF
@@ -26,7 +25,6 @@ from payload_rover.motors import Motor, DriveController
 
 
 #-----Constants-----
-ALPHA_BNO = 0.8
 ALPHA_BMP = 0.8
 
 FRAME_DELAY = 1 / ai.AICAM_FRAME_RATE
@@ -473,24 +471,6 @@ def selectPlant(plantMap, ignore: set):
 
 
 def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name, plantToRover):
-    # Setup sensor shared memory
-    sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
-    sensor_data = np.ndarray(1, 
-                      dtype=[('velocity', np.float64),
-                             ('lin_accel', np.float64), 
-                             ('temperature', np.float64),
-                             ('current', np.float64),
-                             ('distance', np.float64)], 
-                      buffer=sensor_shm.buf)
-
-    thermal_shm = mp.shared_memory.SharedMemory(name=thermal_shm_name)
-    thermal_data = np.ndarray(RTI.THERMAL_CAM_WIDTH * RTI.THERMAL_CAM_HEIGHT, 
-                      dtype=np.float64, 
-                      buffer=thermal_shm.buf)
-
-    prevPlants = {}
-    prevLinTransform = {}
-
     # initialize an ignore id list
     ignore = set()
     if not os.path.exists("plants"):
@@ -510,66 +490,17 @@ def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name, p
         if targetID == -1:
             continue
 
-        printDBG(f"Target ID: {targetID}")
+        # Copy AI Cam frame
+        shutil.copyfile(f"aicam/{frameNumber:05d}.jpg", f"plants/{frameNumber:05d}.jpg")
 
-        # send plant ID and relative position over pipe to rover control (rover should at least slow)
-        # roverqueue.
-        plantToRover.put(True)
+        # Save plant health data
+        with open(f"plants/{id.txt}", "w") as f:
+            f.write(f"Plant ID: {id}\n"
+                    + f"Time reading was taken: {time.time()}"
+                    + f"Frame Number: {frameNumber}")
 
-        # TODO** Sleep for a small bit to let rover stop???
-
-        vel = sensor_data['velocity'][0] # Get velocity from BNO
-        temp = sensor_data['temperature'][0] # Get tmp from bmp
-        thermal_frame = None # Only copy if actually needed
-        printDBG(f"Velocity: {vel}")
-        # Store time, vel, and size in data structure
-        for id, plant in plantMap.items(): 
-            if id in ignore: # Don't process plants again
-                continue
-
-            old_plant, old_vel = prevPlants.pop(id, (None, None))
-            
-            if old_plant == None or (plant.t - old_plant.t) > MAX_BOX_DELAY:
-                prevPlants[id] = (plant, vel) # No old measurement
-            else:
-                T_d, d = translation.recoverT_d(old_plant.inference.box, plant.inference.box, old_vel, vel, plant.t - old_plant.t)
-                
-                printDBG(f"d value: {d}")
-
-                # Try to recover inverse function if previous exists
-                T_d0, d_0, t_0 = prevLinTransform.pop(id, (None, None, None))
-                if t_0 == None or (plant.t - t_0) > MAX_LIN_DELAY:
-                    prevLinTransform[id] = (T_d, d, plant.t)
-                else:
-                    dist = translation.approximate_distance(T_d0, d_0, T_d, d, plant.inference.box)
-                    printDBG(f"Estimated Distance: {dist}")
-
-                    # Calculate box in thermal frame of reference
-                    thermal_box = translation.translate_box_to_thermal(plant.inference.box, dist)
-
-                    # Copy frame if this hasn't happened yet this iteration
-                    if thermal_frame is None:
-                        thermal_frame = thermal_data[:]
-                        cv2.imwrite(f"plants/{frameNumber:05d}.jpg", thermal_frame)
-
-                        # Also copy AI Cam frame
-                        shutil.copyfile(f"aicam/{frameNumber:05d}.jpg", f"plants/{frameNumber:05d}.jpg")
-
-                    # Calculate health
-                    actd = RTI.calculate_ATCD(thermal_frame, thermal_box, temp)
-
-                    # Save plant health data
-                    with open(f"plants/{id.txt}", "w") as f:
-                        f.write(f"Plant ID: {id}\n"
-                              + f"Plant ATCD: {actd}"
-                              + f"Distance when reading was taken: {dist}"
-                              + f"Top Left Box Thermal Pixel: ({thermal_box[0]}, {thermal_box[1]})"
-                              + f"Bottom Right Box Thermal Pixel: ({thermal_box[2]}, {thermal_box[3]})"
-                              + f"Time reading was taken: {time.time()}"
-                              + f"Frame Number: {frameNumber}")
-
-                    # Add ID to ignore list
-                    ignore.add(id)
+        # Add ID to ignore list
+        ignore.add(id)
 
         
 
@@ -602,10 +533,6 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue)
                       dtype=np.float64, 
                       buffer=thermal_shm.buf)
 
-    # Create all I2C dependent sensors
-    bno = BNO.BNO085()
-    bno.initialize(ALPHA_BNO)
-
     bmp = BMP.BMP()
     bmp.initialize(ALPHA_BMP)
 
@@ -618,18 +545,12 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue)
     # mlx.initialize()
     # thermal_read = 0
 
-    # Init velocity calculation
-    local_data['velocity'] = 0
-    prev_lin_accel = bno.get_linear_acceleration()
-    prev_time = time.perf_counter()
-
     while True:
         if time.time() > timeout:
             break
 
         # read all relevant sensor info into local variables
         read_time = time.perf_counter()
-        local_data['lin_accel'] = bno.get_linear_acceleration()
         local_data['temperature'] = bmp.get_temperature()
         local_data['current'] = ina.get_current_a()
         local_data['distance'] = None #tof.get_distance()
@@ -641,14 +562,6 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue)
         except Exception as e:
             pass # Not stopped since no message in queue
 
-        # calculate current velocity
-        if stopped:
-            local_data['velocity'] = 0
-
-        delta_t = read_time - prev_time
-        delta_v = ((local_data['lin_accel'] + prev_lin_accel) / 2) * delta_t
-        local_data['velocity'] = delta_v + local_data['velocity']
-
         # save all these into shared memory at once
         data[:] = local_data[:]
 
@@ -656,9 +569,6 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue)
         # if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
         #     thermal_frame[:] = mlx.getFrame()[:]
         #     thermal_read = time.time()
-
-        prev_lin_accel = local_data['lin_accel']
-        prev_time = read_time
 
 
 

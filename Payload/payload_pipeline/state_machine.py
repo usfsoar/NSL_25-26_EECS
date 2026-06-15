@@ -30,11 +30,10 @@ class StateMachine:
         t = datetime.strptime(start_time, "%H:%M:%S.%f").time()
         self.start_time = t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1e6
         
-    def update(self, cur_time, current_state, g_force, altitude, velocity, apogee):
+    def update(self, cur_time, current_state, altitude, velocity, apogee):
         t = datetime.strptime(cur_time, "%H:%M:%S.%f").time()
         self.time = t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1e6
         self.current_state = current_state
-        self.g_force = g_force
         self.altitude = altitude
         self.velocity = velocity
         self.apogee = apogee
@@ -45,7 +44,7 @@ class StateMachine:
     def get_state(self):
         match self.current_state:
             case "READY":
-                if (self.g_force > self.launch_gforce_threshold) and (self.altitude > self.launch_altitude_threshold):
+                if (self.altitude > self.launch_altitude_threshold):
                     self.ready_counters += 1
                 else:
                     self.ready_counters = 0
@@ -76,7 +75,7 @@ class StateMachine:
                     self.current_state  = "LANDING"
                     return
                 
-                if (abs(self.velocity) < self.landing_vel_threshold) and (abs(self.g_force - 1.0) < self.landing_gforce_threshold) and (self.altitude < self.landing_altitude_threshold):
+                if (abs(self.velocity) < self.landing_vel_threshold) and (self.altitude < self.landing_altitude_threshold):
                     self.landing_counters += 1
                 else:
                     self.landing_counters = 0

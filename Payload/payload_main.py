@@ -28,7 +28,6 @@ from payload_pipeline.state_machine import StateMachine
 from payload_pipeline.telemetry_logger import TelemetryLogger
 
 from payload_sensor.bmp580 import BMP
-from payload_sensor.bno085 import BNO085
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 from payload_sensor.servo import ServoControl
 import payload_sensor.relative_thermal_index as RTI
@@ -105,8 +104,6 @@ THERMAL_SHAPE = (RTI.THERMAL_CAM_HEIGHT, RTI.THERMAL_CAM_WIDTH, 1)
 data = {
     "timestamp": 0,
     "state": "READY",
-    "raw_g_force": 0,
-    "g_force": 0,
     "raw_altitude": 0,
     "altitude": 0,
     "raw_velocity": 0,
@@ -121,11 +118,9 @@ data = {
 
 #----INITIALIZE CLASSES----
 if MODE == "sim":
-    bno = None
     bmp = None
     sim = Sensor_Data_Simulator()
 else:
-    bno = BNO085()
     bmp = BMP()
     sim = None
     servo = ServoControl()
@@ -223,8 +218,6 @@ def power_loss_recovery():
 
                 print(f"Recovering from {logFile}")
                 data['state'] = row[state_index]
-                data["raw_g_force"] = float(row[2])
-                data["g_force"] = float(row[3])
                 data["raw_altitude"] = float(row[4])
                 data["altitude"] = float(row[5])
                 data["raw_velocity"] = float(row[6])
@@ -251,11 +244,6 @@ def initialize_sensors():
         except Exception as error:
             print(error)
 
-        try: 
-            bno.initialize(ALPHA_GFORCE)
-        except Exception as error:
-            print(error)
-
         try:
             servo.initialize(16, -45, 45)
         except Exception as error:
@@ -265,8 +253,6 @@ def initialize_sensors():
 def validate_data():
     #need to figure out what to do if data is None
     #probably where kalman filter goes
-    if data["g_force"] is None:
-        data["g_force"] = 0
     if data["altitude"] is None:
         data["altitude"] = 0
     if data["velocity"] is None:
@@ -277,13 +263,10 @@ def get_sensor_data():
 
     if MODE == "sim":
         sim.updateValues()
-        data["raw_g_force"] = data["g_force"] = abs(sim.getAccel()) / 9.81
         data["raw_altitude"] = data["altitude"] = sim.getAlt()
         data["raw_velocity"] = data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
     else:
-        data["raw_acceleration"], data["acceleration"] = bno.get_acceleration()
-        data["raw_g_force"], data["g_force"] = bno.convert_gforce(data["raw_acceleration"]), bno.convert_gforce(data["acceleration"])
         data["raw_velocity"], data["velocity"] = bmp.get_vertical_velocity()
         data["raw_altitude"], data["altitude"] = bmp.get_altitude()
 
@@ -304,19 +287,6 @@ def set_zero_altitude(power_loss):
         data["start_pressure"] = bmp.get_pressure()
 
     bmp.set_sea_level_pressure(data["start_pressure"])
-
-def get_landing_orientation():
-    accel = bno.get_acceleration()
-    x = accel[0]
-    y = accel[1]
-    z = accel[2]
-    #ideal situation
-    # z = 9.81, x = 0, y = 0
-    if abs(z) > abs(x) and abs(z) > abs(y):
-        if z > 0:
-            return 1
-        else:
-            return 0
     
 def get_landing_altitude():
     alt = bmp.get_altitude()
@@ -366,7 +336,7 @@ def main():
 
     # Presumably not power recovered
     time.sleep(10)
-    if (get_landing_orientation() == 0 or get_landing_altitude() == 0):
+    if (get_landing_altitude() == 0):
         print("bad landing orientation or altitude")
         return
 
