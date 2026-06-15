@@ -256,6 +256,12 @@ def initialize_sensors():
         except Exception as error:
             print(error)
 
+        try:
+            servo.initialize(16, -45, 45)
+        except Exception as error:
+            print(error)
+        
+
 def validate_data():
     #need to figure out what to do if data is None
     #probably where kalman filter goes

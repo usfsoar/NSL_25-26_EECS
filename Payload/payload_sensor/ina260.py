@@ -61,7 +61,7 @@ class INA():
         Returns:
             float: Current in A
         """
-        return self.get_current_ma / 1000.0
+        return self.get_current_ma() / 1000.0
     
 if __name__ == '__main__':
     ina = INA()
