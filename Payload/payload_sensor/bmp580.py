@@ -6,6 +6,8 @@ import board
 import busio
 import time
 
+RECOVERY_WAIT = 0.1
+
 # todo: Class getters should probably have exceptions and bad data handled
 
 class BMP():
@@ -25,8 +27,8 @@ class BMP():
         """
         self.alpha = alpha
         self.address = address
-        self.prev = (0,0)
-        self.alt = (0,0)
+        self.prev = (0,0,0)
+        self.alt = (0,0,0)
 
         self.pressure = 0
         self.temperature = 0
@@ -51,8 +53,12 @@ class BMP():
     
     def recover(self):
         print(f"Recovering BMP")
-        del self.sensor
-        del self.i2c
+        try:
+            del self.sensor
+            del self.i2c
+        except Exception as e:
+            print(f"Error deleting old i2c sensor object: {e}")
+        time.sleep(RECOVERY_WAIT)
         self.initialize(alpha=self.alpha, address=self.address)
 
 
@@ -71,9 +77,23 @@ class BMP():
         """
         raw_altitude = 0
         self.prev = self.alt
-        for i in range (8):
+        
+        # for i in range(0, 100):
+        #     try:
+        #         if self.sensor.data_ready:
+        #             break
+        #     except Exception as e:
+        #         pass
+        #     time.sleep(0.01)
+
+        i = 0
+        while i < 8:
             try:
+                i += 1
+                
                 raw_altitude = self.sensor.altitude
+                if raw_altitude == self.prev[2]:
+                    i -= 1
             except Exception as e:
                 print(f"BMP Altitude Exception: {e}")
                 # If we fail 6 times, recover before last times:
@@ -89,12 +109,14 @@ class BMP():
         Input: None
         Output: Returns vertical velocity in m/s
         """
-        for _ in range(2):
-            if time.perf_counter() - self.prev[1] > 1:
-                raw_alt, _ = self.get_altitude()
+        if time.perf_counter() - self.prev[1] > 0.02:
+            self.get_altitude()
         
         delta_t = self.alt[1] - self.prev[1]
-        return (self.alt[0] - self.prev[0]) / delta_t, self.alt[2], self.alt[0]
+        try:
+            return (self.alt[0] - self.prev[0]) / delta_t, self.alt[2], self.alt[0]
+        except Exception as e:
+            return (self.alt[0] - self.prev[0]) / 0.001, self.alt[2], self.alt[0]
 
 
     def get_pressure(self):
@@ -140,6 +162,7 @@ if __name__ == '__main__':
     bmp = BMP()
     try:
         bmp.initialize(alpha=0.5)
+        bmp.set_sea_level_pressure(bmp.get_pressure())
     except Exception as e:
         print(e)
 

@@ -310,14 +310,12 @@ def main():
             data["velocity"],
             data["apogee"]
         )
-        
+
         # Log data to file: (Time, Current State, G-Force, Altitute, Velocity, Apogee)
         log.log_sensor(data=data)
         
 
         # loop_time = time.perf_counter() - start_loop
-
-        time.sleep(0.005)
     #end of loop
 
     # TODO** Check if reached due to power recovery
