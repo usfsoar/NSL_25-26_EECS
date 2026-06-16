@@ -289,46 +289,46 @@ def get_landing_altitude():
         return 1
 
 def main():
-    global log
-    log = TelemetryLogger(sensor_data=data)
+    # global log
+    # log = TelemetryLogger(sensor_data=data)
 
-    initialize_sensors()
+    # initialize_sensors()
 
-    power_loss = power_loss_recovery()
-    if MODE != "sim":
-        set_zero_altitude(power_loss)
+    # power_loss = power_loss_recovery()
+    # if MODE != "sim":
+    #     set_zero_altitude(power_loss)
         
 
-    while data["state"] != "LANDING":
-        if MODE != "sim":
-            servo.lock()
-        # start_loop = time.perf_counter()
-        get_sensor_data()
-        validate_data()
-        data["state"] = sm.update(
-            data["timestamp"],
-            data["state"],
-            data["altitude"],
-            data["velocity"],
-            data["apogee"]
-        )
+    # while data["state"] != "LANDING":
+    #     if MODE != "sim":
+    #         servo.lock()
+    #     # start_loop = time.perf_counter()
+    #     get_sensor_data()
+    #     validate_data()
+    #     data["state"] = sm.update(
+    #         data["timestamp"],
+    #         data["state"],
+    #         data["altitude"],
+    #         data["velocity"],
+    #         data["apogee"]
+    #     )
         
-        # Log data to file: (Time, Current State, G-Force, Altitute, Velocity, Apogee)
-        log.log_sensor(data=data)
+    #     # Log data to file: (Time, Current State, G-Force, Altitute, Velocity, Apogee)
+    #     log.log_sensor(data=data)
         
 
-        # loop_time = time.perf_counter() - start_loop
+    #     # loop_time = time.perf_counter() - start_loop
 
-        # if MODE == "sim":
-        #     time.sleep(0.005)
-    #end of loop
+    #     # if MODE == "sim":
+    #     #     time.sleep(0.005)
+    # #end of loop
 
-    # TODO** Check if reached due to power recovery
-        # Handle issues if needed
+    # # TODO** Check if reached due to power recovery
+    #     # Handle issues if needed
 
-    # Presumably not power recovered
-    if MODE != "sim":
-        time.sleep(10)
+    # # Presumably not power recovered
+    # if MODE != "sim":
+    #     time.sleep(10)
 
     if (get_landing_altitude() == 0):
         print("bad landing orientation or altitude")
@@ -356,9 +356,9 @@ def main():
     timeout_time = time.time() + ROVER_SCAN_TIMEOUT
     processes = list()
     processes.append(startRoverProcess((None, timeout_time, sensor_shm.name, plantToRover, roverToSensorQueue))) # rover
-    processes.append(startAIProcess((None, timeout_time, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
-    processes.append(startPlantProcess((thermal_shm.name, timeout_time, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
-    processes.append(startSensorProcess((timeout_time, sensor_shm.name, thermal_shm.name, roverToSensorQueue))) # sensor process
+    # processes.append(startAIProcess((None, timeout_time, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
+    # processes.append(startPlantProcess((thermal_shm.name, timeout_time, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
+    # processes.append(startSensorProcess((timeout_time, sensor_shm.name, thermal_shm.name, roverToSensorQueue))) # sensor process
 
     # wait on all 3 to finish
     for p in processes:

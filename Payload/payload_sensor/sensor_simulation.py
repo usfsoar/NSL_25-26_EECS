@@ -1,6 +1,7 @@
 #import matplotlib.pyplot as plt
 import numpy as np
 import math
+import csv
 
 # Rebekah to do:
 # - update rocket parameters
@@ -27,6 +28,12 @@ class Sensor_Data_Simulator:
         self.dt=0.05         #time step increments
         self.tRange=np.arange(0, 40, self.dt) #test start, stop, and step times
         self.currentCounter = 0
+        self.line_number = 0
+        self.data = []
+        with open('test-launch-data.csv') as testData:
+            csvReader = csv.reader(testData)
+            for row in csvReader:
+                self.data.append(row)
 
     def calcAccel(self, time, velocity):
         #calculate the acceleration using the thrust, drag, and mass
@@ -65,32 +72,33 @@ class Sensor_Data_Simulator:
         return mass
 
     def updateValues(self):
-        if self.currentCounter >= 790: # Reached the end of the simulation
-            return
+        self.line_number += 1
+        # if self.currentCounter >= 790: # Reached the end of the simulation
+        #     return
 
-        if self.currentHeight < 0: # Landed
-            self.currentAccel = -9.81
-            self.currentVelocity = 0
-        else:
-            self.currentAccel = self.calcAccel(self.currentTime, self.currentVelocity)
-            self.currentHeight = self.currentHeight + self.currentVelocity*self.dt
-            self.currentVelocity = self.currentVelocity + self.currentAccel*self.dt
+        # if self.currentHeight < 0: # Landed
+        #     self.currentAccel = -9.81
+        #     self.currentVelocity = 0
+        # else:
+        #     self.currentAccel = self.calcAccel(self.currentTime, self.currentVelocity)
+        #     self.currentHeight = self.currentHeight + self.currentVelocity*self.dt
+        #     self.currentVelocity = self.currentVelocity + self.currentAccel*self.dt
 
-        self.currentCounter += 1
-        self.currentTime = self.tRange[self.currentCounter]
+        # self.currentCounter += 1
+        # self.currentTime = self.tRange[self.currentCounter]
 
     def getAccel(self):
         # print(self.currentAccel)
-        return self.currentAccel
+        return float(self.data[self.line_number][2])
     
     def getVelocity(self):
         # print(self.currentVelocity)
-        return self.currentVelocity
+        return float(self.data[self.line_number][6])
         
     
     def getAlt(self):
         # print(self.currentHeight)
-        return self.currentHeight
+        return float(self.data[self.line_number][4])
         
 
     # def runSim(A, V, H, T, v, h, dt, k, tRange, t):

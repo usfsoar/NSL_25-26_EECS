@@ -68,20 +68,20 @@ class BMP():
         Input: None
         Output: Returns altitude in meters
         """
-        altitude = 0
+        raw_altitude = 0
         self.prev = self.alt
         for i in range (8):
             try:
-                altitude = self.sensor.altitude
+                raw_altitude = self.sensor.altitude
             except Exception as e:
                 print(f"BMP Altitude Exception: {e}")
                 # If we fail 6 times, recover before last times:
                 if i >= 5: 
                     self.recover()
 
-        self.alt = ((self.alpha * altitude) + (1 - self.alpha)*self.prev[0], time.perf_counter())
+        self.alt = ((self.alpha * raw_altitude) + (1 - self.alpha)*self.prev[0], time.perf_counter())
 
-        return altitude, self.alt    
+        return raw_altitude, self.alt[1]    
 
     def get_vertical_velocity(self):
         """
@@ -90,10 +90,10 @@ class BMP():
         """
         for _ in range(2):
             if time.perf_counter() - self.prev[1] > 1:
-                self.get_altitude()
+                raw_alt, _ = self.get_altitude()
         
         delta_t = self.alt[1] - self.prev[1]
-        return (self.alt[0] - self.prev[0]) / delta_t
+        return (self.alt[0] - self.prev[0]) / delta_t, raw_alt, self.alt[0]
 
 
     def get_pressure(self):
