@@ -96,7 +96,6 @@ data = {
     "state": "READY",
     "raw_altitude": 0,
     "altitude": 0,
-    "raw_velocity": 0,
     "velocity": 0,
     "apogee": 0,
     "start_pressure": 0,
@@ -212,10 +211,9 @@ def power_loss_recovery():
                 data['state'] = row[state_index]
                 data["raw_altitude"] = float(row[2])
                 data["altitude"] = float(row[3])
-                data["raw_velocity"] = float(row[4])
-                data["velocity"] = float(row[5])
-                data["apogee"] = float(row[6])
-                data["start_pressure"] = float(col[7])
+                data["velocity"] = float(row[4])
+                data["apogee"] = float(row[5])
+                data["start_pressure"] = float(col[6])
                 print(f"Recovery values: {data}")
         
 
@@ -259,7 +257,7 @@ def get_sensor_data():
         data["raw_velocity"] = data["velocity"] = sim.getVelocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
     else:
-        data["raw_velocity"], data["raw_altitude"], data["altitude"] = bmp.get_vertical_velocity()
+        data["velocity"], data["raw_altitude"], data["altitude"] = bmp.get_vertical_velocity()
         data["apogee"] = max(data["apogee"], data["altitude"])
 
 def set_zero_altitude(power_loss):
@@ -271,7 +269,7 @@ def set_zero_altitude(power_loss):
         prev = curr
 
     if not power_loss:
-        data["start_pressure"] = bmp.get_pressure()
+        _, data["start_pressure"] = bmp.get_pressure()
 
     bmp.set_sea_level_pressure(data["start_pressure"])
     
@@ -280,7 +278,7 @@ def get_landing_altitude():
     if MODE == "sim":
         alt = sim.getAlt()
     else: 
-        alt = bmp.get_altitude()
+        _, alt = bmp.get_altitude()
 
     #need to take account of change in elevation
     if alt >= 10: # 10 since altimeter isn't the most precise
@@ -319,8 +317,7 @@ def main():
 
         # loop_time = time.perf_counter() - start_loop
 
-        # if MODE == "sim":
-        #     time.sleep(0.005)
+        time.sleep(0.005)
     #end of loop
 
     # TODO** Check if reached due to power recovery

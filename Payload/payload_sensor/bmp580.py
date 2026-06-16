@@ -43,6 +43,7 @@ class BMP():
                 self.sensor = adafruit_bmp5xx.BMP5XX_I2C(self.i2c, address=address)
                 self.sensor.pressure_oversample = 8
                 self.set_sea_level_pressure(sea_level)
+                self.sensor.output_data_rate = adafruit_bmp5xx.BMP5XX_ODR_240_HZ
                 break
             except Exception as e:
                 print(f"Error initializing BMP: {e}")
@@ -79,7 +80,7 @@ class BMP():
                 if i >= 5: 
                     self.recover()
 
-        self.alt = ((self.alpha * raw_altitude) + (1 - self.alpha)*self.prev[0], time.perf_counter())
+        self.alt = ((self.alpha * raw_altitude) + (1 - self.alpha)*self.prev[0], time.perf_counter(), raw_altitude)
 
         return raw_altitude, self.alt[1]    
 
@@ -93,7 +94,7 @@ class BMP():
                 raw_alt, _ = self.get_altitude()
         
         delta_t = self.alt[1] - self.prev[1]
-        return (self.alt[0] - self.prev[0]) / delta_t, raw_alt, self.alt[0]
+        return (self.alt[0] - self.prev[0]) / delta_t, self.alt[2], self.alt[0]
 
 
     def get_pressure(self):
