@@ -73,8 +73,8 @@ ALPHA_ALT = 0.2 # Calculate by hand before go/no go
 ALPHA_PRESSURE = 0.8
 
 #state transition evaluation constants
-STABLE_READINGS = 3
-STABLE_READINGS_FOR_LANDING = 10
+STABLE_READINGS = 10
+STABLE_READINGS_FOR_LANDING = 20
 
 #timeout constants
 POWER_CYCLE_TIME = 45 # seconds

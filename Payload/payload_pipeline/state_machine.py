@@ -55,11 +55,6 @@ class StateMachine:
                     self.ready_counters = 0
                 
             case "LAUNCHED":
-                self.current_time = self.time - self.start_time
-                if self.current_time > self.timeout:
-                    self.current_state  = "LANDING"
-                    return
-
                 if (self.apogee > self.descent_apogee_threshold) and (self.altitude < (self.apogee - self.descent_altitude_threshold)):
                     self.launched_counters += 1
                 else:
@@ -70,11 +65,6 @@ class StateMachine:
                     self.launched_counters = 0
 
             case "DESCENT":
-                self.current_time = self.time - self.start_time
-                if self.current_time > self.timeout:
-                    self.current_state  = "LANDING"
-                    return
-                
                 if (abs(self.velocity) < self.landing_vel_threshold) and (self.altitude < self.landing_altitude_threshold):
                     self.landing_counters += 1
                 else:
