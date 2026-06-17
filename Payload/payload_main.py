@@ -43,11 +43,11 @@ MODE = "hand"
 #hand thresholds
 if MODE == "launch" or MODE == "sim":
     LAUNCH_GFORCE_THRESHOLD     = 2.0   #G  gs needed to launch
-    LAUNCH_ALTITUDE_THRESHOLD   = 30.0  #m  height needed to launch
+    LAUNCH_ALTITUDE_THRESHOLD   = 3000.0  #m  height needed to launch
     DESCENT_ALTITUDE_THRESHOLD  = 10.0  #m  below apogee to call descent
     DESCENT_APOGEE_THRESHOLD    = 500.0 #m  minimum apogee to care
     LANDING_GFORCE_THRESHOLD    = 0.8   #G  gs needed to call landing
-    LANDING_VEL_THRESHOLD       = 0.8  #m/s velocity needed to call landing
+    LANDING_VEL_THRESHOLD       = 0.3  #m/s velocity needed to call landing
     LANDING_ALTITUDE_THRESHOLD  = 50  #m height needed to call landing
 elif MODE == "drop":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
@@ -69,7 +69,7 @@ else:
     exit("Invalid MODE selected")
 
 #ema constants
-ALPHA_ALT = 0.2 # Calculate by hand before go/no go
+ALPHA_ALT = 0.1 # Calculate by hand before go/no go
 ALPHA_PRESSURE = 0.8
 
 #state transition evaluation constants
@@ -322,8 +322,8 @@ def main():
         # Handle issues if needed
 
     # Presumably not power recovered
-    if MODE != "sim":
-        time.sleep(10)
+    if MODE == "launch":
+        time.sleep(250) # Wait the full parachute descent time
 
     if (get_landing_altitude() == 0):
         print("bad landing orientation or altitude")
