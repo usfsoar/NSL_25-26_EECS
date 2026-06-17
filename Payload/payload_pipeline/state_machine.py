@@ -65,7 +65,7 @@ class StateMachine:
                     self.launched_counters = 0
 
             case "DESCENT":
-                if (abs(self.velocity) < self.landing_vel_threshold) and (self.altitude < self.landing_altitude_threshold):
+                if (abs(self.velocity) < self.landing_vel_threshold) and (self.altitude < self.landing_altitude_threshold) and (self.time - self.start_time > 180): # try 180, 240, 300 seconds to determine what's best. Based off last launch, from slaunch to landing it's 158 seconds.
                     self.landing_counters += 1
                 else:
                     self.landing_counters = 0
