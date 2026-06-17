@@ -19,13 +19,14 @@ class BMP():
         pass
     
     
-    def initialize(self, alpha, address: int = 0x47, sea_level: float = 1013.25):
+    def initialize(self, alpha_alt, alpha_pressure, address: int = 0x47, sea_level: float = 1013.25):
         """
         Input: I2C Address; Pressure at sea levelin hPa\n
         Output: None\n
         Note: Will throw an exception if the BMP sensor cannot be initialized
         """
-        self.alpha = alpha
+        self.alpha_alt = alpha_alt
+        self.alpha_pressure = alpha_pressure
         self.address = address
         self.prev = (0,0,0)
         self.alt = (0,0,0)
@@ -59,7 +60,7 @@ class BMP():
         except Exception as e:
             print(f"Error deleting old i2c sensor object: {e}")
         time.sleep(RECOVERY_WAIT)
-        self.initialize(alpha=self.alpha, address=self.address)
+        self.initialize(self.alpha_alt, self.alpha_pressure, address=self.address)
 
 
     def set_sea_level_pressure(self, sea_level: float):
@@ -100,7 +101,7 @@ class BMP():
                 if i >= 5: 
                     self.recover()
 
-        self.alt = ((self.alpha * raw_altitude) + (1 - self.alpha)*self.prev[0], time.perf_counter(), raw_altitude)
+        self.alt = ((self.alpha_alt * raw_altitude) + (1 - self.alpha_alt)*self.prev[0], time.perf_counter(), raw_altitude)
 
         return raw_altitude, self.alt[1]    
 
@@ -134,7 +135,7 @@ class BMP():
                 if i >= 5: 
                     self.recover()
 
-        self.pressure = (self.alpha * pressure) + (1 - self.alpha)*self.pressure
+        self.pressure = (self.alpha_pressure * pressure) + (1 - self.alpha_pressure)*self.pressure
 
         return pressure, self.pressure
 
@@ -154,14 +155,14 @@ class BMP():
                 if i >= 5: 
                     self.recover()
 
-        self.temperature = (self.alpha * temperature) + (1 - self.alpha)*self.temperature
+        self.temperature = (self.alpha_pressure * temperature) + (1 - self.alpha_pressure)*self.temperature
         return temperature, self.temperature
 
 
 if __name__ == '__main__':
     bmp = BMP()
     try:
-        bmp.initialize(alpha=0.5)
+        bmp.initialize(0.5, 0.8)
         bmp.set_sea_level_pressure(bmp.get_pressure())
     except Exception as e:
         print(e)

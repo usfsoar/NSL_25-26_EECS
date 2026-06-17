@@ -126,7 +126,7 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue, roverToSensorQueue
     # Exit CubeSat
     # motors.set_speed(0.5,0.5)
     # time.sleep(4)
-    motors.move_forward(1, 1)
+    motors.move_forward(1)
 
     # time.sleep(timeout - motors.move_forward(1))
 
@@ -134,6 +134,7 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue, roverToSensorQueue
         if time.time() > timeout:
             break
 
+        selected = False
         try:
             selected = plantQueue.get(block=False)
         except Exception as e:
@@ -141,14 +142,14 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue, roverToSensorQueue
 
         if selected:
             # Stop 
-            motors.set_speed(0, 0)
+            motors.stop()
             if not roverToSensorQueue.full():
                 roverToSensorQueue.put(True)
 
             time.sleep(0.07) # Sleep until process has a good chance to reach queue read
             
             # Go back to normal speed
-            motors.set_speed(1,1)
+            motors.move_forward(1)
 
         time.sleep(0.08) # Prevent looping too quickly
 
@@ -347,7 +348,7 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
         shm, lock = SIM
         #aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
     else:
-        aicam = ai.AICamera(network=MODEL_PATH, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
+        aicam = ai.AICamera(network=MODEL_PATH)#, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
 
     # make aicam directory if not already there
     if not os.path.exists("aicam"):

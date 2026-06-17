@@ -3,6 +3,7 @@ from picamera2.devices.imx500 import IMX500
 from aicam_lib.camera import Camera
 from aicam_lib.inference import Inference
 from aicam_lib.post_processing import boxFloatToInt
+import copy
 
 RESOLUTION_WIDTH = 2028
 RESOLUTION_HEIGHT = 1520
@@ -29,7 +30,7 @@ class AICamera(Camera):
             if outputs is None:
                 outputs = self._previous_output
             else:
-                self._previous_output = outputs
+                self._previous_output = copy.deepcopy(outputs)
 
             inferences = [Inference(boxFloatToInt(outputs[0][i]), outputs[1][i], int(outputs[2][i])) for i in range(len(outputs[0]))]
             return inferences, frame

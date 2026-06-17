@@ -22,6 +22,7 @@ import time
 import multiprocessing as mp
 import multiprocessing.shared_memory as shared_memory
 import numpy as np
+import subprocess
 
 #import classes
 from payload_pipeline.state_machine import StateMachine
@@ -46,8 +47,8 @@ if MODE == "launch" or MODE == "sim":
     DESCENT_ALTITUDE_THRESHOLD  = 10.0  #m  below apogee to call descent
     DESCENT_APOGEE_THRESHOLD    = 500.0 #m  minimum apogee to care
     LANDING_GFORCE_THRESHOLD    = 0.8   #G  gs needed to call landing
-    LANDING_VEL_THRESHOLD       = 1.0   #m/s velocity needed to call landing
-    LANDING_ALTITUDE_THRESHOLD  = 20.0  #m height needed to call landing
+    LANDING_VEL_THRESHOLD       = 0.8  #m/s velocity needed to call landing
+    LANDING_ALTITUDE_THRESHOLD  = 50  #m height needed to call landing
 elif MODE == "drop":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
     LAUNCH_ALTITUDE_THRESHOLD   = 0.75   #m
@@ -60,7 +61,7 @@ elif MODE == "hand":
     LAUNCH_GFORCE_THRESHOLD     = 1.3   #G
     LAUNCH_ALTITUDE_THRESHOLD   = 0.1   #m
     DESCENT_ALTITUDE_THRESHOLD  = 0.2   #m
-    DESCENT_APOGEE_THRESHOLD    = 1   #m
+    DESCENT_APOGEE_THRESHOLD    = 0.5   #m
     LANDING_GFORCE_THRESHOLD    = 0.2   #G
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
     LANDING_ALTITUDE_THRESHOLD  = 0.5   #m
@@ -68,9 +69,8 @@ else:
     exit("Invalid MODE selected")
 
 #ema constants
-ALPHA_GFORCE   = 0.8
-ALPHA_ALTITUDE = 0.5 # Calculate by hand before go/no go
-ALPHA_VELOCITY = 0.8
+ALPHA_ALT = 0.2 # Calculate by hand before go/no go
+ALPHA_PRESSURE = 0.8
 
 #state transition evaluation constants
 STABLE_READINGS = 3
@@ -87,7 +87,7 @@ WHEEL_RADIUS = 0
 WHEEL_BASE = 0
 WHEEL_CIRCUM = 2 * 3.14 * WHEEL_RADIUS
 
-AI_MODEL_PATH = "model.pt"
+AI_MODEL_PATH = "model.rpk"
 THERMAL_SHAPE = (RTI.THERMAL_CAM_HEIGHT, RTI.THERMAL_CAM_WIDTH, 1)
 
 #data storage
@@ -230,7 +230,7 @@ def initialize_sensors():
         pass
     else:
         try:
-            bmp.initialize(ALPHA_ALTITUDE)
+            bmp.initialize(ALPHA_ALT, ALPHA_PRESSURE)
         except Exception as error:
             print(error)
 
@@ -261,10 +261,10 @@ def get_sensor_data():
         data["apogee"] = max(data["apogee"], data["altitude"])
 
 def set_zero_altitude(power_loss):
-    raw, prev = bmp.get_pressure()
+    _, prev = bmp.get_pressure()
     while True:
-        raw, curr = bmp.get_pressure()
-        if abs(curr - prev) < 5:
+        _, curr = bmp.get_pressure()
+        if abs(curr - prev) < 0.5:
             break
         prev = curr
 
@@ -375,6 +375,7 @@ def main():
     if os.path.exists(".running.txt"):
         os.remove(".running.txt")
 
+    subprocess.run(["sudo poweroff"], check=True)
         
 if __name__ == '__main__':
     main()
