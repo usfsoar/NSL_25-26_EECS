@@ -30,7 +30,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 
 from payload_sensor.bmp580 import BMP
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
-# from payload_sensor.servo import ServoControl
+from payload_sensor.servo import ServoControl
 
 from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, startSensorProcess
 
@@ -110,11 +110,11 @@ data = {
 if MODE == "sim":
     bmp = None
     sim = Sensor_Data_Simulator()
-    # servo = None
+    servo = None
 else:
     bmp = BMP()
     sim = None
-    # servo = ServoControl()
+    servo = ServoControl()
     
 sm = StateMachine(
     LAUNCH_GFORCE_THRESHOLD,
@@ -238,10 +238,10 @@ def initialize_sensors():
         except Exception as error:
             print(error)
 
-        # try:
-        #     servo.initialize(16, -45, 45)
-        # except Exception as error:
-        #     print(error)
+        try:
+            servo.initialize(16, -45, 45)
+        except Exception as error:
+            print(error)
         
 
 def validate_data():
@@ -290,8 +290,8 @@ def main():
         
 
     while data["state"] != "LANDING":
-        # if MODE != "sim":
-        #     servo.lock()
+        if MODE != "sim":
+            servo.lock()
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
@@ -319,9 +319,9 @@ def main():
     elif MODE == "hand":
         time.sleep(20)
 
-    # #Servo Retract
-    # if MODE != "sim":
-    #     servo.retract()
+    #Servo Retract
+    if MODE != "sim":
+        servo.retract()
     time.sleep(5)
 
     sensor_shm = mp.shared_memory.SharedMemory(create=True, 
