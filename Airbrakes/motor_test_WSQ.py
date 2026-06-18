@@ -44,14 +44,14 @@ def move_motor(direction, amount):
 
     if direction == "w":
         stepsToMove = min(amount, maxSteps - currentpos)
-        DIR.value = True
+        DIR.value = False
         for i in range(stepsToMove):
             pulse_step()
         currentpos += stepsToMove
 
     elif direction == "s":
         stepsToMove = min(amount, currentpos - minSteps)
-        DIR.value = False
+        DIR.value = True
         for i in range(stepsToMove):
             pulse_step()
         currentpos -= stepsToMove

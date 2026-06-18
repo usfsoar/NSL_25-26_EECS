@@ -17,6 +17,18 @@ class Motor():
         self.dir.direction = Direction.OUTPUT
         self.step = DigitalInOut(board.D24)
         self.step.direction = Direction.OUTPUT
+        MS3 = DigitalInOut(board.D25)
+        MS3.direction = Direction.OUTPUT
+        MS3.value = False
+        RST = DigitalInOut(board.D1)
+        RST.direction = Direction.OUTPUT
+        RST.value = True
+        SLP = DigitalInOut(board.D15)
+        SLP.direction = Direction.OUTPUT
+        SLP.value = True
+        EN = DigitalInOut(board.D16)
+        EN.direction = Direction.OUTPUT
+        EN.value = False
         self.max_step = 7000
         print("Basic GPIO initialized")
 
@@ -58,6 +70,6 @@ class Motor():
 
 if __name__ == '__main__':
     motor = Motor()
-    motor.move_to(200)
-    time.sleep(1)
+    motor.move_to(800)
+    time.sleep(1.5)
     motor.move_to(0)
