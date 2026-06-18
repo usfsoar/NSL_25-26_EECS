@@ -122,26 +122,18 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
     motors = DriveController(left_back_motor, right_back_motor, left_front_motor, right_front_motor)
 
     time.sleep(0.1)
-
+    curr_time = time.time()
     while True:
-        if time.time() > timeout:
+        if time.time() - curr_time >timeout:
             break
-
-        selected = False
-        try:
-            selected = plantQueue.get(block=False)
-        except Exception as e:
-            pass # No message in queue
-        
-        dist = sensor_data["distance"] #[0]
-
-        if (selected): #tof.get_distance() <= 500:
+       
+        if (sensor_data["distance"] <= 35):
             #stop, delay, rotate 
             motors.stop()
             time.sleep(1)
             curr_time = time.time()
 
-            while time.time() - curr_time < 3:
+            while time.time() - curr_time < 4:
                 motors.turn_right(1)
         
         #if ina.get_current_a() > 5:

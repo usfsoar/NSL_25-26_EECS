@@ -68,4 +68,4 @@ if __name__ == '__main__':
     while True:
         print(f"Current: {ina.get_current_ma()} mA")
         print(f"Current: {ina.get_current_a()} A")
-        time.sleep(0.5)
+        time.sleep(0.1)

@@ -122,3 +122,7 @@ class MLX90640Camera:
             self.i2c.deinit()
         except Exception:
             pass
+if __name__ == '__main__':
+    mlx = MLX90640Camera()
+    mlx.capture_frame()
+    mlx.close()
