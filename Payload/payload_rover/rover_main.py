@@ -102,7 +102,7 @@ def startProcess(target, args: tuple, name: str):
     return None
 
 
-def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
+def __roverMain(SIM, timeout, shm_name):
     # Setup sensor shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
     sensor_data = np.ndarray(1, 
@@ -123,138 +123,10 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
 
 
     # Exit CubeSat
-    # motors.set_speed(0.5,0.5)
-    # time.sleep(4)
     motors.move_forward(1)
 
-    # time.sleep(timeout - motors.move_forward(1))
+    time.sleep(timeout - motors.move_forward(1))
 
-    while True:
-        if time.time() > timeout:
-            break
-
-        selected = False
-        try:
-            selected = plantQueue.get(block=False)
-        except Exception as e:
-            pass # No message in queue
-
-        if selected:
-            # Stop 
-            motors.stop()
-
-            time.sleep(0.07) # Sleep until process has a good chance to reach queue read
-            
-            # Go back to normal speed
-            motors.move_forward(1)
-
-        time.sleep(0.08) # Prevent looping too quickly
-
-
-    # # Initialize grid pattern
-    # move_dist = 0
-    # kp = 0.5
-    # dist_increment = 1 #meter
-
-    # motor_stall = 0
-
-    # while True:
-    #     if time.time() > timeout:
-    #         traveled = 0
-    #         move_time = time.time()
-    #         move_dist = move_dist + dist_increment
-
-    #         while (traveled < move_dist):
-
-    #             # MOVE THIS!!!!!
-    #             # I can send plant id, pixel coordinates on screen, confidence, or label
-    #             plantDetected = False
-    #             try:
-    #                 plantDetected = plantQueue.get(block=False) # Must have block=False if you don't want to wait for something to arrive in the queue
-    #                 # Also have the timeout options which will block for a time given
-    #             except Exception as e:
-    #                 pass # Queue will throw empty exception if nothing is in there
-    #             if plantDetected:
-    #                 # TODO** add frame centering, then move slow
-    #                 motors.stop()
-    #                 time.sleep(3)
-    #                 while plantDetected:
-    #                     left, right = im_center_pid()
-    #                     motors.set_speed(left, right)
-    #                     try:
-    #                         plantDetected = plantQueue.get(block=False) # Must have block=False if you don't want to wait for something to arrive in the queue
-    #                         # Also have the timeout options which will block for a time given
-    #                     except Exception as e:
-    #                         plantDetected = False
-    #                         pass
-    #                     time.sleep(0.05)
-
-    #             traveled += sensor_data['velocity'] * (time.time() - move_time)
-    #             error = move_dist - traveled
-    #             speed = max(25, min(int(error * kp), 100))
-                
-                # if ina.is_stall():
-                #     motors.stop()
-                #     time.sleep(3)
-
-                #     curr = time.time()
-                #     while time.time() - curr < 10:
-                #         motors.move_backward(speed=100)
-                        
-                #     time.sleep(3)
-                        
-                #     while time.time() - curr < 3:
-                #         motors.move_backward(speed=50)
-                #         if ina.is_stall():
-                #             motors.stop()
-                #             break
-                #         else:
-                #             motors.spin_right(speed=75)
-                #             continue
-                    
-
-                        
-            #     motors.set_speed(speed, speed)
-            #     time.sleep(0.05)
-            
-            # motors.spin_right(speed=75)
-            
-        # check if obstacle function
-            # call obstacle avoidance function
-            # continue
-
-        # check if plant in queue from plant process
-            # plant driving handling
-            # continue
-
-        # else drive in holding pattern for an interval
-
-
-        # alternatively, wait on queue for all messages. handle obstacles or plant that way. 
-        # Once handled, then go back to holding and wait again
-
-def im_center_pid():
-    #TODO get frame dimensions, tune center constraint and set target constant
-    dt = 0.5
-    x_left = 270
-    x_right = 370
-
-    target_degrees = (x_left + x_right) / 2
-    cx = distToCenter()
-    error = 320 - cx
-
-    p = abs(error * dt)
-    if error < 0:
-        right_rpm = p
-        left_rpm = -p    
-    elif error > 0:
-        right_rpm = -p
-        left_rpm = p
-    else:
-        right_rpm = 0
-        left_rpm = 0
-    
-    return left_rpm, right_rpm
 
 
 def startRoverProcess(args: tuple):
@@ -338,7 +210,7 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
     return plantMap
 
 
-def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
+def __aiMain(SIM: bool, timeout, MODEL_PATH: str):
     # Initialize AI camera
     aicam = None
     if SIM is not None:
@@ -410,12 +282,6 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
 
         if len(plantMap) == 0:
             continue
-
-        # send id list, boxes, and frame number to plant process
-        if queue.full():
-            queue.get()
-        
-        queue.put((plantMap, frameNumber))
         
 
 def startAIProcess(args: tuple):

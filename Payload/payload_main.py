@@ -30,7 +30,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 
 from payload_sensor.bmp580 import BMP
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
-# from payload_sensor.servo import ServoControl
+from payload_sensor.servo import ServoControl
 
 from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, startSensorProcess
 
@@ -82,6 +82,8 @@ STABLE_READINGS_FOR_LANDING = 20
 POWER_CYCLE_TIME = 45 # seconds
 FLIGHT_TIMEOUT = 15 * 60
 ROVER_SCAN_TIMEOUT = 900
+if MODE == "sim":
+    ROVER_SCAN_TIMEOUT = 60
 ROVER_EXIT_TIMEOUT = 60
 
 #rover dimensions
@@ -108,11 +110,11 @@ data = {
 if MODE == "sim":
     bmp = None
     sim = Sensor_Data_Simulator()
-    # servo = None
+    servo = None
 else:
     bmp = BMP()
     sim = None
-    # servo = ServoControl()
+    servo = ServoControl()
     
 sm = StateMachine(
     LAUNCH_GFORCE_THRESHOLD,
@@ -236,10 +238,10 @@ def initialize_sensors():
         except Exception as error:
             print(error)
 
-        # try:
-        #     servo.initialize(16, -45, 45)
-        # except Exception as error:
-        #     print(error)
+        try:
+            servo.initialize(16, -45, 45)
+        except Exception as error:
+            print(error)
         
 
 def validate_data():
@@ -286,10 +288,10 @@ def main():
     if MODE != "sim":
         set_zero_altitude(power_loss)
         
+    if MODE != "sim":
+            servo.lock()
 
     while data["state"] != "LANDING":
-        # if MODE != "sim":
-        #     servo.lock()
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
@@ -317,29 +319,19 @@ def main():
     elif MODE == "hand":
         time.sleep(20)
 
-    # #Servo Retract
-    # if MODE != "sim":
-    #     servo.retract()
+    #Servo Retract
+    if MODE != "sim":
+        servo.retract()
     time.sleep(5)
 
     sensor_shm = mp.shared_memory.SharedMemory(create=True, 
         size=np.zeros(1, dtype=[('velocity', np.float64), ('lin_accel', np.float64), ('temperature', np.float64), ('current', np.float64), ('distance', np.float64)]).nbytes)
 
-    # Create and pass in all required args for the threads
-    # AI to Plant Process Message Queue
-    aiToPlantQueue = mp.Queue(maxsize=1)
-    plantToRover = mp.Queue(maxsize=1)
-
-    # Thermal Camera Shared Memory
-    thermal_shm = mp.shared_memory.SharedMemory(create=True,
-    size=np.zeros(THERMAL_SHAPE, dtype=np.float64).nbytes)
-
     # Start processes
     timeout_time = time.time() + ROVER_SCAN_TIMEOUT
     processes = list()
-    processes.append(startRoverProcess((None, timeout_time, sensor_shm.name, plantToRover))) # rover
-    processes.append(startAIProcess((None, timeout_time, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
-    #processes.append(startPlantProcess((thermal_shm.name, timeout_time, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
+    processes.append(startRoverProcess((None, timeout_time, sensor_shm.name))) # rover
+    processes.append(startAIProcess((None, timeout_time, AI_MODEL_PATH))) # ai cam
     processes.append(startSensorProcess((timeout_time, sensor_shm.name))) # sensor process
 
     # wait on all 3 to finish
@@ -348,12 +340,6 @@ def main():
     
     sensor_shm.close()
     sensor_shm.unlink()
-
-    thermal_shm.close()
-    thermal_shm.unlink()
-
-    #rover.exit_rover()
-    #rover.do_scan_2()
     
     #plot data here
     #run rover stuff here
