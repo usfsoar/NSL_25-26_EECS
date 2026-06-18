@@ -19,7 +19,7 @@ import payload_rover.camera_translation as translation
 import payload_sensor.bmp580 as BMP
 import payload_sensor.ina260 as INA
 import payload_sensor.tofvl53 as TOF
-import payload_sensor.relative_thermal_index as RTI
+import payload_sensor.mlx906040 as MLX
 
 from payload_rover.motors import Motor, DriveController
 
@@ -28,16 +28,15 @@ from payload_rover.motors import Motor, DriveController
 ALPHA_BMP = 0.8
 
 FRAME_DELAY = 1 / ai.AICAM_FRAME_RATE
-MODEL_PATH = "payload_rover/yolo_200epoch.pt"
 
-MAX_DIST = 4 * 2028
-BOTTOM_CORRECTION = 70 # TODO** TUNE
-DISTANCE_THRESHOLD = 220 # TODO** SUBJECT TO CHANGE AND TESTING
-PLANT_CLASSES = set([6, 8]) # TODO**
+CROP_CORRECTION_FACTOR = 0.315
+MAX_DIST = 4 * ai.MODEL_WIDTH
+BOTTOM_CORRECTION = 70 * CROP_CORRECTION_FACTOR # TODO** TUNE
+DISTANCE_THRESHOLD = 220 * CROP_CORRECTION_FACTOR # TODO** SUBJECT TO CHANGE AND TESTING
 MAX_UNMATCHED_TIME = 30 # TODO** TUNE 
 
-MAX_AREA = ai.RESOLUTION_WIDTH * ai.RESOLUTION_HEIGHT
-MAX_OFFSET = math.sqrt((ai.RESOLUTION_WIDTH/2) ** 2 + (ai.RESOLUTION_HEIGHT/2) ** 2)
+MAX_AREA = ai.MODEL_WIDTH * ai.MODEL_HEIGHT
+MAX_OFFSET = math.sqrt((ai.MODEL_WIDTH/2) ** 2 + (ai.MODEL_HEIGHT/2) ** 2)
 
 # Hyper-parameters TODO** TUNE THEM
 ACCEPTABLE_LAST_SEEN = 1
@@ -46,7 +45,7 @@ WEIGHT_AREA = 1
 WEIGHT_CONFIDENCE = 0.7
 WEIGHT_OFFSET = 1
 
-THERMAL_CAM_DELAY = 1 / RTI.THERMAL_CAM_HZ
+THERMAL_CAM_DELAY = 1 / 16
 
 MAX_BOX_DELAY = 1500 # TODO** Need to tune
 MAX_LIN_DELAY = 1500
@@ -103,7 +102,7 @@ def startProcess(target, args: tuple, name: str):
     return None
 
 
-def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue, roverToSensorQueue: mp.Queue):
+def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
     # Setup sensor shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
     sensor_data = np.ndarray(1, 
@@ -241,7 +240,7 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
         shm, lock = SIM
         #aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
     else:
-        aicam = ai.AICamera(network=MODEL_PATH)#, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
+        aicam = ai.AICamera(network=MODEL_PATH)
 
     # make aicam directory if not already there
     if not os.path.exists("aicam"):
@@ -333,7 +332,7 @@ def distToCenter(box):
     center_y = box[3] + (box[1] - box[3]) / 2
 
     # Return euclid distance to center
-    return math.sqrt((center_x - ai.RESOLUTION_WIDTH/2)**2 + (center_y - ai.RESOLUTION_HEIGHT/2)**2)
+    return math.sqrt((center_x - ai.MODEL_WIDTH/2)**2 + (center_y - ai.MODEL_HEIGHT/2)**2)
 
 
 def selectPlant(plantMap, ignore: set):
@@ -393,9 +392,6 @@ def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name, p
                     + f"Time reading was taken: {time.time()}"
                     + f"Frame Number: {frameNumber}")
 
-        # Add ID to ignore list
-        ignore.add(id)
-
         
 
 def startPlantProcess(args: tuple):
@@ -404,7 +400,7 @@ def startPlantProcess(args: tuple):
 
 
 
-def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue):
+def __SensorMain(timeout, sensor_shm_name):
     # Init shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
     data = np.ndarray(1, 
@@ -422,47 +418,36 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue)
                                    ('current', np.float64),
                                    ('distance', np.float64)])
 
-    thermal_shm = mp.shared_memory.SharedMemory(name=therm_shm_name)
-    thermal_frame = np.ndarray(RTI.THERMAL_CAM_WIDTH * RTI.THERMAL_CAM_HEIGHT, 
-                      dtype=np.float64, 
-                      buffer=thermal_shm.buf)
-
     bmp = BMP.BMP()
     bmp.initialize(ALPHA_BMP)
 
     ina = INA.INA()
 
-    # tof = TOF.TOF()
-    # tof.initialize()
+    tof = TOF.TOF()
+    tof.initialize()
 
-    # mlx = RTI.MLX()
+    mlx = MLX.MLX90640Camera()
     # mlx.initialize()
-    # thermal_read = 0
+    thermal_read = 0
+    fileNumber = 0
 
     while True:
         if time.time() > timeout:
             break
 
         # read all relevant sensor info into local variables
-        read_time = time.perf_counter()
         local_data['temperature'] = bmp.get_temperature()
         local_data['current'] = ina.get_current_a()
-        local_data['distance'] = None #tof.get_distance()
-
-        # attempt to read from queue for reset velocity bias to 0
-        stopped = False
-        try: 
-            stopped = roverQueue.get(block=False)
-        except Exception as e:
-            pass # Not stopped since no message in queue
+        local_data['distance'] = tof.get_distance()
 
         # save all these into shared memory at once
         data[:] = local_data[:]
 
-        # # get frame from mlx if it's ready
-        # if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
-        #     thermal_frame[:] = mlx.getFrame()[:]
-        #     thermal_read = time.time()
+        # get frame from mlx if it's ready
+        if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
+            mlx.captureframe(filename=f"thermal{fileNumber}.jpg" )
+            thermal_read = time.time()
+            fileNumber += 1
 
 
 

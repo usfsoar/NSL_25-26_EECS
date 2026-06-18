@@ -5,7 +5,7 @@ class StateMachine:
     def __init__(self, launch_gforce_threshold, launch_altitude_threshold, 
                  descent_apogee_threshold, descent_altitude_threshold, landing_vel_threshold, 
                  landing_gforce_threshold, landing_altitude_threshold,
-                 stable_readings, stable_readings_for_landing, timeout):
+                 stable_readings, stable_readings_for_landing, min_landing_time, timeout):
         
         self.launch_gforce_threshold = launch_gforce_threshold
         self.launch_altitude_threshold = launch_altitude_threshold
@@ -16,6 +16,7 @@ class StateMachine:
         self.landing_altitude_threshold = landing_altitude_threshold
         self.stable_readings = stable_readings
         self.stable_readings_for_landing = stable_readings_for_landing
+        self.min_landing_time = min_landing_time
         self.timeout = timeout
 
         self.ready_counters = 0
@@ -65,7 +66,7 @@ class StateMachine:
                     self.launched_counters = 0
 
             case "DESCENT":
-                if (abs(self.velocity) < self.landing_vel_threshold) and (self.altitude < self.landing_altitude_threshold) and (self.time - self.start_time > 180): # try 180, 240, 300 seconds to determine what's best. Based off last launch, from slaunch to landing it's 158 seconds.
+                if (abs(self.velocity) < self.landing_vel_threshold) and (self.altitude < self.landing_altitude_threshold) and (self.time - self.start_time > self.min_landing_time): # try 180, 240, 300 seconds to determine what's best. Based off last launch, from slaunch to landing it's 158 seconds.
                     self.landing_counters += 1
                 else:
                     self.landing_counters = 0
