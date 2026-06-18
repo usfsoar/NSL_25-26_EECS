@@ -102,7 +102,7 @@ def startProcess(target, args: tuple, name: str):
     return None
 
 
-def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
+def __roverMain(SIM, timeout, shm_name):
     # Setup sensor shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
     sensor_data = np.ndarray(1, 
@@ -124,7 +124,7 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
     time.sleep(0.1)
     curr_time = time.time()
     while True:
-        if time.time() - curr_time >timeout:
+        if time.time() > timeout:
             break
        
         if (sensor_data["distance"] <= 35):
@@ -135,8 +135,9 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
 
             while time.time() - curr_time < 4:
                 motors.turn_right(1)
+                time.sleep(0.1) # Delay to save CPU time
         
-        #if ina.get_current_a() > 5:
+        if sensor_data['current'] > 5:
             motors.stop()
         
         motors.move_forward(1)
@@ -225,7 +226,7 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
     return plantMap
 
 
-def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
+def __aiMain(SIM: bool, timeout, MODEL_PATH: str):
     # Initialize AI camera
     aicam = None
     if SIM is not None:
@@ -297,12 +298,6 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
 
         if len(plantMap) == 0:
             continue
-
-        # send id list, boxes, and frame number to plant process
-        if queue.full():
-            queue.get()
-        
-        queue.put((plantMap, frameNumber))
         
 
 def startAIProcess(args: tuple):

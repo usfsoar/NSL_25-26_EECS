@@ -69,11 +69,11 @@ class MLX90640Camera:
         """
 
         # Read frame (retry on occasional I2C errors)
-        while True:
+        for _ in range(8):
             try:
                 self.sensor.getFrame(self.frame)
                 break
-            except ValueError:
+            except Exception as e:
                 continue
 
         thermal = np.array(self.frame).reshape((24, 32))
