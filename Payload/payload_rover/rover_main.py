@@ -341,7 +341,7 @@ def idPlants(prevPlantMap: dict[Plant], inferences):
     return plantMap
 
 
-def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
+def __aiMain(SIM: bool, timeout, MODEL_PATH: str):
     # Initialize AI camera
     aicam = None
     if SIM is not None:
@@ -413,12 +413,6 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
 
         if len(plantMap) == 0:
             continue
-
-        # send id list, boxes, and frame number to plant process
-        if queue.full():
-            queue.get()
-        
-        queue.put((plantMap, frameNumber))
         
 
 def startAIProcess(args: tuple):
