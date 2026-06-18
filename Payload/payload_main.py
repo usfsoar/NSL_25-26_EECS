@@ -276,19 +276,7 @@ def set_zero_altitude(power_loss):
         _, data["start_pressure"] = bmp.get_pressure()
 
     bmp.set_sea_level_pressure(data["start_pressure"])
-    
-def get_landing_altitude():
-    alt = None
-    if MODE == "sim":
-        alt = sim.getAlt()
-    else: 
-        _, alt = bmp.get_altitude()
 
-    #need to take account of change in elevation
-    if alt >= 10: # 10 since altimeter isn't the most precise
-        return 0
-    else:
-        return 1
 
 def main():
     global log
@@ -331,10 +319,6 @@ def main():
     elif MODE == "hand":
         time.sleep(20)
 
-    if (get_landing_altitude() == 0):
-        print("bad landing orientation or altitude")
-        return
-
     # #Servo Retract
     # if MODE != "sim":
     #     servo.retract()
@@ -358,7 +342,7 @@ def main():
     processes.append(startRoverProcess((None, timeout_time, sensor_shm.name, plantToRover))) # rover
     processes.append(startAIProcess((None, timeout_time, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
     #processes.append(startPlantProcess((thermal_shm.name, timeout_time, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
-    #processes.append(startSensorProcess((timeout_time, sensor_shm.name, thermal_shm.name, roverToSensorQueue))) # sensor process
+    processes.append(startSensorProcess((timeout_time, sensor_shm.name))) # sensor process
 
     # wait on all 3 to finish
     for p in processes:

@@ -19,7 +19,7 @@ import payload_rover.camera_translation as translation
 import payload_sensor.bmp580 as BMP
 import payload_sensor.ina260 as INA
 import payload_sensor.tofvl53 as TOF
-import payload_sensor.relative_thermal_index as RTI
+import payload_sensor.mlx906040 as MLX
 
 from payload_rover.motors import Motor, DriveController
 
@@ -505,7 +505,7 @@ def startPlantProcess(args: tuple):
 
 
 
-def __SensorMain(timeout, sensor_shm_name, therm_shm_name):
+def __SensorMain(timeout, sensor_shm_name):
     # Init shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
     data = np.ndarray(1, 
@@ -523,11 +523,6 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name):
                                    ('current', np.float64),
                                    ('distance', np.float64)])
 
-    thermal_shm = mp.shared_memory.SharedMemory(name=therm_shm_name)
-    thermal_frame = np.ndarray(RTI.THERMAL_CAM_WIDTH * RTI.THERMAL_CAM_HEIGHT, 
-                      dtype=np.float64, 
-                      buffer=thermal_shm.buf)
-
     bmp = BMP.BMP()
     bmp.initialize(ALPHA_BMP)
 
@@ -536,16 +531,16 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name):
     tof = TOF.TOF()
     tof.initialize()
 
-    # mlx = RTI.MLX()
+    mlx = MLX.MLX90640Camera()
     # mlx.initialize()
-    # thermal_read = 0
+    thermal_read = 0
+    fileNumber = 0
 
     while True:
         if time.time() > timeout:
             break
 
         # read all relevant sensor info into local variables
-        read_time = time.perf_counter()
         local_data['temperature'] = bmp.get_temperature()
         local_data['current'] = ina.get_current_a()
         local_data['distance'] = tof.get_distance()
@@ -553,10 +548,11 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name):
         # save all these into shared memory at once
         data[:] = local_data[:]
 
-        # # get frame from mlx if it's ready
-        # if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
-        #     thermal_frame[:] = mlx.getFrame()[:]
-        #     thermal_read = time.time()
+        # get frame from mlx if it's ready
+        if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
+            mlx.captureframe(filename=f"thermal{fileNumber}.jpg" )
+            thermal_read = time.time()
+            fileNumber += 1
 
 
 
