@@ -13,12 +13,25 @@ DIR.direction = Direction.OUTPUT
 STEP = DigitalInOut(board.D24)
 STEP.direction = Direction.OUTPUT
 
+MS3 = DigitalInOut(board.D25)
+MS3.direction = Direction.OUTPUT
+MS3.value = False
+RST = DigitalInOut(board.D1)
+RST.direction = Direction.OUTPUT
+RST.value = True
+SLP = DigitalInOut(board.D15)
+SLP.direction = Direction.OUTPUT
+SLP.value = True
+EN = DigitalInOut(board.D16)
+EN.direction = Direction.OUTPUT
+EN.value = False
+
 currentpos = 0
 minSteps = 0
 maxSteps = 6000
 
 stepsPerPress = 50
-step_delay = 0.00005
+step_delay = 0.002
 
 def pulse_step():
     STEP.value = True

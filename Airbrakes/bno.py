@@ -12,10 +12,11 @@ from adafruit_bno08x import (
     BNO_REPORT_LINEAR_ACCELERATION,
     BNO_REPORT_GRAVITY
 )
+import time
 
-
+ALPHA = 0.3
 class BNO:
-    def __init__(self):
+    def __init__(self, accel=None):
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.sensor = BNO08X_I2C(self.i2c)
 
@@ -25,6 +26,11 @@ class BNO:
         self.sensor.enable_feature(BNO_REPORT_ROTATION_VECTOR)
         self.sensor.enable_feature(BNO_REPORT_LINEAR_ACCELERATION)
         self.sensor.enable_feature(BNO_REPORT_GRAVITY)
+        time.sleep(0.2)
+        if accel:
+            self.accel = accel
+        else:
+            self.accel = self.sensor.linear_acceleration[2]
 
 
     def magnetic(self):
@@ -37,7 +43,9 @@ class BNO:
         return self.sensor.quaternion
 
     def linear_acceleration(self):
-        return self.sensor.linear_acceleration
+        curr_accel = self.sensor.linear_acceleration
+        EMA_Accel = ALPHA * curr_accel + (1-ALPHA) * self.accel
+        return EMA_Accel
     
     def acceleration(self):
         return self.sensor.acceleration

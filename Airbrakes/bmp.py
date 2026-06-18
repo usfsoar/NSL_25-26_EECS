@@ -1,5 +1,6 @@
 # Class to make calls to the BMP easier
 import board
+import time
 from adafruit_bmp5xx import BMP5XX
 
 class BMP:
@@ -9,9 +10,10 @@ class BMP:
         self.i2c = board.I2C()  # uses board.SCL and board.SDA
         # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
         self.bmp = BMP5XX.over_i2c(self.i2c)
-        self.temp = None
-        self.pres = None
-        self.alt = None
+        time.sleep(0.2)
+        self.temp = self.bmp.temperature
+        self.pres = self.bmp.pressure
+        self.alt = self.bmp.altitude
     def temperature(self):
         temp = self.bmp.temperature
         print(f'{temp=}')
@@ -21,13 +23,16 @@ class BMP:
         pres = self.bmp.pressure
         return 0.8*pres + 0.2*self.pres
     
-    def altitude(self):
+    def ema_altitude(self):
         curr_alt = self.bmp.altitude
-        print(f'{curr_alt=}')
+        #print(f'{curr_alt=}')
         EMA_alt = 0.8*curr_alt + 0.2*self.alt
-        print(f'{EMA_alt=}')
+        #print(f'{EMA_alt=}')
         self.alt = EMA_alt
         return EMA_alt
+    
+    def altitude(self):
+        return self.bmp.altitude
     
     def initialize(self):
         self.temp = self.bmp.temperature
