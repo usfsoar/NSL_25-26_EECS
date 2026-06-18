@@ -362,6 +362,9 @@ def main():
     sensor_shm.close()
     sensor_shm.unlink()
 
+    thermal_shm.close()
+    thermal_shm.unlink()
+
     #rover.exit_rover()
     #rover.do_scan_2()
     
