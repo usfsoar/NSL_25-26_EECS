@@ -60,16 +60,23 @@ class DriveController:
         self.front_right_motor.set_direction(True)
         self.set_speed(left=speed, right=speed)
 
-    def spin_left(self, speed=1):
-        self.back_left_motor.set_direction(False)
-        self.back_right_motor.set_direction(False)
-        self.front_left_motor.set_direction(False)
-        self.front_right_motor.set_direction(False)
-        self.set_speed(left=speed, right=speed)
-
-    def spin_right(self, speed=1):
+    def turn_right(self, speed=1):
         self.back_left_motor.set_direction(True)
         self.back_right_motor.set_direction(True)
         self.front_left_motor.set_direction(True)
         self.front_right_motor.set_direction(True)
         self.set_speed(left=speed, right=speed)
+
+    # def spin_left(self, speed=1):
+    #     self.back_left_motor.set_direction(False)
+    #     self.back_right_motor.set_direction(False)
+    #     self.front_left_motor.set_direction(False)
+    #     self.front_right_motor.set_direction(False)
+    #     self.set_speed(left=speed, right=speed)
+
+    # def spin_right(self, speed=1):
+    #     self.back_left_motor.set_direction(True)
+    #     self.back_right_motor.set_direction(True)
+    #     self.front_left_motor.set_direction(True)
+    #     self.front_right_motor.set_direction(True)
+    #     self.set_speed(left=speed, right=speed)

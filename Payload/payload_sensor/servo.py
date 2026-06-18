@@ -5,7 +5,7 @@ class ServoControl:
     def __init__(self):
         pass
 
-    def initialize(self, pin: int = 18, min_angle: int = -90, max_angle: int = 90):
+    def initialize(self, pin: int = 16, min_angle: int = -45, max_angle: int = 45):
         self.min = min_angle/180
         self.max = max_angle/180
 
@@ -43,7 +43,7 @@ class ServoControl:
 if __name__ == '__main__':
     servo = ServoControl()
 
-    servo.initialize(18, -90, 90)
+    servo.initialize(16, -45, 45)
 
     while True:
         time.sleep(1)
