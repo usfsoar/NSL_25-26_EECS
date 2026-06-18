@@ -31,7 +31,6 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 from payload_sensor.bmp580 import BMP
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
 # from payload_sensor.servo import ServoControl
-import payload_sensor.relative_thermal_index as RTI
 
 from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, startSensorProcess
 
@@ -91,7 +90,6 @@ WHEEL_BASE = 0
 WHEEL_CIRCUM = 2 * 3.14 * WHEEL_RADIUS
 
 AI_MODEL_PATH = "model.rpk"
-THERMAL_SHAPE = (RTI.THERMAL_CAM_HEIGHT, RTI.THERMAL_CAM_WIDTH, 1)
 
 #data storage
 data = {
