@@ -65,18 +65,24 @@ class TOF():
                 print(f"Error initializing TOF sensor: {e}")
         
         self.sensor.distance_mode = 2
-        self.sensor.timing_budget = 50
+        self.sensor.timing_budget = 500
 
         self.sensor.start_ranging()
     
     #mm or cm?
     def get_distance(self):
-        self.sensor.clear_interrupt()
-        return self.sensor.distance
+        for _ in range(10):
+            try:
+                self.sensor.clear_interrupt()
+                return self.sensor.distance
+            except Exception as e:
+                print(f"TOF Error: {e}")
+        return 100
+        
 
 if __name__ == "__main__":
     tof = TOF()
     tof.initialize()
     while True:
         print(tof.get_distance())
-        time.sleep(0.1)
+        time.sleep(1)

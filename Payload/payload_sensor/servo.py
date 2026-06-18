@@ -5,51 +5,42 @@ class ServoControl:
     def __init__(self):
         pass
 
-    def initialize(self, pin: int = 16, min_angle: int = -45, max_angle: int = 45):
+    def initialize(self, pin: int = 16, min_angle: int = -20, max_angle: int = 20):
         self.min = min_angle/180
         self.max = max_angle/180
-
-        for i in range(10):
-            try:
-                self.servo = Servo(pin, min_pulse_width=0.0005, max_pulse_width=0.0025)
-                break
-            except Exception as e:
-                print(f"Error initializing Servo: {e}")
+        self.servo = Servo(pin, min_pulse_width=0.0005, max_pulse_width=0.0025)
 
     def retract(self):
-        for i in range(10):
-            try:
-                self.servo.value = self.max
-                break
-            except Exception as e:
-                print(f"Error retracting the Servo: {e}")
+        self.servo.value = self.max
     
     def lock(self):
-        for i in range(10):
-            try:
-                self.servo.value = self.min
-                break
-            except Exception as e:
-                print(f"Error locking the Servo: {e}")
+        self.servo.value = self.min
 
     def test(self, val=.75):
-        for i in range(10):
-            try:
-                self.servo.value = val
-                break
-            except Exception as e:
-                print(f"Error testing the Servo: {e}")
+        self.servo.value = val
 
 if __name__ == '__main__':
     servo = ServoControl()
 
-    servo.initialize(16, -45, 45)
+    servo.initialize(16)#, -45, 45)
 
+    #servo.retract()
+
+    #time.sleep(8)
+
+   # servo.lock()
+        
+    #servo.test(-1)
+    #time.sleep(3)
+    #del servo
+    
+    #while True:
+    #    pass
     while True:
-        time.sleep(1)
-        servo.test(1)
-        time.sleep(1)
-        servo.test(-1)
+        time.sleep(2)
+        servo.retract()
+        time.sleep(2)
+        servo.lock()
 
     # time.sleep(2)
     # print("lock")

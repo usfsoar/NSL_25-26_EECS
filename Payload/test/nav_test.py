@@ -1,5 +1,6 @@
 from motors import Motor, DriveController
 from tofvl53 import TOF
+# from ina260 import INA260
 import time
 timeout = 400
 # Simplified rover logic :(
@@ -11,6 +12,8 @@ right_front_motor = Motor(wheel_diameter=0.1, direction_pin="BOARD18", pwm_pin="
 motors = DriveController(left_back_motor, right_back_motor, left_front_motor, right_front_motor)
 
 tof = TOF()
+tof.initialize()
+# ina = INA260()
 
 time.sleep(0.1)
 print("all intialized")
@@ -28,19 +31,23 @@ while True:
     #     pass # No message in queue
         
     # dist = sensor_data["distance"] #[0]
-    print(tof.get_distance())
+    dist = tof.get_distance()
+    # print(ina.get_current_a())
+    print(dist)
 
-    if (selected or (tof.get_distance() <= 30)):
+    if (selected or (dist <= 30 and dist > 7 )):
         #stop, delay, rotate 
         motors.stop()
         time.sleep(1)
         curr_time = time.time()
 
         while time.time() - curr_time < 4:
-            motors.turn_right(1)
+            print("turning")
+            motors.turn_right(1)            
         
-    #if ina.get_current_a() > 5:
-        # motors.stop()
+    # if ina.get_current_a() > 5:
+    #     motors.stop()
+
     print("move forward")
     motors.move_forward(1)
     time.sleep(0.08) # Prevent looping too quickly

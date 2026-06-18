@@ -126,8 +126,9 @@ def __roverMain(SIM, timeout, shm_name):
     while True:
         if time.time() > timeout:
             break
-       
-        if (sensor_data["distance"] <= 35):
+        
+        object_dist = sensor_data["distance"]
+        if (object_dist <= 30 and object_dist > 7):
             #stop, delay, rotate 
             motors.stop()
             time.sleep(1)
