@@ -102,7 +102,7 @@ def startProcess(target, args: tuple, name: str):
     return None
 
 
-def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue, roverToSensorQueue: mp.Queue):
+def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue):
     # Setup sensor shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=shm_name)
     sensor_data = np.ndarray(1, 
@@ -142,8 +142,6 @@ def __roverMain(SIM, timeout, shm_name, plantQueue: mp.Queue, roverToSensorQueue
         if selected:
             # Stop 
             motors.stop()
-            if not roverToSensorQueue.full():
-                roverToSensorQueue.put(True)
 
             time.sleep(0.07) # Sleep until process has a good chance to reach queue read
             
@@ -507,7 +505,7 @@ def startPlantProcess(args: tuple):
 
 
 
-def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue):
+def __SensorMain(timeout, sensor_shm_name, therm_shm_name):
     # Init shared memory
     sensor_shm = mp.shared_memory.SharedMemory(name=sensor_shm_name)
     data = np.ndarray(1, 
@@ -535,8 +533,8 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue)
 
     ina = INA.INA()
 
-    # tof = TOF.TOF()
-    # tof.initialize()
+    tof = TOF.TOF()
+    tof.initialize()
 
     # mlx = RTI.MLX()
     # mlx.initialize()
@@ -550,14 +548,7 @@ def __SensorMain(timeout, sensor_shm_name, therm_shm_name, roverQueue: mp.Queue)
         read_time = time.perf_counter()
         local_data['temperature'] = bmp.get_temperature()
         local_data['current'] = ina.get_current_a()
-        local_data['distance'] = None #tof.get_distance()
-
-        # attempt to read from queue for reset velocity bias to 0
-        stopped = False
-        try: 
-            stopped = roverQueue.get(block=False)
-        except Exception as e:
-            pass # Not stopped since no message in queue
+        local_data['distance'] = tof.get_distance()
 
         # save all these into shared memory at once
         data[:] = local_data[:]

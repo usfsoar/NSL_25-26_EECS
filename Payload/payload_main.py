@@ -30,7 +30,7 @@ from payload_pipeline.telemetry_logger import TelemetryLogger
 
 from payload_sensor.bmp580 import BMP
 from payload_sensor.sensor_simulation import Sensor_Data_Simulator
-from payload_sensor.servo import ServoControl
+# from payload_sensor.servo import ServoControl
 import payload_sensor.relative_thermal_index as RTI
 
 from payload_rover.rover_main import startRoverProcess, startAIProcess, startPlantProcess, startSensorProcess
@@ -49,6 +49,7 @@ if MODE == "launch" or MODE == "sim":
     LANDING_GFORCE_THRESHOLD    = 0.8   #G  gs needed to call landing
     LANDING_VEL_THRESHOLD       = 0.3  #m/s velocity needed to call landing
     LANDING_ALTITUDE_THRESHOLD  = 50  #m height needed to call landing
+    MIN_LANDING_TIME = 180
 elif MODE == "drop":
     LAUNCH_GFORCE_THRESHOLD     = 1.5   #G
     LAUNCH_ALTITUDE_THRESHOLD   = 0.75   #m
@@ -57,6 +58,7 @@ elif MODE == "drop":
     LANDING_GFORCE_THRESHOLD    = 0.2   #G
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
     LANDING_ALTITUDE_THRESHOLD  = -1.0   #m
+    MIN_LANDING_TIME = 60
 elif MODE == "hand":
     LAUNCH_GFORCE_THRESHOLD     = 1.3   #G
     LAUNCH_ALTITUDE_THRESHOLD   = 0.1   #m
@@ -65,6 +67,7 @@ elif MODE == "hand":
     LANDING_GFORCE_THRESHOLD    = 0.2   #G
     LANDING_VEL_THRESHOLD       = 0.8   #m/s
     LANDING_ALTITUDE_THRESHOLD  = 0.5   #m
+    MIN_LANDING_TIME = 10
 else:
     exit("Invalid MODE selected")
 
@@ -107,11 +110,11 @@ data = {
 if MODE == "sim":
     bmp = None
     sim = Sensor_Data_Simulator()
-    servo = None
+    # servo = None
 else:
     bmp = BMP()
     sim = None
-    servo = ServoControl()
+    # servo = ServoControl()
     
 sm = StateMachine(
     LAUNCH_GFORCE_THRESHOLD,
@@ -123,6 +126,7 @@ sm = StateMachine(
     LANDING_ALTITUDE_THRESHOLD,
     STABLE_READINGS,
     STABLE_READINGS_FOR_LANDING,
+    MIN_LANDING_TIME,
     FLIGHT_TIMEOUT
 )
 
@@ -234,10 +238,10 @@ def initialize_sensors():
         except Exception as error:
             print(error)
 
-        try:
-            servo.initialize(16, -45, 45)
-        except Exception as error:
-            print(error)
+        # try:
+        #     servo.initialize(16, -45, 45)
+        # except Exception as error:
+        #     print(error)
         
 
 def validate_data():
@@ -298,8 +302,8 @@ def main():
         
 
     while data["state"] != "LANDING":
-        if MODE != "sim":
-            servo.lock()
+        # if MODE != "sim":
+        #     servo.lock()
         # start_loop = time.perf_counter()
         get_sensor_data()
         validate_data()
@@ -324,14 +328,16 @@ def main():
     # Presumably not power recovered
     if MODE == "launch":
         time.sleep(250) # Wait the full parachute descent time
+    elif MODE == "hand":
+        time.sleep(20)
 
     if (get_landing_altitude() == 0):
         print("bad landing orientation or altitude")
         return
 
-    #Servo Retract
-    if MODE != "sim":
-        servo.retract()
+    # #Servo Retract
+    # if MODE != "sim":
+    #     servo.retract()
     time.sleep(5)
 
     sensor_shm = mp.shared_memory.SharedMemory(create=True, 
@@ -341,7 +347,6 @@ def main():
     # AI to Plant Process Message Queue
     aiToPlantQueue = mp.Queue(maxsize=1)
     plantToRover = mp.Queue(maxsize=1)
-    roverToSensorQueue = mp.Queue(maxsize=1)
 
     # Thermal Camera Shared Memory
     thermal_shm = mp.shared_memory.SharedMemory(create=True,
@@ -350,10 +355,10 @@ def main():
     # Start processes
     timeout_time = time.time() + ROVER_SCAN_TIMEOUT
     processes = list()
-    processes.append(startRoverProcess((None, timeout_time, sensor_shm.name, plantToRover, roverToSensorQueue))) # rover
+    processes.append(startRoverProcess((None, timeout_time, sensor_shm.name, plantToRover))) # rover
     processes.append(startAIProcess((None, timeout_time, AI_MODEL_PATH, aiToPlantQueue))) # ai cam
-    processes.append(startPlantProcess((thermal_shm.name, timeout_time, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
-    processes.append(startSensorProcess((timeout_time, sensor_shm.name, thermal_shm.name, roverToSensorQueue))) # sensor process
+    #processes.append(startPlantProcess((thermal_shm.name, timeout_time, aiToPlantQueue, sensor_shm.name, plantToRover))) # plant processing   
+    #processes.append(startSensorProcess((timeout_time, sensor_shm.name, thermal_shm.name, roverToSensorQueue))) # sensor process
 
     # wait on all 3 to finish
     for p in processes:
