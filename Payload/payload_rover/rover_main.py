@@ -394,13 +394,13 @@ def __SensorMain(timeout, sensor_shm_name):
 
     ina = INA.INA()
 
-    tof = TOF.TOF()
-    tof.initialize()
-
     mlx = MLX.MLX90640Camera()
     # mlx.initialize()
     thermal_read = 0
     fileNumber = 0
+
+    if not os.path.exists("thermal"):
+            os.mkdir("thermal")
 
     while True:
         if time.time() > timeout:
@@ -409,14 +409,14 @@ def __SensorMain(timeout, sensor_shm_name):
         # read all relevant sensor info into local variables
         local_data['temperature'] = bmp.get_temperature()
         local_data['current'] = ina.get_current_a()
-        local_data['distance'] = tof.get_distance()
+        local_data['distance'] = None
 
         # save all these into shared memory at once
         data[:] = local_data[:]
 
         # get frame from mlx if it's ready
         if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
-            mlx.captureframe(filename=f"thermal{fileNumber}.jpg" )
+            mlx.captureframe(filename=f"thermal/{fileNumber}.jpg" )
             thermal_read = time.time()
             fileNumber += 1
 

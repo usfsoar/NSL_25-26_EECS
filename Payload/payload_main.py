@@ -114,7 +114,7 @@ if MODE == "sim":
 else:
     bmp = BMP()
     sim = None
-    servo = ServoControl()
+    servo = ServoControl(16, -20, 20)
     
 sm = StateMachine(
     LAUNCH_GFORCE_THRESHOLD,
