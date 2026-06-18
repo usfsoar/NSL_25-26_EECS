@@ -25,8 +25,11 @@ elapsed_time = time.time() - start_time # time passed since start of program
 try:
     # Initialize bmp
     bmpsensor = bmp.BMP()
+    time.sleep(0.2)
     # Initialize bno
     bnosensor = bno.BNO()
+    bnosensor.initialize()
+    time.sleep(0.2)
     # Initialize servo controller
     motor = motor_control.Motor()
     # Create State Machine object
@@ -77,8 +80,8 @@ except Exception as e:
 # Initial values
 
 target_apogee = 3048 # Our target max height in meters
-dt = 0.1 # time between iterations
-extra_dt = 0.1 # added time between iterations to remove errors in velocity
+dt = 0.01 # time between iterations
+extra_dt = 0.01 # added time between iterations to remove errors in velocity
 apogee = 0 # our current max height
 acceleration = None
 quat = None
@@ -172,7 +175,7 @@ while True:
         time.sleep(extra_dt)
         continue
 
-    velocity =  get_velocity(altitude, acceleration, curr_time)
+    velocity = get_velocity(altitude, acceleration, curr_time)
     try:
         pressure = bmpsensor.pressure()
     except:

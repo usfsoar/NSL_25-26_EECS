@@ -15,8 +15,13 @@ from adafruit_bno08x import (
 import time
 
 ALPHA = 0.3
+RECOVERY_WAIT = 0.1
 class BNO:
-    def __init__(self, accel=None):
+    def __init__(self):
+        pass
+        
+
+    def initialize(self, accel=None):
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.sensor = BNO08X_I2C(self.i2c)
 
@@ -32,6 +37,16 @@ class BNO:
         else:
             self.accel = self.sensor.linear_acceleration[2]
 
+    def recover(self):
+        print(f"Recovering BNO")
+        try:
+            del self.sensor
+            del self.i2c
+        except Exception as e:
+            print(f"Error deleting old i2c sensor object: {e}")
+        time.sleep(RECOVERY_WAIT)
+        self.initialize(alpha=self.alpha, address=self.address)
+
 
     def magnetic(self):
         return self.sensor.magnetic
@@ -43,9 +58,21 @@ class BNO:
         return self.sensor.quaternion
 
     def linear_acceleration(self):
-        curr_accel = self.sensor.linear_acceleration
-        EMA_Accel = ALPHA * curr_accel + (1-ALPHA) * self.accel
-        return EMA_Accel
+    
+        curr_accel = 0
+        for i in range (8):
+            try:
+                curr_accel = self.sensor.linear_acceleration
+                EMA_Accel = ALPHA * curr_accel + (1-ALPHA) * self.accel
+                self.accel = EMA_Accel
+                return EMA_Accel
+            except Exception as e:
+                print(f"BNO Linear Acceleration Exception: {e}")
+                # If we fail 6 times, recover before last times:
+                if i >= 5: 
+                    self.recover()
+        return self.accel
+        
     
     def acceleration(self):
         return self.sensor.acceleration
