@@ -419,6 +419,10 @@ def __SensorMain(timeout, sensor_shm_name):
     thermal_read = 0
     fileNumber = 0
 
+    if not os.path.exists("thermal"):
+        os.mkdir("thermal")
+
+
     while True:
         if time.time() > timeout:
             break
@@ -433,7 +437,7 @@ def __SensorMain(timeout, sensor_shm_name):
 
         # get frame from mlx if it's ready
         if (time.time() - thermal_read) > THERMAL_CAM_DELAY:
-            mlx.captureframe(filename=f"thermal{fileNumber}.jpg" )
+            mlx.captureframe(filename=f"thermal/{fileNumber}.jpg" )
             thermal_read = time.time()
             fileNumber += 1
 
