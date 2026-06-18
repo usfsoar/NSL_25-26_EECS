@@ -28,16 +28,15 @@ from payload_rover.motors import Motor, DriveController
 ALPHA_BMP = 0.8
 
 FRAME_DELAY = 1 / ai.AICAM_FRAME_RATE
-MODEL_PATH = "payload_rover/yolo_200epoch.pt"
 
-MAX_DIST = 4 * 2028
-BOTTOM_CORRECTION = 70 # TODO** TUNE
-DISTANCE_THRESHOLD = 220 # TODO** SUBJECT TO CHANGE AND TESTING
-PLANT_CLASSES = set([6, 8]) # TODO**
+CROP_CORRECTION_FACTOR = 0.315
+MAX_DIST = 4 * ai.MODEL_WIDTH
+BOTTOM_CORRECTION = 70 * CROP_CORRECTION_FACTOR # TODO** TUNE
+DISTANCE_THRESHOLD = 220 * CROP_CORRECTION_FACTOR # TODO** SUBJECT TO CHANGE AND TESTING
 MAX_UNMATCHED_TIME = 30 # TODO** TUNE 
 
-MAX_AREA = ai.RESOLUTION_WIDTH * ai.RESOLUTION_HEIGHT
-MAX_OFFSET = math.sqrt((ai.RESOLUTION_WIDTH/2) ** 2 + (ai.RESOLUTION_HEIGHT/2) ** 2)
+MAX_AREA = ai.MODEL_WIDTH * ai.MODEL_HEIGHT
+MAX_OFFSET = math.sqrt((ai.MODEL_WIDTH/2) ** 2 + (ai.MODEL_HEIGHT/2) ** 2)
 
 # Hyper-parameters TODO** TUNE THEM
 ACCEPTABLE_LAST_SEEN = 1
@@ -348,7 +347,7 @@ def __aiMain(SIM: bool, timeout, MODEL_PATH: str, queue: mp.Queue):
         shm, lock = SIM
         #aicam = webots_ai.WebotsAICamera(network=MODEL_PATH, shm_name=shm, lock=lock, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
     else:
-        aicam = ai.AICamera(network=MODEL_PATH)#, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
+        aicam = ai.AICamera(network=MODEL_PATH)
 
     # make aicam directory if not already there
     if not os.path.exists("aicam"):
@@ -440,7 +439,7 @@ def distToCenter(box):
     center_y = box[3] + (box[1] - box[3]) / 2
 
     # Return euclid distance to center
-    return math.sqrt((center_x - ai.RESOLUTION_WIDTH/2)**2 + (center_y - ai.RESOLUTION_HEIGHT/2)**2)
+    return math.sqrt((center_x - ai.MODEL_WIDTH/2)**2 + (center_y - ai.MODEL_HEIGHT/2)**2)
 
 
 def selectPlant(plantMap, ignore: set):
@@ -499,9 +498,6 @@ def __plantMain(thermal_shm_name, timeout, aiqueue: mp.Queue, sensor_shm_name, p
             f.write(f"Plant ID: {id}\n"
                     + f"Time reading was taken: {time.time()}"
                     + f"Frame Number: {frameNumber}")
-
-        # Add ID to ignore list
-        ignore.add(id)
 
         
 

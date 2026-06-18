@@ -2,7 +2,7 @@ import aicam_lib.aicamera as ai
 import aicam_lib.rendering as rendering
 import cv2
 
-aicam = ai.AICamera(network=model_final.rpk)#, size=(ai.RESOLUTION_WIDTH, ai.RESOLUTION_HEIGHT))
+aicam = ai.AICamera(network="model_final.rpk")
 
 inferences, frame = aicam.getInference()
 

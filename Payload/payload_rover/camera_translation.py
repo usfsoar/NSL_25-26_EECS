@@ -1,5 +1,3 @@
-# from aicam_lib.aicamera import AICamera
-
 import sys
 sys.path.append('../')
 
@@ -13,7 +11,7 @@ import aicam_lib.aicamera as ai
 import payload_sensor.relative_thermal_index as thermal
 
 # Camera constants
-FOCAL_LENGTH_AI_PIXELS = (ai.RESOLUTION_WIDTH / 2) / (math.tan(math.radians(ai.FOV_HORIZONTAL / 2)))
+FOCAL_LENGTH_AI_PIXELS = (ai.MODEL_WIDTH / 2) / (math.tan(math.radians(ai.FOV_HORIZONTAL / 2)))
 FOCAL_LENGTH_THERMAL_PIXELS = (thermal.THERMAL_CAM_WIDTH / 2) / (math.tan(math.radians(thermal.FOV_HORIZONTAL / 2)))
 DISTANCE_CAMERAS = np.array([0, 24297.531, 0]) # Meters [x, y, z] NEEDS TO BE CHANGED. Measured from center
 # 24.297531 mm between camera centers
@@ -58,8 +56,8 @@ def recoverT_d(box0, box1, vel0, vel1, elapsed):
 
 
 def translate_pixel_to_3d_point(pixel, dist: float):
-    x = (pixel[0] - ai.RESOLUTION_WIDTH  / 2) / FOCAL_LENGTH_AI_PIXELS
-    y = (pixel[1] - ai.RESOLUTION_HEIGHT / 2) / FOCAL_LENGTH_AI_PIXELS
+    x = (pixel[0] - ai.MODEL_WIDTH  / 2) / FOCAL_LENGTH_AI_PIXELS
+    y = (pixel[1] - ai.MODEL_HEIGHT / 2) / FOCAL_LENGTH_AI_PIXELS
     
     return np.array([x * dist, y * dist, dist])
 
