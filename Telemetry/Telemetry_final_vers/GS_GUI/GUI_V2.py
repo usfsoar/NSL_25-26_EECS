@@ -48,7 +48,7 @@ import pyqtgraph as pg
 # ──────────────────────────────────────────────────────────────────────────────
 # Constants
 # ──────────────────────────────────────────────────────────────────────────────
-MAX_POINTS  = 600   # rolling window
+MAX_POINTS  = 1000   # rolling window
 PLOT_HZ     = 10    # plot refresh rate
 
 
