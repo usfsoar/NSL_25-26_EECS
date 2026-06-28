@@ -38,8 +38,10 @@ if __name__ == '__main__':
     #    pass
     while True:
         time.sleep(2)
+        print("retract")
         servo.retract()
         time.sleep(2)
+        print("lock")
         servo.lock()
 
     # time.sleep(2)
