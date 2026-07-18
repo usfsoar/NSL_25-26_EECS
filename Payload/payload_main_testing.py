@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 """
+TO DO:
 add motor dimensions from cad
 
 add p control for distance control

@@ -51,13 +51,13 @@ class TOF():
         pass
 
     def initialize(self, ):
-        for i in range(100):
+        for i in range(10):
             try:
                 self.i2c = board.I2C()
                 break
             except Exception as e:
                 print(f"Error initializing I2C for TOF: {e}")
-        for i in range(100):
+        for i in range(10):
             try:
                 self.sensor = vl53l4cx.VL53L4CX(self.i2c)
                 break
