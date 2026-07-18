@@ -21,3 +21,7 @@ desktop.ini
 # Project specific temporary files
 # *.log
 *.tmp
+
+# Ignore log files
+Payload/logs/*.csv
+Payload/webots/controllers/bot_with_model/aicam/

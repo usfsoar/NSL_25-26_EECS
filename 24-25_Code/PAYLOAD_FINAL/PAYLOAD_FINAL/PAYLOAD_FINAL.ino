@@ -59,7 +59,7 @@ h) good luch! -sam
 #include <SoftwareSerial.h>  //xbee
 #include "DIGITAL_TWIN.h"    //sim
 #include "_config.h"         //sim
-
+//attempted commit by J. Huang
 
 /*eeprom set values
 EEPROM bytes = SLOT_COUNT * sizeof(FlightData) + sizeof(currentSlot) = 3 * 68 + 4 = 220 bytes -> 256 bytes

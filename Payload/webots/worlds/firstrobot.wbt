@@ -1,0 +1,403 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/UnevenTerrain.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Fabric.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.27697343974031186 0.268484657047388 0.9226059302912409 1.6822559330591937
+  position 0.5479085230682803 -3.8432998709269204 6.207076648394013
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Robot {
+  translation 0.33 -0.2 3.31
+  rotation 0 -0.026325976945026194 0.9996534114071184 1.642486371911517
+  children [
+    DEF CAM_AI Camera {
+      translation 0.1485 0.01 -0.012525
+      children [
+        Solid {
+          rotation 0 1 0 1.5707996938995747
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 1 0 0.5
+                metalness 0
+              }
+              geometry DEF CAM_SHAPE Cylinder {
+                height 0.005
+                radius 0.005
+              }
+            }
+          ]
+          name "aicamsolid"
+          boundingObject USE CAM_SHAPE
+        }
+      ]
+      name "aicam"
+      fieldOfView 1.15192
+      width 2028
+      height 1520
+    }
+    DEF CAM_IR Camera {
+      translation 0.1485 -0.008875 -0.012525
+      rotation 0 1 0 0
+      children [
+        Solid {
+          rotation 0 1 0 1.5707996938995747
+          children [
+            Shape {
+              appearance PBRAppearance {
+              }
+              geometry USE CAM_SHAPE
+            }
+          ]
+          name "ircamsolid"
+          boundingObject USE CAM_SHAPE
+        }
+      ]
+      name "ircam"
+      width 640
+      height 640
+    }
+    DEF BODY Shape {
+      appearance PBRAppearance {
+        metalness 0
+      }
+      geometry Box {
+        size 0.297 0.179 0.086
+      }
+    }
+    DEF DS_RIGHT DistanceSensor {
+      translation 0.148 -0.03 0
+      rotation 0 0 1 -0.3
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0 0 1
+            metalness 0
+          }
+          geometry Box {
+            size 0.01 0.01 0.01
+          }
+        }
+      ]
+      name "ds_right"
+    }
+    DEF DS_LEFT DistanceSensor {
+      translation 0.148 0.03 0
+      rotation 0 0 1 0.3
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0 0 1
+            metalness 0
+          }
+          geometry Box {
+            size 0.01 0.01 0.01
+          }
+        }
+      ]
+      name "ds_left"
+    }
+    DEF WHEEL1 HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor 0.0895 0.1 -0.02
+      }
+      device [
+        DEF WHEEL1 RotationalMotor {
+          name "wheel1"
+        }
+      ]
+      endPoint DEF WHEEL1 Solid {
+        translation 0.0895 0.1 -0.02
+        rotation 1 0 0 1.5708
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 1 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.0314
+            }
+          }
+        ]
+        boundingObject USE WHEEL
+        physics DEF WHEEL_PH Physics {
+        }
+      }
+    }
+    DEF WHEEL2 HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor 0.0895 -0.1 -0.02
+      }
+      device [
+        DEF WHEEL2 RotationalMotor {
+          name "wheel2"
+        }
+      ]
+      endPoint DEF WHEEL2 Solid {
+        translation 0.0895 -0.1 -0.02
+        rotation 1 0 0 1.5708
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 1 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.0314
+            }
+          }
+        ]
+        name "solid(1)"
+        boundingObject USE WHEEL
+        physics DEF WHEEL_PH Physics {
+        }
+      }
+    }
+    DEF WHEEL3 HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor -0.0895 0.1 -0.02
+      }
+      device [
+        DEF WHEEL1 RotationalMotor {
+          name "wheel3"
+        }
+      ]
+      endPoint DEF WHEEL3 Solid {
+        translation -0.0895 0.1 -0.02
+        rotation 1 0 0 1.5708
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 1 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.0314
+            }
+          }
+        ]
+        name "solid(2)"
+        boundingObject USE WHEEL
+        physics DEF WHEEL_PH Physics {
+        }
+      }
+    }
+    DEF WHEEL4 HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 1 0
+        anchor -0.0895 -0.1 -0.02
+      }
+      device [
+        DEF WHEEL1 RotationalMotor {
+          name "wheel4"
+        }
+      ]
+      endPoint DEF WHEEL4 Solid {
+        translation -0.0895 -0.1 -0.02
+        rotation 1 0 0 1.5708
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 1 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.0314
+            }
+          }
+        ]
+        name "solid(3)"
+        boundingObject USE WHEEL
+        physics DEF WHEEL_PH Physics {
+        }
+      }
+    }
+  ]
+  boundingObject DEF BODY Shape {
+    appearance PBRAppearance {
+      baseColor 1 0 0
+      metalness 0
+    }
+    geometry Box {
+      size 0.2 0.1 0.05
+    }
+  }
+  physics Physics {
+    mass 1
+  }
+  controller "bot_with_model"
+  controllerArgs [
+    ""
+  ]
+}
+DEF PLANT Solid {
+  translation 0.1 1 3.15
+  rotation 1 0 0 1.5707996938995747
+  children [
+    Transform {
+      translation 0 0 0.15
+      scale 0.001 0.001 0.001
+      children [
+        Shape {
+          appearance Fabric {
+            colorOverride 0.5 1 0.4
+          }
+          geometry Mesh {
+            url [
+              "../plant.obj"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+DEF PLANT Solid {
+  translation 0.2 0.7 3.13
+  rotation 1 0 0 1.5707996938995747
+  children [
+    Transform {
+      translation 0 0 0.15
+      scale 0.001 0.001 0.001
+      children [
+        Shape {
+          appearance Fabric {
+            colorOverride 0.5 1 0.4
+          }
+          geometry Mesh {
+            url [
+              "../plant.obj"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(1)"
+}
+DEF PLANT Solid {
+  translation 0.27 0.6 3.13
+  rotation 1 0 0 1.5707996938995747
+  children [
+    Transform {
+      translation 0 0 0.15
+      scale 0.001 0.001 0.001
+      children [
+        Shape {
+          appearance Fabric {
+            colorOverride 0.5 1 0.4
+          }
+          geometry Mesh {
+            url [
+              "../plant.obj"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(6)"
+}
+DEF PLANT Solid {
+  translation 0.4 0.6 3.13
+  rotation 1 1.2589800000000001e-08 -9.58976e-09 1.5708
+  children [
+    Transform {
+      translation 0 0 0.15
+      rotation 0 0.4472135954999579 0.8944271909999159 0
+      scale 0.002 0.003 0.003
+      children [
+        Shape {
+          appearance Fabric {
+            colorOverride 0.5 1 0.4
+          }
+          geometry Mesh {
+            url [
+              "../plant.obj"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(5)"
+}
+DEF PLANT Solid {
+  translation 0.2 0.9 3.15
+  rotation 1 0 0 1.5707996938995747
+  children [
+    Transform {
+      translation 0 0 0.15
+      scale 0.001 0.001 0.001
+      children [
+        Shape {
+          appearance Fabric {
+            colorOverride 0.5 1 0.4
+          }
+          geometry Mesh {
+            url [
+              "../plant.obj"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(2)"
+}
+UnevenTerrain {
+}
+Solid {
+  translation 0 2 3.3
+  rotation 0 0 1 -0.9162996938995747
+  children [
+    Pose {
+      translation 0.8 -0.1 0
+      rotation 0 0 1 1.7016996938995748
+      children [
+        Shape {
+          appearance Appearance {
+          }
+          geometry Box {
+            size 0.1 2 0.2
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(3)"
+}
+Solid {
+  translation 0 1.3 3.3
+  rotation 0 0 1 0.9163003061004252
+  children [
+    Pose {
+      rotation 0 0 1 1.7016996938995748
+      children [
+        Shape {
+          geometry Box {
+            size 0.1 2 0.4
+          }
+        }
+      ]
+    }
+  ]
+  name "solid(4)"
+}

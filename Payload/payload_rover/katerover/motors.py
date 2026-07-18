@@ -1,0 +1,92 @@
+import asyncio
+from rpi_hardware_pwm import HardwarePWM
+from gpiozero import DigitalOutputDevice
+from time import sleep
+
+class Motor:
+    # ex, Motor(wheel_diameter=0.1 (meters), pwm_channel=0 (0 or 1), direction_pin=36, output_pin=38)
+    def __init__(self, wheel_diameter, pwm_channel, direction_pin, output_pin):
+        self.wheel_diameter = wheel_diameter                        # in meters
+        self.position = 0                                           # axel position  
+        self.pwmRight = HardwarePWM(pwm_channel, hz=25000)          # 0 or 1 at 25 kHz
+        self.pwmRight.start(100)                                    # Start with 100% duty cycle (stopped)
+        self.direction_pin = DigitalOutputDevice(direction_pin)     # GPIO output for direction control
+        self.output_pin = output_pin                                # gpio for HAL PWM output for rotation detection
+
+    # Set speed as a percentage (0-100)
+    def set_speed(self, speed):
+        duty_cycle = max(0, min(100, speed))  # clamp to 0-100 
+        real_duty_cycle = 100 - duty_cycle
+        self.pwmRight.change_duty_cycle(real_duty_cycle)
+
+    # True for clockwise, false for counterclockwise
+    def set_direction(self, clockwise=True):
+        if clockwise:
+            self.direction_pin.on()  # Set direction to clockwise
+        else:
+            self.direction_pin.off()  # Set direction to counterclockwise
+
+    #move clockwise for time seconds
+    async def move_clockwise_time(self, time, speed=100):
+        self.direction_pin.on()  # Set direction to clockwise
+        self.set_speed(speed)  # Set speed
+        await asyncio.sleep(time)  # Move for the specified time
+        self.set_speed(0)  # Stop the motor
+
+    #move counterclockwise for time seconds
+    async def move_counterclockwise_time(self, time, speed=100):
+        self.direction_pin.off()  # Set direction to counterclockwise
+        self.set_speed(speed)  # Set speed
+        await asyncio.sleep(time)  # Move for the specified time
+        self.set_speed(0)  # Stop the motor
+
+
+
+class DriveController:
+    def __init__(self, left_motor: Motor, right_motor: Motor):
+        self.left_motor = left_motor
+        self.right_motor = right_motor
+
+    def stop(self):
+        self.left_motor.set_speed(0)
+        self.right_motor.set_speed(0)
+
+    def set_speed(self, speed):
+        self.left_motor.set_speed(speed)
+        self.right_motor.set_speed(speed)
+    
+    async def move_forward_timed(self, time, speed=100):
+        await asyncio.gather(
+            self.left_motor.move_clockwise_time(time, speed),
+            self.right_motor.move_counterclockwise_time(time, speed)
+        )
+
+    async def move_backward_timed(self, time, speed=100):
+        await asyncio.gather(
+            self.left_motor.move_counterclockwise_time(time, speed),
+            self.right_motor.move_clockwise_time(time, speed)
+        )
+
+    async def spin_left_timed(self, time, speed=100):
+        await asyncio.gather(
+            self.left_motor.move_counterclockwise_time(time, speed),
+            self.right_motor.move_counterclockwise_time(time, speed)
+        )
+
+    async def spin_right_timed(self, time, speed=100):
+        await asyncio.gather(
+            self.left_motor.move_clockwise_time(time, speed),
+            self.right_motor.move_clockwise_time(time, speed)
+        )
+
+    # async def move_forward(self, distance):
+    #     await asyncio.gather(
+    #         self.left_motor.move_clockwise_time(distance),
+    #         self.right_motor.move_counterclockwise_time(distance)
+    #     )
+
+    # async def move_backward(self, distance):
+    #     await asyncio.gather(
+    #         self.left_motor.move_counterclockwise_time(distance),
+    #         self.right_motor.move_clockwise_time(distance)
+    #     )

@@ -1,0 +1,17 @@
+[Unit]
+Description=SOAR Payload Program
+# After=network.target  # Start AFTER the network is ready (optional: adjust based on dependencies)
+ 
+[Service]
+User=soar67
+WorkingDirectory=/opt/Payload
+ExecStart=/usr/bin/python3 /opt/Payload/payload_main.py
+StandardOutput=append:/opt/Payload/logs/consoleLog.txt
+StandardError=append:/opt/Payload/logs/stderror.txt
+Type=simple
+# Restart if the program crashes (optional: "always", "never", etc.)
+Restart=on-failure
+
+[Install]
+# Start when the system reaches multi-user mode (boot)
+WantedBy=multi-user.target
